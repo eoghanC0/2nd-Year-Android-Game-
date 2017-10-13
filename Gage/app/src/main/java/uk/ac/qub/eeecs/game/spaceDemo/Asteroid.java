@@ -38,8 +38,11 @@ public class Asteroid extends Sprite {
         mBitmap = gameScreen.getGame().getAssetManager()
                 .getBitmap(random.nextBoolean() ? "Asteroid1" : "Asteroid2");
 
-        mBound.halfWidth = 20.0f;
-        mBound.halfHeight = 20.0f;
+        //Inaki - random float between 10 and 30 generated for size
+        float halfLength = (random.nextFloat()*20 + 10);
+
+        mBound.halfWidth = halfLength;
+        mBound.halfHeight = halfLength;
 
         angularVelocity = random.nextFloat() * 240.0f - 20.0f;
     }
