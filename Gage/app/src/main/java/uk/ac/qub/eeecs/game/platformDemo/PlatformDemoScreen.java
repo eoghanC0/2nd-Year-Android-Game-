@@ -84,6 +84,9 @@ public class PlatformDemoScreen extends GameScreen {
         assetManager.loadAndAddBitmap("RightArrow", "img/RightArrow.png");
         assetManager.loadAndAddBitmap("LeftArrow", "img/LeftArrow.png");
         assetManager.loadAndAddBitmap("UpArrow", "img/UpArrow.png");
+        assetManager.loadAndAddBitmap("RightArrowActive", "img/RightArrowActive.png");
+        assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
+        assetManager.loadAndAddBitmap("UpArrowActive", "img/UpArrowActive.png");
 
         // Determine the screen size to correctly position the touch buttons
         int screenWidth = game.getScreenWidth();
@@ -92,13 +95,13 @@ public class PlatformDemoScreen extends GameScreen {
         // Create and position the touch buttons
         mControls = new ArrayList<PushButton>();
         moveLeft = new PushButton(100.0f, (screenHeight - 100.0f),
-                100.0f, 100.0f, "LeftArrow", this);
+                100.0f, 100.0f, "LeftArrow", "LeftArrowActive", this);
         mControls.add(moveLeft);
         moveRight = new PushButton(225.0f, (screenHeight - 100.0f),
-                100.0f, 100.0f, "RightArrow", this);
+                100.0f, 100.0f, "RightArrow", "RightArrowActive", this);
         mControls.add(moveRight);
         jumpUp = new PushButton((screenWidth - 125.0f),
-                (screenHeight - 100.0f), 100.0f, 100.0f, "UpArrow", this);
+                (screenHeight - 100.0f), 100.0f, 100.0f, "UpArrow", "UpArrowActive", this);
         mControls.add(jumpUp);
 
         // Create the player
