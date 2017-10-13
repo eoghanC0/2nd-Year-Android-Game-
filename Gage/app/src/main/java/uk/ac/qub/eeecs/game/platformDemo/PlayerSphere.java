@@ -4,7 +4,9 @@ import android.util.Log;
 
 import java.util.List;
 
+import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
+import uk.ac.qub.eeecs.gage.engine.audio.Sound;
 import uk.ac.qub.eeecs.gage.util.CollisionDetector;
 import uk.ac.qub.eeecs.gage.util.CollisionDetector.CollisionType;
 import uk.ac.qub.eeecs.gage.world.GameObject;
@@ -62,6 +64,11 @@ public class PlayerSphere extends Sprite {
      */
     private float ANGULAR_VELOCITY_SCALE = 1.5f;
 
+    /**
+     * Sound effect when the ball hits a platform
+     */
+    private Sound collisionSound;
+
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
@@ -76,6 +83,10 @@ public class PlayerSphere extends Sprite {
     public PlayerSphere(float startX, float startY, GameScreen gameScreen) {
         super(startX, startY, 50.0f, 50.0f, gameScreen.getGame()
                 .getAssetManager().getBitmap("Ball"), gameScreen);
+
+        //Load assets the sphere will use
+        AssetStore assetStore = gameScreen.getGame().getAssetManager();
+        collisionSound = assetStore.getSound("BallBounce");
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -168,6 +179,13 @@ public class PlayerSphere extends Sprite {
                     break;
                 case None:
                     break;
+            }
+
+            if (collisionType != collisionType.None) {
+                //Sound will only play if the ball is going a certain speed
+                if (Math.sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y)) >= (Math.abs(MAX_X_VELOCITY * 0.75))) {
+                    collisionSound.play();
+                }
             }
         }
     }

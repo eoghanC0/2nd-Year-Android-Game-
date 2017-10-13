@@ -89,6 +89,7 @@ public class PlatformDemoScreen extends GameScreen {
         assetManager.loadAndAddBitmap("RightArrowActive", "img/RightArrowActive.png");
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
         assetManager.loadAndAddBitmap("UpArrowActive", "img/UpArrowActive.png");
+        assetManager.loadAndAddSound("BallBounce", "sounds/Ball_Bounce.mp3");
 
         // Determine the screen size to correctly position the touch buttons
         int screenWidth = game.getScreenWidth();
