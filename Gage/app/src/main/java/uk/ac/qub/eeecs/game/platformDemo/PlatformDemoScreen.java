@@ -144,13 +144,17 @@ public class PlatformDemoScreen extends GameScreen {
         // Check if any platforms are colliding
         // Ignores first platform of mPlatforms as this is the ground platform
         boolean platformCollision = false;
+        int platformCollisions = 0;
         for (int i = 1; i < mPlatforms.size() - 1; i++) {
-            if(CollisionDetector.determineCollisionType(mPlatforms.get(i).getBound(), mPlatforms.get(i + 1).getBound()) != CollisionDetector.CollisionType.None) {
-                Log.d(TAG, String.format("PlatformDemoScreen: Platform x Platform collision detected --> mPlatforms[%1$s]: x=%2$f y=%3$f | mPlatforms[%4$s]: x=%5$f y=%6$f", i, mPlatforms.get(i).position.x, mPlatforms.get(i).position.y, i + 1, mPlatforms.get(i + 1).position.x, mPlatforms.get(i + 1).position.y));
-                platformCollision = true;
+            for (int j = i + 1; j < mPlatforms.size(); j++) {
+                if (CollisionDetector.determineCollisionType(mPlatforms.get(i).getBound(), mPlatforms.get(j).getBound()) != CollisionDetector.CollisionType.None) {
+                    Log.d(TAG, String.format("PlatformDemoScreen: Platform x Platform collision detected --> mPlatforms[%1$s]: x=%2$f y=%3$f | mPlatforms[%4$s]: x=%5$f y=%6$f", i, mPlatforms.get(i).position.x, mPlatforms.get(i).position.y, j, mPlatforms.get(j).position.x, mPlatforms.get(j).position.y));
+                    platformCollision = true; platformCollisions++;
+                }
             }
         }
         if(!platformCollision) Log.d(TAG, "PlatformDemoScreen: No platform collisions detected");
+        else Log.d(TAG, String.format("PlatformDemoScreen: %1$d platform collisions detected", platformCollisions));
     }
 
     // /////////////////////////////////////////////////////////////////////////
