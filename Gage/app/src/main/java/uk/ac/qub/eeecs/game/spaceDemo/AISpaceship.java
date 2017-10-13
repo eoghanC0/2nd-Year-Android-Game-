@@ -1,5 +1,7 @@
 package uk.ac.qub.eeecs.game.spaceDemo;
 
+import java.util.Random;
+
 import uk.ac.qub.eeecs.gage.ai.SteeringBehaviours;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.util.Vector2;
@@ -49,9 +51,12 @@ public class AISpaceship extends Sprite {
      * @param shipBehaviour Steering behaviour to be used by the AI ship
      * @param gameScreen    Gamescreen to which AI belongs
      */
+
+    private static Random random = new Random();
+
     public AISpaceship(float startX, float startY, ShipBehaviour shipBehaviour,
                        SpaceshipDemoScreen gameScreen) {
-        super(startX, startY, 50.0f, 50.0f, null, gameScreen);
+        super(startX, startY, random.nextFloat()*20 + 50, random.nextFloat()*40 + 30, null, gameScreen);
 
         mShipBehaviour = shipBehaviour;
 
