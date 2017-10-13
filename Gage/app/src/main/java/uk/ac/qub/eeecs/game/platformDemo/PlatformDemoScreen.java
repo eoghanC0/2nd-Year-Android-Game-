@@ -123,14 +123,7 @@ public class PlatformDemoScreen extends GameScreen {
         // the first 300 units of the level to avoid overlap with the player.
         Random random = new Random();
         int platformWidth = 70, platformHeight = 70, nNumRandomPlatforms = 30;
-       /* for (int idx = 0; idx < nNumRandomPlatforms; idx++) {
-            mPlatforms.add(new Platform(
-                    300.0f + (random.nextFloat() * LEVEL_WIDTH),
-                    (random.nextFloat() * (LEVEL_HEIGHT - platformHeight)),
-                    platformWidth, platformHeight,
-                    "Platform", this));
-        }*/
-       int platformX, platformY;
+        int platformX, platformY;
         for (int idx = 0; idx < nNumRandomPlatforms; idx++) {
             platformX = (int) (random.nextFloat() * LEVEL_WIDTH);
             platformX -= (platformX % platformWidth);
