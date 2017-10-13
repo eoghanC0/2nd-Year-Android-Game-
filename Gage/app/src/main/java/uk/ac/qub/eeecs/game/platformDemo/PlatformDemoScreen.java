@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.game.platformDemo;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +13,13 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
+import uk.ac.qub.eeecs.gage.util.CollisionDetector;
 import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 
+import static android.content.ContentValues.TAG;
 import static android.view.View.Y;
 
 /**
@@ -137,6 +140,17 @@ public class PlatformDemoScreen extends GameScreen {
                     platformWidth, platformHeight,
                     "Platform", this));
         }
+
+        // Check if any platforms are colliding
+        // Ignores first platform of mPlatforms as this is the ground platform
+        boolean platformCollision = false;
+        for (int i = 1; i < mPlatforms.size() - 1; i++) {
+            if(CollisionDetector.determineCollisionType(mPlatforms.get(i).getBound(), mPlatforms.get(i + 1).getBound()) != CollisionDetector.CollisionType.None) {
+                Log.d(TAG, String.format("PlatformDemoScreen: Platform x Platform collision detected --> mPlatforms[%1$s]: x=%2$f y=%3$f | mPlatforms[%4$s]: x=%5$f y=%6$f", i, mPlatforms.get(i).position.x, mPlatforms.get(i).position.y, i + 1, mPlatforms.get(i + 1).position.x, mPlatforms.get(i + 1).position.y));
+                platformCollision = true;
+            }
+        }
+        if(!platformCollision) Log.d(TAG, "PlatformDemoScreen: No platform collisions detected");
     }
 
     // /////////////////////////////////////////////////////////////////////////
