@@ -17,6 +17,8 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 
+import static android.view.View.Y;
+
 /**
  * A simple platform-style demo that generates a number of platforms and
  * provides a player controlled entity that can move about the images.
@@ -121,10 +123,16 @@ public class PlatformDemoScreen extends GameScreen {
         // the first 300 units of the level to avoid overlap with the player.
         Random random = new Random();
         int platformWidth = 70, platformHeight = 70, nNumRandomPlatforms = 30;
+        int platformX, platformY;
         for (int idx = 0; idx < nNumRandomPlatforms; idx++) {
+            platformX = (int) (random.nextFloat() * LEVEL_WIDTH);
+            platformX -= (platformX % platformWidth);
+
+            platformY = (int) (random.nextFloat() * (LEVEL_HEIGHT - platformHeight));
+            platformY -= (platformY % platformHeight);
             mPlatforms.add(new Platform(
-                    300.0f + (random.nextFloat() * LEVEL_WIDTH),
-                    (random.nextFloat() * (LEVEL_HEIGHT - platformHeight)),
+                    300.0f + platformX,
+                    platformY,
                     platformWidth, platformHeight,
                     "Platform", this));
         }
