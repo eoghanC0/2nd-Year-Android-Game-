@@ -13,6 +13,8 @@ import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Simple controllable player sprite.
  *
@@ -184,7 +186,7 @@ public class PlayerSphere extends Sprite {
             if (collisionType != collisionType.None) {
                 //Sound will only play if the ball is going a certain speed
                 if (Math.sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y)) >= (Math.abs(MAX_X_VELOCITY * 0.75))) {
-                    collisionSound.play();
+                    if (velocity.y > 30) collisionSound.play();
                 }
             }
         }
