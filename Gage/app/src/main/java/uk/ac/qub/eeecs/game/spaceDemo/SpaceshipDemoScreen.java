@@ -1,14 +1,18 @@
 package uk.ac.qub.eeecs.game.spaceDemo;
 
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.lang.Object;
 
 import uk.ac.qub.eeecs.gage.Game;
+import uk.ac.qub.eeecs.gage.R;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
+import uk.ac.qub.eeecs.gage.engine.audio.Music;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.world.GameObject;
@@ -125,6 +129,11 @@ public class SpaceshipDemoScreen extends GameScreen {
 			mAISpaceships.add(new AISpaceship(random.nextFloat() * LEVEL_WIDTH,
 					random.nextFloat() * LEVEL_HEIGHT,
 					AISpaceship.ShipBehaviour.Turret, this));
+
+		//For getting the music file from the resources.
+		AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.bgmusic);
+		//Plays the background song
+		new Music(afd).play();
 	}
 
 	// /////////////////////////////////////////////////////////////////////////
