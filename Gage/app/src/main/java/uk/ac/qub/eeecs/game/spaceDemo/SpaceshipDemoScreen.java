@@ -30,8 +30,8 @@ public class SpaceshipDemoScreen extends GameScreen {
 	/**
 	 * Width and height of the level 
 	 */
-	private final float LEVEL_WIDTH = 1000.0f;
-	private final float LEVEL_HEIGHT = 1000.0f;
+	private final float LEVEL_WIDTH = 1414.2f;
+	private final float LEVEL_HEIGHT = 1414.2f;
 
 	/**
 	 * Define viewports for this layer and the associated screen projection
@@ -52,14 +52,14 @@ public class SpaceshipDemoScreen extends GameScreen {
 	/**
 	 * Define asteroids in the game world
 	 */
-	private final int NUM_ASTEROIDS = 20;
+	private final int NUM_ASTEROIDS = 80;
 	private List<Asteroid> mAsteroids;
 
 	/**
 	 * Define AI controlled ships in the game world
 	 */
-	private final int NUM_SEEKERS = 5;
-	private final int NUM_TURRETS = 5;
+	private final int NUM_SEEKERS = 20;
+	private final int NUM_TURRETS = 20;
 	private List<AISpaceship> mAISpaceships;
 
 	// /////////////////////////////////////////////////////////////////////////
