@@ -122,13 +122,11 @@ public class SpaceshipDemoScreen extends GameScreen {
 		// Create a number of randomly positioned AI controlled ships
 		mAISpaceships = new ArrayList<AISpaceship>(NUM_SEEKERS + NUM_TURRETS);
 		for (int idx = 0; idx < NUM_SEEKERS; idx++)
-			mAISpaceships.add(new AISpaceship(random.nextFloat() * LEVEL_WIDTH,
-					random.nextFloat() * LEVEL_HEIGHT,
-					AISpaceship.ShipBehaviour.Seeker, this));
+			mAISpaceships.add(new Seeker(random.nextFloat() * LEVEL_WIDTH,
+					random.nextFloat() * LEVEL_HEIGHT, this));
 		for (int idx = 0; idx < NUM_TURRETS; idx++)
-			mAISpaceships.add(new AISpaceship(random.nextFloat() * LEVEL_WIDTH,
-					random.nextFloat() * LEVEL_HEIGHT,
-					AISpaceship.ShipBehaviour.Turret, this));
+			mAISpaceships.add(new Turret(random.nextFloat() * LEVEL_WIDTH,
+					random.nextFloat() * LEVEL_HEIGHT, this));
 
 		//For getting the music file from the resources.
 		AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.bgmusic);
