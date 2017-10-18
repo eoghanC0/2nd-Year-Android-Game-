@@ -20,7 +20,6 @@ import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 
 import static android.content.ContentValues.TAG;
-import static android.view.View.Y;
 
 /**
  * A simple platform-style demo that generates a number of platforms and
@@ -93,6 +92,7 @@ public class PlatformDemoScreen extends GameScreen {
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
         assetManager.loadAndAddBitmap("UpArrowActive", "img/UpArrowActive.png");
         assetManager.loadAndAddSound("BallBounce", "sounds/Ball_Bounce.mp3");
+        assetManager.loadAndAddSound("JumpSound", "sounds/Jump_Sound.mp3");
 
         // Determine the screen size to correctly position the touch buttons
         int screenWidth = game.getScreenWidth();
@@ -107,7 +107,7 @@ public class PlatformDemoScreen extends GameScreen {
                 100.0f, 100.0f, "RightArrow", "RightArrowActive", this);
         mControls.add(moveRight);
         jumpUp = new PushButton((screenWidth - 125.0f),
-                (screenHeight - 100.0f), 100.0f, 100.0f, "UpArrow", "UpArrowActive", this);
+                (screenHeight - 100.0f), 100.0f, 100.0f, "UpArrow", "UpArrowActive", "JumpSound", false, this);
         mControls.add(jumpUp);
 
         // Create the player

@@ -157,6 +157,7 @@ public class PushButton extends Button {
             // Play a trigger sound if needed
             if (mTriggerSound != null)
                 mTriggerSound.play();
+
         }
     }
 
