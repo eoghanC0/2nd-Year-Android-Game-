@@ -189,6 +189,11 @@ public class PlatformDemoScreen extends GameScreen {
         else if (playerBound.getTop() > LEVEL_HEIGHT)
             mPlayer.position.y -= (playerBound.getTop() - LEVEL_HEIGHT);
 
+        //Change the viewport size depending on the speed of the playerSphere
+        //Multiplying by 1.5 to preserve resolution
+        mLayerViewport.set(240 + (Math.abs(mPlayer.velocity.x) * 0.2f * 1.5f), 160 + Math.abs(mPlayer.velocity.x) * 0.2f, 240 + (Math.abs(mPlayer.velocity.x) * 0.2f * 1.5f), 160 + Math.abs(mPlayer.velocity.x) * 0.2f);
+
+
         // Focus the layer viewport on the player's x location
         mLayerViewport.x = mPlayer.position.x;
 
