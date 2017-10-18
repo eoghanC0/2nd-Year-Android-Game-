@@ -1,5 +1,6 @@
 package uk.ac.qub.eeecs.game.platformDemo;
 
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
 import android.util.Log;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.Game;
+import uk.ac.qub.eeecs.gage.R;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
@@ -18,6 +20,7 @@ import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.gage.engine.audio.Music;
 
 import static android.content.ContentValues.TAG;
 
@@ -155,6 +158,13 @@ public class PlatformDemoScreen extends GameScreen {
         }
         if(!platformCollision) Log.d(TAG, "PlatformDemoScreen: No platform collisions detected");
         else Log.d(TAG, String.format("PlatformDemoScreen: %1$d platform collisions detected", platformCollisions));
+
+        //Get the music file from the resources.
+        AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
+        //Plays the background song
+        new Music(afd).play();
+
+
     }
 
     // /////////////////////////////////////////////////////////////////////////
