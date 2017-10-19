@@ -163,8 +163,6 @@ public class PlatformDemoScreen extends GameScreen {
         AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
         //Plays the background song
         new Music(afd).play();
-
-
     }
 
     // /////////////////////////////////////////////////////////////////////////
