@@ -21,7 +21,7 @@ public abstract class AISpaceship extends Sprite {
     /**
      * Distance at which the spaceship should avoid other game objects
      */
-    private float separateThresholdShip = 75.0f;
+    private float separateThresholdShip = 125.0f;
     private float separateThresholdAsteroid = 125.0f;
 
     /**
