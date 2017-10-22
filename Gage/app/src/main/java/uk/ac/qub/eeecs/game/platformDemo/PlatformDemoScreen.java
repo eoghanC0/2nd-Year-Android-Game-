@@ -87,14 +87,12 @@ public class PlatformDemoScreen extends GameScreen {
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("Platform", "img/Platform1.png");
         assetManager.loadAndAddBitmap("Ground", "img/Ground.png");
-        assetManager.loadAndAddBitmap("Ball", "img/Ball.png");
         assetManager.loadAndAddBitmap("RightArrow", "img/RightArrow.png");
         assetManager.loadAndAddBitmap("LeftArrow", "img/LeftArrow.png");
         assetManager.loadAndAddBitmap("UpArrow", "img/UpArrow.png");
         assetManager.loadAndAddBitmap("RightArrowActive", "img/RightArrowActive.png");
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
         assetManager.loadAndAddBitmap("UpArrowActive", "img/UpArrowActive.png");
-        assetManager.loadAndAddSound("BallBounce", "sounds/Ball_Bounce.mp3");
         assetManager.loadAndAddSound("JumpSound", "sounds/Jump_Sound.mp3");
 
         // Determine the screen size to correctly position the touch buttons

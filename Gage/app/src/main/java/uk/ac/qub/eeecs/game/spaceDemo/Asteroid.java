@@ -2,6 +2,7 @@ package uk.ac.qub.eeecs.game.spaceDemo;
 
 import java.util.Random;
 
+import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
@@ -36,15 +37,15 @@ public class Asteroid extends Sprite {
         super(startX, startY, 200.0f, 200.0f, null, gameScreen);
 
         //Load the assets used by Asteroid
-        if (mGameScreen.getGame().getAssetManager().getBitmap("Asteroid1") == null) {
-            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Asteroid1", "img/Asteroid1.png");
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        if (assetManager.getBitmap("Asteroid1") == null) {
+            assetManager.loadAndAddBitmap("Asteroid1", "img/Asteroid1.png");
         }
-        if (mGameScreen.getGame().getAssetManager().getBitmap("Asteroid2") == null) {
-            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Asteroid2", "img/Asteroid2.png");
+        if (assetManager.getBitmap("Asteroid2") == null) {
+            assetManager.loadAndAddBitmap("Asteroid2", "img/Asteroid2.png");
         }
 
-        mBitmap = gameScreen.getGame().getAssetManager()
-                .getBitmap(random.nextBoolean() ? "Asteroid1" : "Asteroid2");
+        mBitmap = assetManager.getBitmap(random.nextBoolean() ? "Asteroid1" : "Asteroid2");
 
         //Inaki - random float between 10 and 30 generated for size
         float halfLength = (random.nextFloat()*20 + 10);

@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.game.spaceDemo;
 
 import uk.ac.qub.eeecs.gage.ai.SteeringBehaviours;
+import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 
 /**
@@ -15,11 +16,13 @@ public class Turret extends AISpaceship {
         maxVelocity = 0.0f;
         maxAngularVelocity = 50.0f;
         maxAngularAcceleration = 50.0f;
+
         //Load the assets used by Turret
-        if (mGameScreen.getGame().getAssetManager().getBitmap("Turret") == null) {
-            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Turret", "img/Turret.png");
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        if (assetManager.getBitmap("Turret") == null) {
+            assetManager.loadAndAddBitmap("Turret", "img/Turret.png");
         }
-        mBitmap = gameScreen.getGame().getAssetManager().getBitmap("Turret");
+        mBitmap = assetManager.getBitmap("Turret");
     }
 
     @Override
