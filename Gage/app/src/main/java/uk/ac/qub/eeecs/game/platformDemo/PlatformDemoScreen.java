@@ -233,7 +233,7 @@ public class PlatformDemoScreen extends GameScreen {
 
         // Draw each of the platforms
         for (Platform platform : mPlatforms)
-            platform.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+            platform.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport, mPlayer);
 
         // Draw the controls last of all
         for (PushButton control : mControls)

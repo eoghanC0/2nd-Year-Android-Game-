@@ -1,5 +1,11 @@
 package uk.ac.qub.eeecs.game.platformDemo;
 
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuffColorFilter;
+
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
@@ -91,9 +97,8 @@ public class Platform extends GameObject {
      * @param layerViewport  Game layer viewport
      * @param screenViewport Screen viewport
      */
-    @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D,
-                     LayerViewport layerViewport, ScreenViewport screenViewport) {
+                     LayerViewport layerViewport, ScreenViewport screenViewport, PlayerSphere player) {
 
         // Call the getBound method to make sure we're using an up-to-date bound
         BoundingBox bound = getBound();
@@ -122,8 +127,15 @@ public class Platform extends GameObject {
                     // If the layer tile is visible then draw tne tile
                     if (GraphicsHelper.getClippedSourceAndScreenRect(
                             tileBound, mBitmap, layerViewport, screenViewport, drawSourceRect, drawScreenRect)) {
-                        graphics2D
-                                .drawBitmap(mBitmap, drawSourceRect, drawScreenRect, null);
+
+                        //if the playerSphere is in close proximity, highlight the platform
+                        if (Math.abs(player.getBound().x - tileBound.x) < 80 && Math.abs(player.getBound().y - tileBound.y) < 80) {
+                            Paint pt = new Paint();
+                            pt.setColorFilter(new LightingColorFilter(Color.RED,0));
+                            graphics2D.drawBitmap(mBitmap, drawSourceRect, drawScreenRect,pt);
+                        } else {
+                            graphics2D.drawBitmap(mBitmap, drawSourceRect, drawScreenRect,null);
+                        }
                     }
                 }
         }
