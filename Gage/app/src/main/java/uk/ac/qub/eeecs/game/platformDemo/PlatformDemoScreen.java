@@ -85,8 +85,6 @@ public class PlatformDemoScreen extends GameScreen {
 
         // Load in the assets used by this layer
         AssetStore assetManager = mGame.getAssetManager();
-        assetManager.loadAndAddBitmap("Platform", "img/Platform1.png");
-        assetManager.loadAndAddBitmap("Ground", "img/Ground.png");
         assetManager.loadAndAddBitmap("RightArrow", "img/RightArrow.png");
         assetManager.loadAndAddBitmap("LeftArrow", "img/LeftArrow.png");
         assetManager.loadAndAddBitmap("UpArrow", "img/UpArrow.png");

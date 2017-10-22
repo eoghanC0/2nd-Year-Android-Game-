@@ -6,6 +6,7 @@ import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.PorterDuffColorFilter;
 
+import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
@@ -62,8 +63,19 @@ public class Platform extends GameObject {
      */
     public Platform(float x, float y, float width, float height,
                     String bitmapName, GameScreen gameScreen) {
-        super(x, y, width, height, gameScreen.getGame().getAssetManager()
-                .getBitmap(bitmapName), gameScreen);
+        super(x, y, width, height, null, gameScreen);
+
+        //Load the assets that this Platform instance uses
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        if (assetManager.getBitmap(bitmapName) == null) {
+            if (bitmapName.equals("Platform")) {
+                assetManager.loadAndAddBitmap("Platform", "img/Platform1.png");
+            }
+            if (bitmapName.equals("Ground")) {
+                assetManager.loadAndAddBitmap("Ground", "img/Ground.png");
+            }
+        }
+        mBitmap = assetManager.getBitmap(bitmapName);
     }
 
     /**
