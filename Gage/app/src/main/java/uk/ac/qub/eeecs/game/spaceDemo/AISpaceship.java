@@ -46,6 +46,16 @@ public abstract class AISpaceship extends Sprite {
     public AISpaceship(float startX, float startY,
                        SpaceshipDemoScreen gameScreen) {
         super(startX, startY, random.nextFloat()*20 + 50, random.nextFloat()*40 + 30, null, gameScreen);
+
+        //Load the assets used by AISpaceship
+        if (mGameScreen.getGame().getAssetManager().getBitmap("Spaceship2") == null) {
+            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Spaceship2", "img/Spaceship2.png");
+        }
+        if (mGameScreen.getGame().getAssetManager().getBitmap("Spaceship3") == null) {
+            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Spaceship3", "img/Spaceship3.png");
+        }
+        mBitmap = gameScreen.getGame().getAssetManager()
+                .getBitmap(random.nextBoolean() ? "Spaceship2" : "Spaceship3");
     }
 
     // /////////////////////////////////////////////////////////////////////////

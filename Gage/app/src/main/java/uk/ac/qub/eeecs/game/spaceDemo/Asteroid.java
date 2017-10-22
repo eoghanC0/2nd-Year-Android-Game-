@@ -35,6 +35,14 @@ public class Asteroid extends Sprite {
     public Asteroid(float startX, float startY, GameScreen gameScreen) {
         super(startX, startY, 200.0f, 200.0f, null, gameScreen);
 
+        //Load the assets used by Asteroid
+        if (mGameScreen.getGame().getAssetManager().getBitmap("Asteroid1") == null) {
+            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Asteroid1", "img/Asteroid1.png");
+        }
+        if (mGameScreen.getGame().getAssetManager().getBitmap("Asteroid2") == null) {
+            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Asteroid2", "img/Asteroid2.png");
+        }
+
         mBitmap = gameScreen.getGame().getAssetManager()
                 .getBitmap(random.nextBoolean() ? "Asteroid1" : "Asteroid2");
 
