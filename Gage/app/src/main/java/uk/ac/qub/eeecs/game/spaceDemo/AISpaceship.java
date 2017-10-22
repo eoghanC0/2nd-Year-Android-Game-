@@ -3,6 +3,7 @@ package uk.ac.qub.eeecs.game.spaceDemo;
 import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.ai.SteeringBehaviours;
+import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.Sprite;
@@ -48,14 +49,14 @@ public abstract class AISpaceship extends Sprite {
         super(startX, startY, random.nextFloat()*20 + 50, random.nextFloat()*40 + 30, null, gameScreen);
 
         //Load the assets used by AISpaceship
-        if (mGameScreen.getGame().getAssetManager().getBitmap("Spaceship2") == null) {
-            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Spaceship2", "img/Spaceship2.png");
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        if (assetManager.getBitmap("Spaceship2") == null) {
+            assetManager.loadAndAddBitmap("Spaceship2", "img/Spaceship2.png");
         }
-        if (mGameScreen.getGame().getAssetManager().getBitmap("Spaceship3") == null) {
-            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Spaceship3", "img/Spaceship3.png");
+        if (assetManager.getBitmap("Spaceship3") == null) {
+            assetManager.loadAndAddBitmap("Spaceship3", "img/Spaceship3.png");
         }
-        mBitmap = gameScreen.getGame().getAssetManager()
-                .getBitmap(random.nextBoolean() ? "Spaceship2" : "Spaceship3");
+        mBitmap = assetManager.getBitmap(random.nextBoolean() ? "Spaceship2" : "Spaceship3");
     }
 
     // /////////////////////////////////////////////////////////////////////////

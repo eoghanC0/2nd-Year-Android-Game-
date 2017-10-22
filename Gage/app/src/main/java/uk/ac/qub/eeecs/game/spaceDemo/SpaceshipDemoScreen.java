@@ -94,7 +94,8 @@ public class SpaceshipDemoScreen extends GameScreen {
 					* mScreenViewport.height / mScreenViewport.width, 240);
 
 		// Load in the assets used by the steering demo
-		mGame.getAssetManager().loadAndAddBitmap("SpaceBackground", "img/SpaceBackground.png");
+		AssetStore assetManager = mGame.getAssetManager();
+		assetManager.loadAndAddBitmap("SpaceBackground", "img/SpaceBackground.png");
 
 		// Create the space background
 		mSpaceBackground = new GameObject(LEVEL_WIDTH / 2.0f,

@@ -83,12 +83,14 @@ public class PlayerSphere extends Sprite {
      * @param gameScreen Gamescreen to which sphere belongs
      */
     public PlayerSphere(float startX, float startY, GameScreen gameScreen) {
-        super(startX, startY, 50.0f, 50.0f, gameScreen.getGame()
-                .getAssetManager().getBitmap("Ball"), gameScreen);
+        super(startX, startY, 50.0f, 50.0f, null, gameScreen);
 
         //Load assets the sphere will use
-        AssetStore assetStore = gameScreen.getGame().getAssetManager();
-        collisionSound = assetStore.getSound("BallBounce");
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        assetManager.loadAndAddBitmap("Ball", "img/Ball.png");
+        assetManager.loadAndAddSound("BallBounce", "sounds/Ball_Bounce.mp3");
+        collisionSound = assetManager.getSound("BallBounce");
+        mBitmap = assetManager.getBitmap("Ball");
     }
 
     // /////////////////////////////////////////////////////////////////////////

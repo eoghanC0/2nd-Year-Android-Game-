@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.game.spaceDemo;
 
 import uk.ac.qub.eeecs.gage.ai.SteeringBehaviours;
+import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.util.Vector2;
@@ -41,9 +42,12 @@ public class PlayerSpaceship extends Sprite {
      */
     public PlayerSpaceship(float startX, float startY, GameScreen gameScreen) {
         super(startX, startY, 50.0f, 50.0f, null, gameScreen);
+
         //Load the assets used by PlayerSpaceship
-        mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Spaceship1", "img/Spaceship1.png");
-        mBitmap = mGameScreen.getGame().getAssetManager().getBitmap("Spaceship1");
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        assetManager.loadAndAddBitmap("Spaceship1", "img/Spaceship1.png");
+        mBitmap = assetManager.getBitmap("Spaceship1");
+
         // Store the centre of the screen
         screenCentre.x = gameScreen.getGame().getScreenWidth() / 2;
         screenCentre.y = gameScreen.getGame().getScreenHeight() / 2;

@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.game.spaceDemo;
 
 import uk.ac.qub.eeecs.gage.ai.SteeringBehaviours;
+import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 
 /**
@@ -16,10 +17,11 @@ public class Seeker extends AISpaceship {
         maxAngularAcceleration = 300.0f;
 
         //Load the assets used by seeker
-        if (mGameScreen.getGame().getAssetManager().getBitmap("Spaceship2") == null) {
-            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Spaceship2", "img/Spaceship2.png");
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        if (assetManager.getBitmap("Spaceship2") == null) {
+            assetManager.loadAndAddBitmap("Spaceship2", "img/Spaceship2.png");
         }
-        mBitmap = gameScreen.getGame().getAssetManager().getBitmap("Spaceship2");
+        mBitmap = assetManager.getBitmap("Spaceship2");
     }
 
     @Override
