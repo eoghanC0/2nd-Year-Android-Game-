@@ -144,11 +144,6 @@ public class PlayerSphere extends Sprite {
         // but not a y-velocity. Make sure we have not exceeded this.
         if (Math.abs(velocity.x) > MAX_X_VELOCITY)
             velocity.x = Math.signum(velocity.x) * MAX_X_VELOCITY;
-
-        // Check that our new position has not collided with any of
-        // the defined platforms. If so, then remove any overlap and
-        // ensure a valid velocity.
-        checkForAndResolveCollisions(platforms);
     }
 
     /**
@@ -157,9 +152,10 @@ public class PlayerSphere extends Sprite {
      *
      * @param platforms Array of platforms to test for collision against
      */
-    private void checkForAndResolveCollisions(List<Platform> platforms) {
+    public boolean checkForAndResolveCollisions(List<Platform> platforms) {
 
         CollisionType collisionType;
+        boolean collisionOccurred = false;
 
         // Consider each platform for collision
         for (Platform platform : platforms) {
@@ -188,7 +184,9 @@ public class PlayerSphere extends Sprite {
                 if (Math.sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y)) >= (Math.abs(MAX_X_VELOCITY * 0.75))) {
                     if (velocity.y > 30) collisionSound.play();
                 }
+                collisionOccurred = true;
             }
         }
+        return collisionOccurred;
     }
 }

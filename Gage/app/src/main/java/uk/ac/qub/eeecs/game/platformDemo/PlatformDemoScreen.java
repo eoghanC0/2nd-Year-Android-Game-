@@ -185,6 +185,11 @@ public class PlatformDemoScreen extends GameScreen {
         mPlayer.update(elapsedTime, moveLeft.isPushed(),
                 moveRight.isPushed(), jumpUp.isPushed(), mPlatforms);
 
+        // Check that our new position has not collided with any of
+        // the defined platforms. If so, then remove any overlap and
+        // ensure a valid velocity.
+        mPlayer.checkForAndResolveCollisions(mPlatforms);
+
         // Ensure the player cannot leave the confines of the world
         BoundingBox playerBound = mPlayer.getBound();
         if (playerBound.getLeft() < 0)
