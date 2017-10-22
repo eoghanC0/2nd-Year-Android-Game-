@@ -15,6 +15,10 @@ public class Turret extends AISpaceship {
         maxVelocity = 0.0f;
         maxAngularVelocity = 50.0f;
         maxAngularAcceleration = 50.0f;
+        //Load the assets used by Turret
+        if (mGameScreen.getGame().getAssetManager().getBitmap("Turret") == null) {
+            mGameScreen.getGame().getAssetManager().loadAndAddBitmap("Turret", "img/Turret.png");
+        }
         mBitmap = gameScreen.getGame().getAssetManager().getBitmap("Turret");
     }
 
