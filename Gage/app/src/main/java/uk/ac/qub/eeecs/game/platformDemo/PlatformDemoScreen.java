@@ -126,18 +126,39 @@ public class PlatformDemoScreen extends GameScreen {
         // the first 300 units of the level to avoid overlap with the player.
         Random random = new Random();
         int platformWidth = 70, platformHeight = 70, nNumRandomPlatforms = 30;
-        int platformX, platformY;
+        int platformX, platformY, randNum;
+        String platformName = "Platform";
         for (int idx = 0; idx < nNumRandomPlatforms; idx++) {
+
+            randNum = random.nextInt(3);
+            switch (randNum){
+                case 1:
+                    platformName = "Platform";
+                    platformHeight = 70;
+                    platformWidth = 70;
+                    break;
+                case 2:
+                    platformName = "Platform2";
+                    platformHeight = 70;
+                    platformWidth = 140;
+                    break;
+                default:
+                    platformName = "Platform3";
+                    platformHeight = 35;
+                    platformWidth = 70;
+
+            }
             platformX = (int) (random.nextFloat() * LEVEL_WIDTH);
             platformX -= (platformX % platformWidth);
 
             platformY = (int) (random.nextFloat() * (LEVEL_HEIGHT - platformHeight));
             platformY -= (platformY % platformHeight);
+
             mPlatforms.add(new Platform(
                     300.0f + platformX,
                     platformY,
                     platformWidth, platformHeight,
-                    "Platform", this));
+                    platformName, this));
         }
 
         // Check if any platforms are colliding
@@ -147,7 +168,7 @@ public class PlatformDemoScreen extends GameScreen {
         for (int i = 1; i < mPlatforms.size() - 1; i++) {
             for (int j = i + 1; j < mPlatforms.size(); j++) {
                 if (CollisionDetector.determineCollisionType(mPlatforms.get(i).getBound(), mPlatforms.get(j).getBound()) != CollisionDetector.CollisionType.None) {
-                    Log.d(TAG, String.format("PlatformDemoScreen: Platform x Platform collision detected --> mPlatforms[%1$s]: x=%2$f y=%3$f | mPlatforms[%4$s]: x=%5$f y=%6$f", i, mPlatforms.get(i).position.x, mPlatforms.get(i).position.y, j, mPlatforms.get(j).position.x, mPlatforms.get(j).position.y));
+                    Log.d(TAG, String.format("PlatformDemoScreen: Platform x Platform collision detected --> mPlatforms[%1$s]: x=%2$f y=%3$f w=%4$f h=%5$f | mPlatforms[%6$s]: x=%7$f y=%8$f w=%9$f h=%10$f", i, mPlatforms.get(i).position.x, mPlatforms.get(i).position.y, mPlatforms.get(i).getBound().getWidth(), mPlatforms.get(i).getBound().getHeight(), j, mPlatforms.get(j).position.x, mPlatforms.get(j).position.y, mPlatforms.get(j).getBound().getWidth(), mPlatforms.get(j).getBound().getHeight()));
                     platformCollision = true; platformCollisions++;
                 }
             }
@@ -216,6 +237,8 @@ public class PlatformDemoScreen extends GameScreen {
             mLayerViewport.y -= mLayerViewport.getBottom();
         else if (mLayerViewport.getTop() > LEVEL_HEIGHT)
             mLayerViewport.y -= (mLayerViewport.getTop() - LEVEL_HEIGHT);
+
+        Log.d(TAG, "PLAYER: x=" + mPlayer.position.x + " y=" + mPlayer.position.y);
     }
 
     /**
