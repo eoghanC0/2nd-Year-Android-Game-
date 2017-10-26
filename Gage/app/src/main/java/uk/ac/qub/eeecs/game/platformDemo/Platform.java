@@ -67,12 +67,19 @@ public class Platform extends GameObject {
 
         //Load the assets that this Platform instance uses
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+
         if (assetManager.getBitmap(bitmapName) == null) {
             if (bitmapName.equals("Platform")) {
                 assetManager.loadAndAddBitmap("Platform", "img/Platform1.png");
             }
             if (bitmapName.equals("Ground")) {
                 assetManager.loadAndAddBitmap("Ground", "img/Ground.png");
+            }
+            if (bitmapName.equals("Platform2")){
+                assetManager.loadAndAddBitmap("Platform2", "img/platform 2.jpg");
+            }
+            if (bitmapName.equals(("Platform3"))){
+                assetManager.loadAndAddBitmap("Platform3", "img/platform 3.png");
             }
         }
         mBitmap = assetManager.getBitmap(bitmapName);
@@ -136,7 +143,7 @@ public class Platform extends GameObject {
                     tileBound.x = platformLeft + (tileXIdx + 0.5f) * tileWidth;
                     tileBound.y = platformBottom + (tileYIdx + 0.5f) * tileHeight;
 
-                    // If the layer tile is visible then draw tne tile
+                    // If the layer tile is visible then draw the tile
                     if (GraphicsHelper.getClippedSourceAndScreenRect(
                             tileBound, mBitmap, layerViewport, screenViewport, drawSourceRect, drawScreenRect)) {
 
