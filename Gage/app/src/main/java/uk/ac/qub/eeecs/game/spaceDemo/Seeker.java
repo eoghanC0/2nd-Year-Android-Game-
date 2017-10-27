@@ -13,10 +13,10 @@ public class Seeker extends AISpaceship {
         super(startX, startY, gameScreen);
         maxAcceleration = 30.0f;
         maxVelocity = 50.0f;
-        maxAngularVelocity = 150.0f;
+        maxAngularVelocity = 400.0f;
         maxAngularAcceleration = 300.0f;
 
-        //Load the assets used by seeker
+        //Load the assets used by seekers
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         if (assetManager.getBitmap("Spaceship2") == null) {
             assetManager.loadAndAddBitmap("Spaceship2", "img/Spaceship2.png");
@@ -34,19 +34,19 @@ public class Seeker extends AISpaceship {
         // Try to avoid a collision with the player ship
         SteeringBehaviours.separate(this,
                 ((SpaceshipDemoScreen) mGameScreen).getPlayerSpaceship(),
-                getSeparateThresholdShip(), 1.0f, getAccComponent());
+                getSeparateThresholdShip(), 100.0f, getAccComponent());
         getAccAccumulator().set(getAccComponent());
 
         // Try to avoid a collision with the other spaceships
         SteeringBehaviours.separate(this,
                 ((SpaceshipDemoScreen) mGameScreen).getAISpaceships(),
-                getSeparateThresholdShip(), 1.0f, getAccComponent());
+                getSeparateThresholdShip(), 50.0f, getAccComponent());
         getAccAccumulator().add(getAccComponent());
 
         // Try to avoid a collision with the asteroids
         SteeringBehaviours.separate(this,
                 ((SpaceshipDemoScreen) mGameScreen).getAsteroids(),
-                getSeparateThresholdAsteroid(), 1.0f, getAccComponent());
+                getSeparateThresholdAsteroid(), 50.0f, getAccComponent());
         getAccAccumulator().add(getAccComponent());
 
         // If we are trying to avoid a collision then combine

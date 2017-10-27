@@ -159,4 +159,8 @@ public class Platform extends GameObject {
                 }
         }
     }
+
+    public String getInfo() {
+        return String.format("Platform: (Top left corner) x=%1$f y=%2$f w=%3$f h=%4$f", getBound().getLeft(), getBound().getTop(), getBound().getWidth(), getBound().getHeight());
+    }
 }
