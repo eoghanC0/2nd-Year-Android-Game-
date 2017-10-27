@@ -70,6 +70,11 @@ public class PlatformDemoScreen extends GameScreen {
     private ArrayList<Platform> mPlatforms;
 
     /**
+     * Define the number of platforms to populate the game world
+     */
+    private final int NUMBER_OF_PLATFORMS = 30;
+
+    /**
      * Define the player
      */
     private PlayerSphere mPlayer;
@@ -123,6 +128,22 @@ public class PlatformDemoScreen extends GameScreen {
         // Create the platforms
         mPlatforms = new ArrayList<Platform>();
 
+        // Add ground platform. Add a number of randomly positioned platforms. These are not added in
+        // the first 300 units of the level to avoid overlap with the player.
+        generatePlatforms();
+
+        //Get the music file from the resources.
+        AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
+        //Plays the background song
+        new Music(afd).play();
+    }
+
+    /**
+     * Generate random platforms based on the number of platforms defined in the properties
+     */
+    public void generatePlatforms() {
+        if(mPlatforms.size() > 0) mPlatforms.clear();
+
         // Add a wide platform for the ground tile
         int groundTileWidth = 64, groundTileHeight = 35, groundTiles = 50;
         mPlatforms.add(
@@ -130,17 +151,16 @@ public class PlatformDemoScreen extends GameScreen {
                         groundTileWidth * groundTiles, groundTileHeight,
                         "Ground", groundTiles, 1, this));
 
-        // Add a number of randomly positioned platforms. They are not added in
-        // the first 300 units of the level to avoid overlap with the player.
+        // Randomly generate the platforms
         Random random = new Random();
-        int platformWidth = 70, platformHeight = 70, nNumRandomPlatforms = 30;
-        int platformX, platformY, randNum;
+        int platformX, platformY, platformWidth, platformHeight, randNum;
         Platform tempPlatform = new Platform(0f,0f,0f,0f,"Platform",this);
-        String platformName = "Platform";
-        
-        for (int idx = 0; idx < nNumRandomPlatforms; idx++) {
+        String platformName;
+
+        for (int idx = 0; idx < NUMBER_OF_PLATFORMS; idx++) {
             boolean addPlatform = false;
             while (!addPlatform) {
+                // Randomly choose the platform type
                 randNum = random.nextInt(3);
                 switch (randNum){
                     case 1:
@@ -159,6 +179,7 @@ public class PlatformDemoScreen extends GameScreen {
                         platformWidth = (int) LEVEL_GRID_HEIGHT * 2;
 
                 }
+                // Determine x and y coordinates
                 platformX = (int) (random.nextFloat() * LEVEL_WIDTH);
                 platformX -= (platformX % (LEVEL_GRID_WIDTH * 2));
                 if((platformWidth / LEVEL_GRID_WIDTH) % 4 == 0) platformX += LEVEL_GRID_WIDTH;
@@ -167,13 +188,16 @@ public class PlatformDemoScreen extends GameScreen {
                 platformY -= (platformY % platformHeight);
                 if (platformY < (LEVEL_GRID_HEIGHT * 2)) platformY += LEVEL_GRID_HEIGHT * 2;
 
+                // Instantiate temporary platform for collision detecting
                 tempPlatform = new Platform(300.f + platformX, platformY, platformWidth, platformHeight, platformName, this);
 
                 if(mPlatforms.size() == 0) {
                     mPlatforms.add(tempPlatform);
-                    break;
+                    addPlatform = true;
                 }
 
+                // Check for any colliding platforms before adding to mPlatforms
+                // Restart loop if collision detected
                 boolean collisionDetected = false;
                 for (int i = 0; i < mPlatforms.size(); i++) {
                     if (CollisionDetector.determineCollisionType(tempPlatform.getBound(), mPlatforms.get(i).getBound()) != CollisionDetector.CollisionType.None) {
@@ -181,13 +205,15 @@ public class PlatformDemoScreen extends GameScreen {
                         collisionDetected = true;
                     }
                 }
-                if(!collisionDetected) break;
+                if(!collisionDetected) addPlatform = true;
             }
             mPlatforms.add(tempPlatform);
         }
 
+
+        // Log the information about the platforms
         for (int i = 0; i < mPlatforms.size(); i++) {
-            Log.d(TAG, String.format("Platform[%1$s]: x=%2$f y=%2$f w=%3$f h=%4$f", i, mPlatforms.get(i).getBound().getLeft(), mPlatforms.get(i).getBound().getTop(), mPlatforms.get(i).getBound().getWidth(), mPlatforms.get(i).getBound().getHeight()));
+            Log.d(TAG, "[" + i + "]" + mPlatforms.get(i).getInfo());
         }
 
         // (UNIT TEST) Check if any platforms are colliding
@@ -205,10 +231,6 @@ public class PlatformDemoScreen extends GameScreen {
         if(!platformCollision) Log.d(TAG, "PlatformDemoScreen: No platform collisions detected");
         else Log.d(TAG, String.format("PlatformDemoScreen: %1$d platform collisions detected", platformCollisions));*/
 
-        //Get the music file from the resources.
-        AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
-        //Plays the background song
-        new Music(afd).play();
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -289,5 +311,9 @@ public class PlatformDemoScreen extends GameScreen {
         // Draw the controls last of all
         for (PushButton control : mControls)
             control.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+    }
+
+    public ArrayList<Platform> getPlatforms() {
+        return mPlatforms;
     }
 }
