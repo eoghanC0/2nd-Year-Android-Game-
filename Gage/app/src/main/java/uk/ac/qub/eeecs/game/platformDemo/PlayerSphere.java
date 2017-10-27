@@ -34,30 +34,30 @@ public class PlayerSphere extends Sprite {
     /**
      * Acceleration with which the player can move along the x-axis
      */
-    private float RUN_ACCELERATION = 150.0f;
+    private float RUN_ACCELERATION;
 
     /**
      * Maximum velocity of the player along the x-axis
      */
-    private float MAX_X_VELOCITY = 200.0f;
+    private float MAX_X_VELOCITY;
 
     /**
      * Scale factor that is applied to the x-velocity when the player is not
      * moving left or right
      */
-    private float RUN_DECAY = 0.95f;
+    private float RUN_DECAY;
 
     /**
      * Instantaneous velocity with which the player jumps up
      */
-    private float JUMP_VELOCITY = 450.0f;
+    private float JUMP_VELOCITY;
 
     /**
      * Trigger downwards velocity under which a jump will be permitted.
      * Used to reflect the fact that gravity provides a small download
      * acceleration each frame.
      */
-    private float JUMP_VELOCITY_THRESHOLD = 25.0f;
+    private float JUMP_VELOCITY_THRESHOLD;
 
     /**
      * Scale factor that is used to turn the x-velocity into an angular velocity
@@ -81,16 +81,33 @@ public class PlayerSphere extends Sprite {
      * @param startX     x location of the sphere
      * @param startY     y location of the sphere
      * @param gameScreen Gamescreen to which sphere belongs
+     * @param BallType which ball will be used
      */
-    public PlayerSphere(float startX, float startY, GameScreen gameScreen) {
+    public PlayerSphere(float startX, float startY, String BallType, GameScreen gameScreen) {
         super(startX, startY, 50.0f, 50.0f, null, gameScreen);
 
         //Load assets the sphere will use
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        assetManager.loadAndAddBitmap("Ball2", "img/ball2.jpg");
         assetManager.loadAndAddBitmap("Ball", "img/Ball.png");
         assetManager.loadAndAddSound("BallBounce", "sounds/Ball_Bounce.mp3");
         collisionSound = assetManager.getSound("BallBounce");
-        mBitmap = assetManager.getBitmap("Ball");
+        if (BallType.equals("ballOne")){
+            mBitmap = assetManager.getBitmap("Ball");
+            RUN_ACCELERATION = 150.0f;
+            MAX_X_VELOCITY = 200.0f;
+            JUMP_VELOCITY = 450.0f;
+            JUMP_VELOCITY_THRESHOLD = 25.0f;
+            RUN_DECAY = 0.95f;
+        } else {
+            mBitmap = assetManager.getBitmap("Ball2");
+            RUN_ACCELERATION = 350.0f;
+            MAX_X_VELOCITY = 400.0f;
+            JUMP_VELOCITY = 600.0f;
+            JUMP_VELOCITY_THRESHOLD = 40.0f;
+            RUN_DECAY = 0.95f;
+        }
+
     }
 
     // /////////////////////////////////////////////////////////////////////////
