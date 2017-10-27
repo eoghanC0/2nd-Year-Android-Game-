@@ -16,7 +16,7 @@ public class Seeker extends AISpaceship {
         maxAngularVelocity = 400.0f;
         maxAngularAcceleration = 300.0f;
 
-        //Load the assets used by seeker
+        //Load the assets used by seekers
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         if (assetManager.getBitmap("Spaceship2") == null) {
             assetManager.loadAndAddBitmap("Spaceship2", "img/Spaceship2.png");
