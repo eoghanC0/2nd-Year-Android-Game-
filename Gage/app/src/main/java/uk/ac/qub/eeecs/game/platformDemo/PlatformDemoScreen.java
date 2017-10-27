@@ -123,7 +123,7 @@ public class PlatformDemoScreen extends GameScreen {
         jumpUp = new PushButton((screenWidth - 125.0f),
                 (screenHeight - 100.0f), 100.0f, 100.0f, "UpArrow", "UpArrowActive", "JumpSound", false, this);
         mControls.add(jumpUp);
-        changeBall = new PushButton(100.0f, (screenHeight - 1100.0f), 100.0f, 100.0f, "Ball2Button", "BallButton", this);
+        changeBall = new PushButton(100.0f, (screenHeight - 1100.0f), 100.0f, 100.0f, "Ball2Button", "Ball2Button", this);
         mControls.add(changeBall);
         changeBall2 = new PushButton(225.0f, (screenHeight - 1100.0f), 100.0f, 100.0f, "BallButton", "BallButton", this);
         mControls.add(changeBall2);
