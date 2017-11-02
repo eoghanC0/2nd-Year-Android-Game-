@@ -61,7 +61,7 @@ public class PlatformDemoScreen extends GameScreen {
     /**
      * Create three simple touch controls for player input
      */
-    private PushButton moveLeft, moveRight, jumpUp;
+    private PushButton moveLeft, moveRight, jumpUp, changeBall, changeBall2;
     private List<PushButton> mControls;
 
     /**
@@ -105,6 +105,8 @@ public class PlatformDemoScreen extends GameScreen {
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
         assetManager.loadAndAddBitmap("UpArrowActive", "img/UpArrowActive.png");
         assetManager.loadAndAddSound("JumpSound", "sounds/Jump_Sound.mp3");
+        assetManager.loadAndAddBitmap("BallButton", "img/Ball.png");
+        assetManager.loadAndAddBitmap("Ball2Button", "img/ball2.jpg");
 
         // Determine the screen size to correctly position the touch buttons
         int screenWidth = game.getScreenWidth();
@@ -121,9 +123,15 @@ public class PlatformDemoScreen extends GameScreen {
         jumpUp = new PushButton((screenWidth - 125.0f),
                 (screenHeight - 100.0f), 100.0f, 100.0f, "UpArrow", "UpArrowActive", "JumpSound", false, this);
         mControls.add(jumpUp);
+        changeBall = new PushButton(100.0f, (screenHeight - 1100.0f), 100.0f, 100.0f, "Ball2Button", "Ball2Button", this);
+        mControls.add(changeBall);
+        changeBall2 = new PushButton(225.0f, (screenHeight - 1100.0f), 100.0f, 100.0f, "BallButton", "BallButton", this);
+        mControls.add(changeBall2);
+
 
         // Create the player
-        mPlayer = new PlayerSphere(100.0f, 100.0f, this);
+        mPlayer = new PlayerSphere(100.0f, 100.0f, "ballOne", this);
+
 
         // Create the platforms
         mPlatforms = new ArrayList<Platform>();
@@ -252,6 +260,19 @@ public class PlatformDemoScreen extends GameScreen {
         // Update the player
         mPlayer.update(elapsedTime, moveLeft.isPushed(),
                 moveRight.isPushed(), jumpUp.isPushed(), mPlatforms);
+
+        //Change the players ball when the corresponding button is pressed
+        if (changeBall.isPushed()){
+            float currentX = mPlayer.position.x;
+            float currentY = mPlayer.position.y;
+            mPlayer = new PlayerSphere(currentX, currentY, "ballTwo", this);
+        }
+        if (changeBall2.isPushed()){
+            float currentX = mPlayer.position.x;
+            float currentY = mPlayer.position.y;
+            mPlayer = new PlayerSphere(currentX, currentY, "ballOne", this);
+        }
+
 
         // Check that our new position has not collided with any of
         // the defined platforms. If so, then remove any overlap and

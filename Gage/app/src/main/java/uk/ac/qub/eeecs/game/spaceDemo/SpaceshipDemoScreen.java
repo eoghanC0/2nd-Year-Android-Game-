@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.lang.Object;
+import java.lang.Math;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.R;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
-import uk.ac.qub.eeecs.gage.engine.audio.Music;
+import uk.ac.qub.eeecs.gage.engine.audio.*;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.world.GameObject;
@@ -22,7 +23,7 @@ import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 
 /**
  * Simple steering game world
- * 
+ *
  * @version 1.0
  */
 public class SpaceshipDemoScreen extends GameScreen {
@@ -30,9 +31,9 @@ public class SpaceshipDemoScreen extends GameScreen {
 	// /////////////////////////////////////////////////////////////////////////
 	// Properties
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	/**
-	 * Width and height of the level 
+	 * Width and height of the level
 	 */
 	private final float LEVEL_WIDTH = 1414.2f;
 	private final float LEVEL_HEIGHT = 1414.2f;
@@ -66,13 +67,22 @@ public class SpaceshipDemoScreen extends GameScreen {
 	private final int NUM_TURRETS = 20;
 	private List<AISpaceship> mAISpaceships;
 
+    private Sound SpaceShipStartStop;
+
+    //Plays the start stop noises when at a particular, low velocity
+	private void playEngineStartStop(){
+		float velocity = Math.max(Math.abs(mPlayerSpaceship.velocity.x), Math.abs(mPlayerSpaceship.velocity.y));
+		if (velocity >= 15 && velocity <= 18)
+			SpaceShipStartStop.play(0.5f);
+	}
+
 	// /////////////////////////////////////////////////////////////////////////
 	// Constructors
 	// /////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Create a simple steering game world
-	 * 
+	 *
 	 * @param game Game to which this screen belongs
 	 */
 	public SpaceshipDemoScreen(Game game) {
@@ -96,11 +106,15 @@ public class SpaceshipDemoScreen extends GameScreen {
 		// Load in the assets used by the steering demo
 		AssetStore assetManager = mGame.getAssetManager();
 		assetManager.loadAndAddBitmap("SpaceBackground", "img/SpaceBackground.png");
+		assetManager.loadAndAddSound("Factory_WarpDrive_00", "sounds/Factory_WarpDrive_00.mp3");
+
+		SpaceShipStartStop = assetManager.getSound("Factory_WarpDrive_00");
+
 
 		// Create the space background
 		mSpaceBackground = new GameObject(LEVEL_WIDTH / 2.0f,
 				LEVEL_HEIGHT / 2.0f, LEVEL_WIDTH, LEVEL_HEIGHT, getGame()
-						.getAssetManager().getBitmap("SpaceBackground"), this);
+				.getAssetManager().getBitmap("SpaceBackground"), this);
 
 		// Create the player spaceship
 		mPlayerSpaceship = new PlayerSpaceship(100, 100, this);
@@ -132,17 +146,17 @@ public class SpaceshipDemoScreen extends GameScreen {
 	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Return the player spaceship 
-	 * 
+	 * Return the player spaceship
+	 *
 	 * @return Player spaceship
-	 */	
+	 */
 	public PlayerSpaceship getPlayerSpaceship() {
 		return mPlayerSpaceship;
 	}
 
 	/**
 	 * Return a list of the AI spaceships in the level
-	 * 
+	 *
 	 * @return List of AI controlled spaceships
 	 */
 	public List<AISpaceship> getAISpaceships() {
@@ -151,7 +165,7 @@ public class SpaceshipDemoScreen extends GameScreen {
 
 	/**
 	 * Return a list of asteroids in the the level
-	 * 
+	 *
 	 * @return List of asteroids in the level
 	 */
 	public List<Asteroid> getAsteroids() {
@@ -169,6 +183,9 @@ public class SpaceshipDemoScreen extends GameScreen {
 	 */
 	@Override
 	public void update(ElapsedTime elapsedTime) {
+
+		//Plays start stop noises
+		playEngineStartStop();
 
 		// Update the player spaceship
 		mPlayerSpaceship.update(elapsedTime);
