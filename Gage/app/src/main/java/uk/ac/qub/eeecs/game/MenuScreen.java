@@ -33,6 +33,7 @@ public class MenuScreen extends GameScreen {
     private PushButton mSpaceshipDemoButton;
     private PushButton mPlatformDemoButton;
     private PushButton mCardDemoButton;
+    private PushButton mPerformanceScreenButton;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -51,6 +52,8 @@ public class MenuScreen extends GameScreen {
         assetManager.loadAndAddBitmap("SpaceshipDemoIcon", "img/Spaceship1.png");
         assetManager.loadAndAddBitmap("CardDemoIcon", "img/CardBackground1.png");
         assetManager.loadAndAddBitmap("PlatformDemoIcon", "img/Platform1.png");
+        assetManager.loadAndAddBitmap("PerformanceIcon", "img/PerformanceIcon.png");
+
 
         // Define the spacing that will be used to position the buttons
         int spacingX = game.getScreenWidth() / 5;
@@ -63,6 +66,8 @@ public class MenuScreen extends GameScreen {
                 spacingX * 2.5f, spacingY * 1.5f, spacingX, spacingY, "CardDemoIcon", this);
         mPlatformDemoButton = new PushButton(
                 spacingX * 4.0f, spacingY * 1.5f, spacingX, spacingY, "PlatformDemoIcon", this);
+        mPerformanceScreenButton = new PushButton(
+                spacingX * 2.5f, spacingY * 2.5f, spacingX / 2, spacingY / 2, "PerformanceIcon", this);
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -93,6 +98,7 @@ public class MenuScreen extends GameScreen {
             mSpaceshipDemoButton.update(elapsedTime);
             mCardDemoButton.update(elapsedTime);
             mPlatformDemoButton.update(elapsedTime);
+            mPerformanceScreenButton.update(elapsedTime);
 
             if (mSpaceshipDemoButton.isPushTriggered())
                 changeToScreen(new SpaceshipDemoScreen(mGame));
@@ -100,6 +106,8 @@ public class MenuScreen extends GameScreen {
                 changeToScreen(new CardDemoScreen(mGame));
             else if (mPlatformDemoButton.isPushTriggered())
                 changeToScreen(new PlatformDemoScreen(mGame));
+            else if (mPerformanceScreenButton.isPushTriggered())
+                changeToScreen(new PerformanceScreen(mGame));
         }
     }
 
@@ -128,5 +136,6 @@ public class MenuScreen extends GameScreen {
         mSpaceshipDemoButton.draw(elapsedTime, graphics2D, null, null);
         mCardDemoButton.draw(elapsedTime, graphics2D, null, null);
         mPlatformDemoButton.draw(elapsedTime, graphics2D, null, null);
+        mPerformanceScreenButton.draw(elapsedTime, graphics2D, null, null);
     }
 }
