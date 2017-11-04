@@ -14,6 +14,14 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
  * @version 1.0
  */
 public class CardDemoScreen extends GameScreen {
+    // /////////////////////////////////////////////////////////////////////////
+    // Properties
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Define the player's spaceship
+     */
+    private Card mCard;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -26,8 +34,11 @@ public class CardDemoScreen extends GameScreen {
      */
     public CardDemoScreen(Game game) {
         super("CardScreen", game);
-    }
 
+        // Create the player card
+        mCard = new Card(500, 500, this);
+
+    }
     // /////////////////////////////////////////////////////////////////////////
     // Methods
     // /////////////////////////////////////////////////////////////////////////
@@ -52,5 +63,8 @@ public class CardDemoScreen extends GameScreen {
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         graphics2D.clear(Color.WHITE);
+
+        // Draw the card
+        mCard.draw(elapsedTime, graphics2D);
     }
 }
