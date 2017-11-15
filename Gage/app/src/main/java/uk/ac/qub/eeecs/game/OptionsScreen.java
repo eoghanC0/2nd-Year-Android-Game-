@@ -37,8 +37,27 @@ public class OptionsScreen extends GameScreen {
     public OptionsScreen(Game game) {
 
         super("OptionsScreen", game);
+
+        // Create the screen viewport
+        mScreenViewport = new ScreenViewport(0, 0, game.getScreenWidth(),
+                game.getScreenHeight());
+
+        // Create the layer viewport, taking into account the orientation
+        // and aspect ratio of the screen.
+        if (mScreenViewport.width > mScreenViewport.height)
+            mLayerViewport = new LayerViewport(240.0f, 240.0f
+                    * mScreenViewport.height / mScreenViewport.width, 240,
+                    240.0f * mScreenViewport.height / mScreenViewport.width);
+        else
+            mLayerViewport = new LayerViewport(240.0f * mScreenViewport.height
+                    / mScreenViewport.width, 240.0f, 240.0f
+                    * mScreenViewport.height / mScreenViewport.width, 240);
+
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("OptionsBackground", "img/optionBG.jpg");
+
+        mOptionsBackground = new GameObject(240.0f,
+                160.0f, 480.0f, 320.0f, getGame().getAssetManager().getBitmap("OptionsBackground"), this);
 
 
     }
@@ -53,5 +72,8 @@ public class OptionsScreen extends GameScreen {
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         graphics2D.clear(Color.WHITE);
 
+        mOptionsBackground.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+
     }
+
 }
