@@ -1,16 +1,23 @@
 package uk.ac.qub.eeecs.game;
 
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.Log;
+
+import java.util.List;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
+import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
+import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+
 
 /**
  * Created by aedan on 02/11/2017.
@@ -27,6 +34,14 @@ public class OptionsScreen extends GameScreen {
 
     //define the background
     private GameObject mOptionsBackground;
+
+    //define the buttons
+    private PushButton mMenuButton;
+    private PushButton mColourButton;
+
+    private float screen_height = 320.0f;
+    private float screen_width = 480.0f;
+
 
 
     /**
@@ -55,9 +70,16 @@ public class OptionsScreen extends GameScreen {
 
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("OptionsBackground", "img/optionBG.jpg");
+        assetManager.loadAndAddBitmap("MenuButton", "img/menu button.png");
 
-        mOptionsBackground = new GameObject(240.0f,
-                160.0f, 480.0f, 320.0f, getGame().getAssetManager().getBitmap("OptionsBackground"), this);
+        mMenuButton = new PushButton(100.0f, 50.0f, screen_width / 5, screen_height / 3,
+                "MenuButton", this );
+
+
+        mOptionsBackground = new GameObject(screen_width / 2,
+                screen_height / 2, screen_width, screen_height,
+                getGame().getAssetManager().getBitmap("OptionsBackground"), this);
+
 
 
     }
@@ -66,13 +88,39 @@ public class OptionsScreen extends GameScreen {
     public void update(ElapsedTime elapsedTime) {
         // Process any touch events occurring since the last update
         Input input = mGame.getInput();
+
+        List<TouchEvent> touchEvents = input.getTouchEvents();
+        if (touchEvents.size() > 0) {
+
+            // Just check the first touch event that occurred in the frame.
+            // It means pressing the screen with several fingers may not
+            // trigger a 'button', but, hey, it's an exceedingly basic menu.
+            TouchEvent touchEvent = touchEvents.get(0);
+
+            // Update each button and transition if needed
+            mMenuButton.update(elapsedTime);
+
+            if (mMenuButton.isPushTriggered())
+                changeToScreen(new MenuScreen(mGame));
+
+
+        }
+    }
+
+    /**
+     * Remove the current game screen and then change to the specified screen
+     *
+     * @param screen game screen to become active
+     */
+    private void changeToScreen(GameScreen screen) {
+        mGame.getScreenManager().removeScreen(this.getName());
+        mGame.getScreenManager().addScreen(screen);
     }
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         graphics2D.clear(Color.WHITE);
-
-        mOptionsBackground.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        mMenuButton.draw(elapsedTime, graphics2D, null, null);
 
     }
 
