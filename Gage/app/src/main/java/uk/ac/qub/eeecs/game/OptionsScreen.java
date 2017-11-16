@@ -128,6 +128,7 @@ public class OptionsScreen extends GameScreen {
         graphics2D.clear(Color.WHITE);
         mMenuButton.draw(elapsedTime, graphics2D);
         mFlagButton.draw(elapsedTime, graphics2D);
+        mOptionsBackground.draw(elapsedTime, graphics2D, mLayerViewport ,mScreenViewport);
         //Paint the boolean flag value on screen
         Paint textPaint = new Paint();
         textPaint.setColor(Color.BLACK);
