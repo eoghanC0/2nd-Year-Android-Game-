@@ -121,6 +121,8 @@ public class OptionsScreen extends GameScreen {
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         graphics2D.clear(Color.WHITE);
         mMenuButton.draw(elapsedTime, graphics2D, null, null);
+        mOptionsBackground.draw(elapsedTime, graphics2D, mLayerViewport ,mScreenViewport);
+        
 
     }
 
