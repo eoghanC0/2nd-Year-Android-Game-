@@ -1,5 +1,6 @@
 package uk.ac.qub.eeecs.game;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
@@ -38,6 +39,7 @@ public class OptionsScreen extends GameScreen {
     //define the buttons
     private PushButton mMenuButton;
     private PushButton mColourButton;
+    private PushButton mFlagButton;
 
     private float screen_height = 320.0f;
     private float screen_width = 480.0f;
@@ -71,16 +73,18 @@ public class OptionsScreen extends GameScreen {
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("OptionsBackground", "img/optionBG.jpg");
         assetManager.loadAndAddBitmap("MenuButton", "img/menu button.png");
+        assetManager.loadAndAddBitmap("FlagButton", "img/round_arrow.png");
 
         mMenuButton = new PushButton(100.0f, 50.0f, screen_width / 5, screen_height / 3,
                 "MenuButton", this );
+
+        mFlagButton = new PushButton(100.0f, 300.0f, screen_width / 5, screen_height / 3,
+                "FlagButton", this);
 
 
         mOptionsBackground = new GameObject(screen_width / 2,
                 screen_height / 2, screen_width, screen_height,
                 getGame().getAssetManager().getBitmap("OptionsBackground"), this);
-
-
 
     }
 
@@ -99,11 +103,13 @@ public class OptionsScreen extends GameScreen {
 
             // Update each button and transition if needed
             mMenuButton.update(elapsedTime);
+            mFlagButton.update(elapsedTime);
 
             if (mMenuButton.isPushTriggered())
                 changeToScreen(new MenuScreen(mGame));
-
-
+            if (mFlagButton.isPushTriggered()) {
+                mGame.setPreference("flag", !(mGame.getPreference("flag")));
+            }
         }
     }
 
@@ -120,8 +126,12 @@ public class OptionsScreen extends GameScreen {
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         graphics2D.clear(Color.WHITE);
-        mMenuButton.draw(elapsedTime, graphics2D, null, null);
-
+        mMenuButton.draw(elapsedTime, graphics2D);
+        mFlagButton.draw(elapsedTime, graphics2D);
+        //Paint the boolean flag value on screen
+        Paint textPaint = new Paint();
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextSize(75);
+        graphics2D.drawText(String.valueOf(mGame.getPreference("flag")), mMenuButton.getBound().getLeft(), mMenuButton.getBound().getBottom() + mMenuButton.getBound().getHeight() + 100, textPaint);
     }
-
 }

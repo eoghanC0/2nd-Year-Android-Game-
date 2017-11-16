@@ -10,6 +10,8 @@ import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -92,6 +94,11 @@ public abstract class Game extends Fragment {
      * Asset Manager
      */
     protected AssetStore mAssetManager;
+
+    /**
+     * Shared Preferences
+     */
+    protected SharedPreferences mSharedPreferences;
 
     /**
      * Get the game's asset manager
@@ -192,6 +199,19 @@ public abstract class Game extends Fragment {
         return mScreenHeight;
     }
 
+    /**
+     * Add/Retrieve Shared Preferences
+     * Only have to get/set boolean preferences at the moment
+     */
+    public void setPreference(String tag, boolean value) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putBoolean(tag, value);
+        editor.apply();
+    }
+
+    public boolean getPreference(String tag) {
+        return mSharedPreferences.getBoolean(tag, false);
+    }
 
     // /////////////////////////////////////////////////////////////////////////
     // Methods: State Management
@@ -221,6 +241,8 @@ public abstract class Game extends Fragment {
 
         // Create the screen manager
         mScreenManager = new ScreenManager();
+
+        mSharedPreferences = getActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE);
 
         // Request control of the volume
         getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
