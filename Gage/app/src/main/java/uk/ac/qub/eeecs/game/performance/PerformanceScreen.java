@@ -1,17 +1,14 @@
 package uk.ac.qub.eeecs.game.performance;
 
-import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
-import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.Game;
-import uk.ac.qub.eeecs.gage.MainActivity;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
@@ -58,9 +55,9 @@ public class PerformanceScreen extends GameScreen {
     boolean increasePressed, decreasePressed;
 
     /**
-     * Number of rects produced
+     * Number of frames since initialisation
      */
-    private long mNumCalls;
+    private long totalFrames;
 
     /**
      * Random variable
@@ -76,7 +73,7 @@ public class PerformanceScreen extends GameScreen {
     /**
      * Current Frames Per Second
      */
-    private long fps;
+    private float fps;
 
     /**
      * Start time and current time in milliseconds
@@ -96,13 +93,13 @@ public class PerformanceScreen extends GameScreen {
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
         GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
-        mNumCalls = 0;
+        totalFrames = 0;
         batchSize = 0;
         increasePressed = false;
         decreasePressed = false;
         mRandom = new Random();
         fps = 0;
-        startTime = System.currentTimeMillis() - 1;
+        startTime = System.currentTimeMillis() / 1000L;
         currentTime = startTime;
         performanceRects = new ArrayList<PerformanceRect>();
 
@@ -113,10 +110,12 @@ public class PerformanceScreen extends GameScreen {
         assetManager.loadAndAddBitmap("Minus", "img/Minus.png");
         assetManager.loadAndAddBitmap("MinusActive", "img/MinusActive.png");
         mControls = new ArrayList<PushButton>();
-        increase = new PushButton((screenWidth - 75.0f), (screenHeight - 75.0f), 100.0f, 100.0f, "Add", "AddActive", this);
+        increase = new PushButton((screenWidth - 75.0f), (screenHeight - 75.0f), 100.0f, 50.0f, "Add", "AddActive", this);
         mControls.add(increase);
         decrease = new PushButton((screenWidth - 75.0f), 75.0f, 100.0f, 100.0f, "Minus", "MinusActive", this);
         mControls.add(decrease);
+
+        Log.d(TAG, String.format("SCREEN WIDTH: %1$d SCREEN HEIGHT: %2$d", screenWidth, screenHeight));
 
     }
 
@@ -132,11 +131,11 @@ public class PerformanceScreen extends GameScreen {
         if(!decrease.isPushed()) decreasePressed = false;
 
         if(increase.isPushed() && !increasePressed) {
-            batchSize+=200;
+            batchSize+=50;
             increasePressed = true;
         }
         else if(decrease.isPushed() && batchSize > 0 && !decreasePressed) {
-            batchSize-=200;
+            batchSize-=50;
             decreasePressed = true;
         }
 
@@ -146,18 +145,23 @@ public class PerformanceScreen extends GameScreen {
 
         // Set properties of each PerformanceRect
         for (int drawIdx = 0; drawIdx < batchSize; drawIdx++) {
-            int rWidth = mRandom.nextInt(screenWidth - 1) + 1;
+            /*int rWidth = mRandom.nextInt(screenWidth - 1) + 1;
             int rHeight = mRandom.nextInt(screenHeight - 1) + 1;
             int x = mRandom.nextInt(screenWidth - rWidth);
+            int y = mRandom.nextInt(screenHeight - rHeight);*/
+            int rWidth = 50;
+            int rHeight = 50;
+            int x = 50;
             int y = mRandom.nextInt(screenHeight - rHeight);
             performanceRects.get(drawIdx).set(x, y, rWidth, rHeight);
             performanceRects.get(drawIdx).update(elapsedTime);
+            Log.d(TAG, performanceRects.get(drawIdx).getInfo());
         }
 
         // Display a count of the number of frames that have been displayed
-        mNumCalls++;
+        totalFrames++;
 
-        calculateFPS();
+        calculateFPS(elapsedTime);
 
     }
 
@@ -169,12 +173,11 @@ public class PerformanceScreen extends GameScreen {
         }
     }
 
-    public void calculateFPS() {
-        currentTime = System.currentTimeMillis();
-        float calc = ((float) mNumCalls / (currentTime - startTime)) * 1000;
-        fps = (long) calc;
-        //Log.d(TAG, String.format("FPS: %1$d | frames: %2$d | start time: %3$d | current time: %4$d | cu-st: %5$d | calc: %6$s", fps, mNumCalls, startTime, currentTime, (currentTime - startTime), calc));
+    private long prevFrame;
 
+    public void calculateFPS(ElapsedTime elapsedTime) {
+        //fps = (int) (1 / elapsedTime.stepTime);
+        fps = mGame.getAverageFramesPerSecond();
     }
 
     @Override
@@ -188,10 +191,13 @@ public class PerformanceScreen extends GameScreen {
         for (PushButton control : mControls)
             control.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
 
+        // Draw FPS counter
         Paint paint = new Paint();
-        paint.setColor(Color.RED);
+        paint.setColor(Color.BLACK);
         paint.setTextSize(75.f);
-        graphics2D.drawText(String.format("ST: %1$d CT: %2$d %nFrames: %3$d FPS: %4$d", startTime, 123, mNumCalls, fps), 0, 100.0f, paint);
+        graphics2D.drawText(String.format("FPS:%1$.2f", fps), 14, 104, paint);
+        paint.setColor(Color.RED);
+        graphics2D.drawText(String.format("FPS:%1$.2f", fps), 10, 100, paint);
     }
 
 }
