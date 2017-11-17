@@ -3,7 +3,6 @@ package uk.ac.qub.eeecs.game.performance;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -55,11 +54,6 @@ public class PerformanceScreen extends GameScreen {
     boolean increasePressed, decreasePressed;
 
     /**
-     * Number of frames since initialisation
-     */
-    private long totalFrames;
-
-    /**
      * Random variable
      */
     private Random mRandom;
@@ -76,12 +70,6 @@ public class PerformanceScreen extends GameScreen {
     private float fps;
 
     /**
-     * Start time and current time in milliseconds
-     */
-    private long startTime;
-    private long currentTime;
-
-    /**
      * Create a new game screen associated with the specified game instance
      *
      * @param game Game instance to which the game screen belongs
@@ -93,14 +81,11 @@ public class PerformanceScreen extends GameScreen {
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
         GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
-        totalFrames = 0;
         batchSize = 0;
         increasePressed = false;
         decreasePressed = false;
         mRandom = new Random();
         fps = 0;
-        startTime = System.currentTimeMillis() / 1000L;
-        currentTime = startTime;
         performanceRects = new ArrayList<PerformanceRect>();
 
         // Create increase and decrease PushButtons
@@ -141,27 +126,19 @@ public class PerformanceScreen extends GameScreen {
 
         updatePerformanceRects();
 
-        //Log.d(TAG,"batchSize = " + batchSize + " increasePressed: " + increase.isPushed() + " decreasePressed: " + decrease.isPushed());
-
         // Set properties of each PerformanceRect
         for (int drawIdx = 0; drawIdx < batchSize; drawIdx++) {
-            /*int rWidth = mRandom.nextInt(screenWidth - 1) + 1;
-            int rHeight = mRandom.nextInt(screenHeight - 1) + 1;
-            int x = mRandom.nextInt(screenWidth - rWidth);
-            int y = mRandom.nextInt(screenHeight - rHeight);*/
-            int rWidth = 50;
-            int rHeight = 50;
-            int x = 50;
-            int y = mRandom.nextInt(screenHeight - rHeight);
+            int rWidth = mRandom.nextInt(screenWidth / 2) + 1;
+            int rHeight = mRandom.nextInt(screenHeight / 2 ) + 1;
+            int x = mRandom.nextInt(screenWidth - (rWidth / 2)) + 1;
+            int y = mRandom.nextInt(screenHeight - (rHeight / 2)) + 1;
             performanceRects.get(drawIdx).set(x, y, rWidth, rHeight);
             performanceRects.get(drawIdx).update(elapsedTime);
             Log.d(TAG, performanceRects.get(drawIdx).getInfo());
         }
 
-        // Display a count of the number of frames that have been displayed
-        totalFrames++;
-
-        calculateFPS(elapsedTime);
+        // Retrieve FPS
+        retrieveAverageFPS();
 
     }
 
@@ -173,10 +150,7 @@ public class PerformanceScreen extends GameScreen {
         }
     }
 
-    private long prevFrame;
-
-    public void calculateFPS(ElapsedTime elapsedTime) {
-        //fps = (int) (1 / elapsedTime.stepTime);
+    public void retrieveAverageFPS() {
         fps = mGame.getAverageFramesPerSecond();
     }
 
