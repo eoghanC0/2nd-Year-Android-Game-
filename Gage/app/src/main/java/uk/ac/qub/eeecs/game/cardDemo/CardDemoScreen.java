@@ -5,7 +5,7 @@ import android.graphics.Color;
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.engine.input.Input;
+import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 /**
@@ -19,7 +19,7 @@ public class CardDemoScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
 
     /**
-     * Define the player's spaceship
+     * Define the player's card
      */
     private Card mCard;
 
@@ -50,8 +50,19 @@ public class CardDemoScreen extends GameScreen {
      */
     @Override
     public void update(ElapsedTime elapsedTime) {
-        // Process any touch events occurring since the last update
-        Input input = mGame.getInput();
+        mCard.update(elapsedTime);
+
+        // Ensure the card cannot leave the confines of the screen
+        BoundingBox playerBound = mCard.getBound();
+        if (playerBound.getLeft() < 0)
+            mCard.position.x -= playerBound.getLeft();
+        else if (playerBound.getRight() >  mGame.getScreenWidth())
+            mCard.position.x -= (playerBound.getRight() -  mGame.getScreenWidth());
+
+        if (playerBound.getBottom() < 0)
+            mCard.position.y -= playerBound.getBottom();
+        else if (playerBound.getTop() >  mGame.getScreenHeight())
+            mCard.position.y -= (playerBound.getTop() -  mGame.getScreenHeight());
     }
 
     /**

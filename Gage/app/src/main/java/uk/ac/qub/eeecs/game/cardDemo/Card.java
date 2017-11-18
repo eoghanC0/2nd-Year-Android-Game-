@@ -2,15 +2,18 @@ package uk.ac.qub.eeecs.game.cardDemo;
 
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
-import uk.ac.qub.eeecs.gage.util.BoundingBox;
+import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
+import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
+import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DRAGGED;
 
 /**
  * Created by Inaki on 04/11/2017.
@@ -23,7 +26,22 @@ public class Card extends Sprite {
     // ////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////
-    Bitmap frontBmp, backBmp;
+    private Bitmap frontBmp, backBmp;
+
+    /**
+     * Dimensions of the screen
+     */
+    private Vector2 screenDimensions = new Vector2();
+
+    /**
+     * Centre of this game object
+     */
+    private Vector2 cardCentre = new Vector2();
+
+    /**
+     * Variables for touch handling
+     */
+    private boolean touchDown;
 
     // /////////////////////////////////////////////////////
     // Constructor
@@ -41,11 +59,31 @@ public class Card extends Sprite {
         //Show the front of the card by default
         mBitmap = frontBmp;
 
+        //TODO: Remove from constructor and avoid hardcoded numbers.
+        screenDimensions.x = mGameScreen.getGame().getScreenWidth();
+        screenDimensions.y = mGameScreen.getGame().getScreenHeight();
+        cardCentre.x = 150f;
+        cardCentre.y = 211f;
     }
 
     // ///////////////////////////////////////////////////////////
     // Methods
     // ///////////////////////////////////////////////////////////
+
+    // swaps image bitmap
+    private void flipCard(){
+        // //////////////////////////////////////////////
+        //TODO: Perform Matrix Transformation here to shrink the bitmap width to 0
+        // //////////////////////////////////////////////
+        if (mBitmap == frontBmp) {
+            mBitmap = backBmp;
+        } else {
+            mBitmap = frontBmp;
+        }
+        // //////////////////////////////////////////////
+        //TODO: Perform Matrix Transformation here to grow the bitmap width back to the original
+        // //////////////////////////////////////////////
+    }
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
@@ -53,30 +91,42 @@ public class Card extends Sprite {
         //Get all inputs on the screen since the last update
         Input input = mGameScreen.getGame().getInput();
 
-        //Get the coordinates of the bounds of the card
-        BoundingBox bound = getBound();
+        boolean touchOnCard = false;
 
         //Consider all buffered touch events
-        for (int i = 0; i < input.getTouchEvents().size(); i++) {
-            //Consider Touch events within the bounds of the card
-            if (input.getTouchEvents().get(i).x <= bound.getRight() && input.getTouchEvents().get(i).x >= bound.getLeft() &&
-                    input.getTouchEvents().get(i).y <= bound.getBottom() && input.getTouchEvents().get(i).y >= bound.getTop()) {
-                //Consider TOUCH_DOWN events
-                if (input.getTouchEvents().get(i).type == TOUCH_DOWN) {
-                    // //////////////////////////////////////////////
-                    // Perform Matrix Transformation here to shrink the bitmap width to 0
-                    // //////////////////////////////////////////////
-                    if (mBitmap == frontBmp) {
-                        mBitmap = backBmp;
-                    } else {
-                        mBitmap = frontBmp;
-                    }
-                    // //////////////////////////////////////////////
-                    // Perform Matrix Transformation here to grow the bitmap width back to the original
-                    // //////////////////////////////////////////////
+        for (TouchEvent t : input.getTouchEvents()) {
+
+            //Consider Touch events within the area of the card
+            if ((input.getTouchX(t.pointer) > position.x - cardCentre.x)
+                    && (input.getTouchX(t.pointer) < position.x + cardCentre.x)
+                    && (input.getTouchY(t.pointer) > position.y - cardCentre.y)
+                    && (input.getTouchY(t.pointer) < position.y + cardCentre.y))
+                touchOnCard = true;
+
+            //Consider TOUCH_DOWN events
+            if (t.type == TOUCH_DOWN && touchOnCard) {
+                touchDown = true;
+                Log.d("Card", "Down detected");
+            }
+
+            //Consider TOUCH_DRAGGED events after TOUCH_DOWN event
+            if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
+                if (!Float.isNaN(input.getTouchX(t.pointer))) {
+                    position.x = input.getTouchX(t.pointer);
+                    position.y = input.getTouchY(t.pointer);
+                    Log.d("Card", "Drag detected");
                 }
+            }
+
+//            else
+//                flipCard();
+
+            //touch ends then change touchdown,activecard,doneMovement else check is dragged
+            if (t.type == TouchEvent.TOUCH_UP) {
+                touchDown = false;
+                touchOnCard = false;
+                Log.d("Card", "Up detected");
             }
         }
     }
-
 }
