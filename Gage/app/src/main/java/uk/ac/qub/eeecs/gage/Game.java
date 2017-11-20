@@ -431,7 +431,8 @@ public abstract class Game extends Fragment {
      *
      * @version 1.0
      */
-    private class GameLoop implements Runnable {
+    private class
+    GameLoop implements Runnable {
 
         // ////////////////////////////////////////////////////////////////////
         // Properties

@@ -73,6 +73,7 @@ public class MenuScreen extends GameScreen {
                 spacingX * 1.5f, spacingY * 2.5f, spacingX / 2, spacingY / 2, "PerformanceIcon", this);
         mOptionsButton = new PushButton(
                 spacingX * 3.5f, spacingY * 2.5f, spacingX / 2, spacingY / 2, "OptionsIcon", this);
+
     }
 
     // /////////////////////////////////////////////////////////////////////////
