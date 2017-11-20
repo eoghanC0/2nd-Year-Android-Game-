@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.game.cardDemo;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -77,5 +78,19 @@ public class CardDemoScreen extends GameScreen {
 
         // Draw the card
         mCard.draw(elapsedTime, graphics2D);
+
+        //Draw on the card
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(45);
+        graphics2D.drawText("PLAYER NAME", mCard.position.x-150, mCard.position.y-80, paint);
+        paint. setTextSize(35);
+        graphics2D.drawText("PAC", mCard.position.x-140, mCard.position.y+80, paint);
+        graphics2D.drawText("SHO", mCard.position.x-140, mCard.position.y+130, paint);
+        graphics2D.drawText("PAS", mCard.position.x-140, mCard.position.y+180, paint);
+
+        graphics2D.drawText("DRI", mCard.position.x+75, mCard.position.y+80, paint);
+        graphics2D.drawText("DEF", mCard.position.x+75, mCard.position.y+130, paint);
+        graphics2D.drawText("HEA", mCard.position.x+75, mCard.position.y+180, paint);
     }
 }
