@@ -1,5 +1,9 @@
 package uk.ac.qub.eeecs.gage.ui;
 
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.Log;
+
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
@@ -13,6 +17,9 @@ import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+
+import static android.R.attr.textSize;
+import static android.content.ContentValues.TAG;
 
 /**
  * Button base class. Provides touch detection for both screen space and layer
@@ -41,6 +48,52 @@ public abstract class Button extends GameObject {
      */
     private Vector2 touchLocation = new Vector2();
 
+    /**
+     * Protected class to manage text property of a Button
+     */
+    // TODO: ButtonText is WIP
+    protected class ButtonText {
+        private Button button;
+        private String text;
+        private float textSize;
+        private Vector2 location;
+        private int colour;
+        private Paint paint;
+
+        public ButtonText(Button button) {
+            this.button = button;
+        }
+
+        public void setButtonText(String text, float textSize, int colour) {
+            this.text = text;
+            this.colour = colour;
+            paint = new Paint();
+            paint.setTextSize(textSize); paint.setColor(colour);
+
+            float textWidth = text.length() * textSize;
+            float textHeight = textSize;
+            location = new Vector2();
+
+            // TODO: Algorithms inaccurate, only placeholder for now. Also only supports drawing on one line.
+            if(textWidth <= button.getBound().getWidth()) {
+                Log.d(TAG, String.format("textwidth (%1$s) <= bound width %2$s", textWidth, button.getBound().getWidth()));
+                location.x = position.x - (textWidth / 4);
+            } else {
+                Log.d(TAG, String.format("textwidth (%1$s) > bound width %2$s", textWidth, button.getBound().getWidth()));
+                location.x = position.x - ((textWidth - button.getBound().getWidth()) / 2);
+            }
+
+            if(textHeight <= button.getBound().getHeight()) {
+                Log.d(TAG, String.format("textheight (%1$s) <= bound width %2$s", textHeight, button.getBound().getHeight()));
+                location.y = position.y + ( textHeight / 4);
+            } else {
+                location.y = position.y;
+            }
+        }
+    }
+
+    protected ButtonText buttonText;
+
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
@@ -65,6 +118,7 @@ public abstract class Button extends GameObject {
                 gameScreen.getGame().getAssetManager().getBitmap(baseButtonImage),
                 gameScreen);
         this.mProcessInLayerSpace = processInLayerSpace;
+        buttonText = new ButtonText(this);
     }
 
 
@@ -216,11 +270,26 @@ public abstract class Button extends GameObject {
         if (mProcessInLayerSpace) {
             // If in layer space, then determine an appropriate screen space bound
             if (GraphicsHelper.getClippedSourceAndScreenRect(this, layerViewport,
-                    screenViewport, drawSourceRect, drawScreenRect))
+                    screenViewport, drawSourceRect, drawScreenRect)) {
                 graphics2D.drawBitmap(mBitmap, drawSourceRect, drawScreenRect, null);
+
+            }
         } else {
             // If in screen space just draw the whole thing
             draw(elapsedTime, graphics2D);
         }
     }
+
+    @Override
+    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
+        super.draw(elapsedTime, graphics2D);
+        if(buttonText.text != null) {
+            graphics2D.drawText(buttonText.text, buttonText.location.x, buttonText.location.y, buttonText.paint);
+        }
+    }
+
+    public void setButtonText(String text, float textSize, int colour) {
+        buttonText.setButtonText(text, textSize, colour);
+    }
+
 }
