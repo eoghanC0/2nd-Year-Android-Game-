@@ -2,6 +2,8 @@ package uk.ac.qub.eeecs.game.cardDemo;
 
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
@@ -9,14 +11,13 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
+import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
-import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DRAGGED;
 
 /**
  * Created by Inaki on 04/11/2017.
@@ -87,6 +88,18 @@ public class Card extends Sprite {
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
 
+        // Ensure the card cannot leave the confines of the screen
+        BoundingBox cardBound = getBound();
+        if (cardBound.getLeft() < 0)
+            this.position.x -= cardBound.getLeft();
+        else if (cardBound.getRight() >  mGameScreen.getGame().getScreenWidth())
+            this.position.x -= (cardBound.getRight() -   mGameScreen.getGame().getScreenWidth());
+
+        if (cardBound.getBottom() < 0)
+            this.position.y -= cardBound.getBottom();
+        else if (cardBound.getTop() >   mGameScreen.getGame().getScreenHeight())
+            this.position.y -= (cardBound.getTop() -   mGameScreen.getGame().getScreenHeight());
+
         //Get all inputs on the screen since the last update
         Input input = mGameScreen.getGame().getInput();
 
@@ -153,6 +166,29 @@ public class Card extends Sprite {
         } else {
             //Make sure the card is back to its usual size
             mBound.halfWidth = flatCardBoundHalfWidth;
+        }
+    }
+
+    @Override
+    public void draw(ElapsedTime elapsedTime,IGraphics2D graphics2D) {
+        super.draw(elapsedTime, graphics2D);
+
+        if (mBitmap == frontBmp) {
+            //Draw on the card
+            Paint paint = new Paint();
+            paint.setColor(Color.BLACK);
+            paint.setTextSize(45);
+
+            graphics2D.drawText("PLAYER NAME", position.x - 150, position.y - 80, paint);
+            paint.setTextSize(35);
+
+            graphics2D.drawText("PAC", position.x - 140, position.y + 80, paint);
+            graphics2D.drawText("SHO", position.x - 140, position.y + 130, paint);
+            graphics2D.drawText("PAS", position.x - 140, position.y + 180, paint);
+
+            graphics2D.drawText("DRI", position.x + 75, position.y + 80, paint);
+            graphics2D.drawText("DEF", position.x + 75, position.y + 130, paint);
+            graphics2D.drawText("HEA", position.x + 75, position.y + 180, paint);
         }
     }
 }
