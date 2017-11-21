@@ -6,10 +6,13 @@ import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
+import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.LayerViewport;
+import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
@@ -43,6 +46,12 @@ public class Card extends Sprite {
      */
     private boolean touchDown;
 
+    private boolean flipFlag;
+
+    private int flipFrameCounter = 1;
+
+    private final int animationLength = 30;
+
     // /////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////
@@ -71,19 +80,20 @@ public class Card extends Sprite {
     // ///////////////////////////////////////////////////////////
 
     // swaps image bitmap
-    private void flipCard(){
-        // //////////////////////////////////////////////
-        //TODO: Perform Matrix Transformation here to shrink the bitmap width to 0
-        // //////////////////////////////////////////////
-        if (mBitmap == frontBmp) {
-            mBitmap = backBmp;
-        } else {
-            mBitmap = frontBmp;
-        }
-        // //////////////////////////////////////////////
-        //TODO: Perform Matrix Transformation here to grow the bitmap width back to the original
-        // //////////////////////////////////////////////
-    }
+//    private void flipCard(){
+//        // //////////////////////////////////////////////
+//        //TODO: Perform Matrix Transformation here to shrink the bitmap width to 0
+//        // //////////////////////////////////////////////
+//        flipFlag = true;
+//        if (mBitmap == frontBmp) {
+//            mBitmap = backBmp;
+//        } else {
+//            mBitmap = frontBmp;
+//        }
+//        // //////////////////////////////////////////////
+//        //TODO: Perform Matrix Transformation here to grow the bitmap width back to the original
+//        // //////////////////////////////////////////////
+//    }
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
@@ -107,6 +117,7 @@ public class Card extends Sprite {
             if (t.type == TOUCH_DOWN && touchOnCard) {
                 touchDown = true;
                 Log.d("Card", "Down detected");
+                flipFlag = true;
             }
 
             //Consider TOUCH_DRAGGED events after TOUCH_DOWN event
@@ -118,9 +129,6 @@ public class Card extends Sprite {
                 }
             }
 
-//            else
-//                flipCard();
-
             //touch ends then change touchdown,activecard,doneMovement else check is dragged
             if (t.type == TouchEvent.TOUCH_UP) {
                 touchDown = false;
@@ -128,5 +136,35 @@ public class Card extends Sprite {
                 Log.d("Card", "Up detected");
             }
         }
+
+        if (flipFlag) {
+
+            if (flipFrameCounter <= animationLength / 2) {
+                mBound.halfWidth -= (mBound.halfWidth / (animationLength /2));
+            } else {
+                mBound.halfWidth += (mBound.halfWidth / (animationLength /2));
+            }
+
+            if (flipFrameCounter == animationLength / 2) {
+                if (mBitmap == frontBmp) {
+                    mBitmap = backBmp;
+                } else {
+                    mBitmap = frontBmp;
+                }
+            }
+
+            if (flipFrameCounter == animationLength) {
+                flipFlag = false;
+                flipFrameCounter = 1;
+            }
+
+            flipFrameCounter++;
+        }
     }
+
+//    @Override
+//    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D, LayerViewport layerViewport, ScreenViewport screenViewport) {
+//        super.draw(elapsedTime, graphics2D, layerViewport, screenViewport);
+//
+//    }
 }
