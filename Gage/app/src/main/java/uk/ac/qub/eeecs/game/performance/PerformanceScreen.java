@@ -95,7 +95,7 @@ public class PerformanceScreen extends GameScreen {
         assetManager.loadAndAddBitmap("Minus", "img/Minus.png");
         assetManager.loadAndAddBitmap("MinusActive", "img/MinusActive.png");
         mControls = new ArrayList<PushButton>();
-        increase = new PushButton((screenWidth - 75.0f), (screenHeight - 75.0f), 100.0f, 50.0f, "Add", "AddActive", this);
+        increase = new PushButton((screenWidth - 75.0f), (screenHeight - 75.0f), 100.0f, 100.0f, "Add", "AddActive", this);
         mControls.add(increase);
         decrease = new PushButton((screenWidth - 75.0f), 75.0f, 100.0f, 100.0f, "Minus", "MinusActive", this);
         mControls.add(decrease);
