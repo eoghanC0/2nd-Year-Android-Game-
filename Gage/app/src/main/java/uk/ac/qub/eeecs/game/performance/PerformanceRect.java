@@ -26,7 +26,7 @@ public class PerformanceRect extends GameObject {
     public PerformanceRect(float x, float y, float width, float height, GameScreen gameScreen) {
         super(x, y, width, height, null, gameScreen);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("PerformanceImg", "img/performance.png");
+        assetManager.loadAndAddBitmap("PerformanceImg", "img/PerformanceRect.png");
         mBitmap = assetManager.getBitmap("PerformanceImg");
     }
 
