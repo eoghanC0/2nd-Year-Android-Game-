@@ -6,10 +6,13 @@ import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
+import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.LayerViewport;
+import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
@@ -43,10 +46,17 @@ public class Card extends Sprite {
      */
     private boolean touchDown;
 
+    /**
+     * Properties for the card flip animation
+     */
+    private float flatCardBoundHalfWidth;
+    private boolean isFlipping;
+    private int flipFrameCounter = 1;
+    private final int animationLength = 20;
+
     // /////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////
-
     public Card(float startX, float startY, GameScreen gameScreen) {
         super(startX, startY, 300f, 422f, null, gameScreen);
 
@@ -64,26 +74,15 @@ public class Card extends Sprite {
         screenDimensions.y = mGameScreen.getGame().getScreenHeight();
         cardCentre.x = 150f;
         cardCentre.y = 211f;
+
+        //Set the default card half width to this initial value
+        flatCardBoundHalfWidth = mBound.halfWidth;
     }
 
     // ///////////////////////////////////////////////////////////
     // Methods
     // ///////////////////////////////////////////////////////////
 
-    // swaps image bitmap
-    private void flipCard(){
-        // //////////////////////////////////////////////
-        //TODO: Perform Matrix Transformation here to shrink the bitmap width to 0
-        // //////////////////////////////////////////////
-        if (mBitmap == frontBmp) {
-            mBitmap = backBmp;
-        } else {
-            mBitmap = frontBmp;
-        }
-        // //////////////////////////////////////////////
-        //TODO: Perform Matrix Transformation here to grow the bitmap width back to the original
-        // //////////////////////////////////////////////
-    }
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
@@ -107,6 +106,9 @@ public class Card extends Sprite {
             if (t.type == TOUCH_DOWN && touchOnCard) {
                 touchDown = true;
                 Log.d("Card", "Down detected");
+
+                //Card should flip on touching
+                isFlipping = true;
             }
 
             //Consider TOUCH_DRAGGED events after TOUCH_DOWN event
@@ -118,15 +120,39 @@ public class Card extends Sprite {
                 }
             }
 
-//            else
-//                flipCard();
-
             //touch ends then change touchdown,activecard,doneMovement else check is dragged
             if (t.type == TouchEvent.TOUCH_UP) {
                 touchDown = false;
                 touchOnCard = false;
                 Log.d("Card", "Up detected");
             }
+        }
+
+        //Show an animation if the card is currently being flipped
+        if (isFlipping) {
+            if (flipFrameCounter <= animationLength / 2) {
+                mBound.halfWidth -= (mBound.halfWidth / (animationLength / 2));
+            } else {
+                mBound.halfWidth += (mBound.halfWidth / (animationLength / 2));
+            }
+
+            if (flipFrameCounter == animationLength / 2) {
+                if (mBitmap == frontBmp) {
+                    mBitmap = backBmp;
+                } else {
+                    mBitmap = frontBmp;
+                }
+            }
+
+            if (flipFrameCounter == animationLength) {
+                isFlipping = false;
+                flipFrameCounter = 1;
+            }
+
+            flipFrameCounter++;
+        } else {
+            //Make sure the card is back to its usual size
+            mBound.halfWidth = flatCardBoundHalfWidth;
         }
     }
 }
