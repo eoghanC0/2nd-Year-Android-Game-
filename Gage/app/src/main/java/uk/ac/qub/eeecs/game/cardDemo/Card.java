@@ -55,6 +55,9 @@ public class Card extends Sprite {
     private int flipFrameCounter = 1;
     private final int animationLength = 20;
 
+    private final int defaultPlayerNameSize = 45;
+    private final int defaultAttributeSize = 35;
+
     // /////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////
@@ -177,18 +180,21 @@ public class Card extends Sprite {
             //Draw on the card
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
-            paint.setTextSize(45);
 
-            graphics2D.drawText("PLAYER NAME", position.x - 150, position.y - 80, paint);
-            paint.setTextSize(35);
+            int currentPlayerNameSize = defaultPlayerNameSize * ((int) mBound.halfWidth / (int) flatCardBoundHalfWidth);
+            paint.setTextSize(currentPlayerNameSize);
 
-            graphics2D.drawText("PAC", position.x - 140, position.y + 80, paint);
-            graphics2D.drawText("SHO", position.x - 140, position.y + 130, paint);
-            graphics2D.drawText("PAS", position.x - 140, position.y + 180, paint);
+            graphics2D.drawText("PLAYER NAME", mBound.getLeft(), mBound.getBottom() + 80, paint);
+            int currentAttributeSize = defaultAttributeSize * ((int) mBound.halfWidth / (int) flatCardBoundHalfWidth);
+            paint.setTextSize(currentAttributeSize);
 
-            graphics2D.drawText("DRI", position.x + 75, position.y + 80, paint);
-            graphics2D.drawText("DEF", position.x + 75, position.y + 130, paint);
-            graphics2D.drawText("HEA", position.x + 75, position.y + 180, paint);
+            graphics2D.drawText("PAC", mBound.getLeft(), mBound.getBottom() + 250, paint);
+            graphics2D.drawText("SHO", mBound.getLeft(), mBound.getBottom() + 300, paint);
+            graphics2D.drawText("PAS", mBound.getLeft(), mBound.getBottom() + 350, paint);
+
+            graphics2D.drawText("DRI", mBound.getRight() - 75, mBound.getBottom() + 250, paint);
+            graphics2D.drawText("DEF", mBound.getRight() - 75, mBound.getBottom() + 300, paint);
+            graphics2D.drawText("HEA", mBound.getRight() - 75, mBound.getBottom()+ 350, paint);
         }
     }
 }
