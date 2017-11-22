@@ -17,6 +17,7 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
+import static android.content.ContentValues.TAG;
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
 
 /**
@@ -57,6 +58,14 @@ public class Card extends Sprite {
 
     private final int defaultPlayerNameSize = 45;
     private final int defaultAttributeSize = 35;
+
+    /**
+     * Variables used to determine whether card is clicked
+     * or dragged
+     */
+    private boolean pushDown = false;
+    private float pushTime = 0;
+    private final float MAX_PUSH_TIME = 0.33f;
 
     // /////////////////////////////////////////////////////
     // Constructor
@@ -108,6 +117,10 @@ public class Card extends Sprite {
 
         boolean touchOnCard = false;
 
+        if(pushDown) {
+            pushTime += elapsedTime.stepTime;
+        }
+
         //Consider all buffered touch events
         for (TouchEvent t : input.getTouchEvents()) {
 
@@ -120,6 +133,8 @@ public class Card extends Sprite {
 
             //Consider TOUCH_DOWN events
             if (t.type == TOUCH_DOWN && touchOnCard) {
+                pushTime = 0;
+                pushDown = true;
                 touchDown = true;
                 Log.d("Card", "Down detected");
 
@@ -138,6 +153,7 @@ public class Card extends Sprite {
 
             //touch ends then change touchdown,activecard,doneMovement else check is dragged
             if (t.type == TouchEvent.TOUCH_UP) {
+                pushDown = false;
                 touchDown = false;
                 touchOnCard = false;
                 Log.d("Card", "Up detected");
@@ -145,7 +161,8 @@ public class Card extends Sprite {
         }
 
         //Show an animation if the card is currently being flipped
-        if (isFlipping) {
+        if (isFlipping && !pushDown && pushTime <= MAX_PUSH_TIME) {
+            pushTime = 0;
             if (flipFrameCounter <= animationLength / 2) {
                 mBound.halfWidth -= (mBound.halfWidth / (animationLength / 2));
             } else {
