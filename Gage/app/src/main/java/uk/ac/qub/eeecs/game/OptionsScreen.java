@@ -1,7 +1,9 @@
 package uk.ac.qub.eeecs.game;
 
 import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 
 import java.util.List;
@@ -32,18 +34,15 @@ public class OptionsScreen extends GameScreen {
     private LayerViewport mLayerViewport;
 
 
-    //define the background
-    private GameObject mOptionsBackground;
+    // Define the variables to change the colour of the background
+    private int backgroundColour = 255;
+    private boolean decreaseColour = true;
+    private boolean changeColour = false;
 
     //define the buttons
     private PushButton mMenuButton;
     private PushButton mColourButton;
     private PushButton mChangeFlagButton;
-
-    private float screen_height = 320.0f;
-    private float screen_width = 480.0f;
-
-
 
     /**
      * Create a new game screen associated with the specified game instance
@@ -73,17 +72,20 @@ public class OptionsScreen extends GameScreen {
         assetManager.loadAndAddBitmap("OptionsBackground", "img/optionBG.jpg");
         assetManager.loadAndAddBitmap("MenuButton", "img/menu button.png");
         assetManager.loadAndAddBitmap("FlagButton", "img/round_arrow.png");
+        assetManager.loadAndAddBitmap("ColourShift", "img/colourButton.png");
 
-        mMenuButton = new PushButton(100.0f, 50.0f, screen_width / 5, screen_height / 3,
+
+
+        int spacingX = game.getScreenWidth() / 5;
+        int spacingY = game.getScreenHeight() / 3;
+
+        //create the buttons for the screen
+        mMenuButton = new PushButton(spacingX * 1.0f, spacingY * 1.5f, spacingX / 2, spacingY / 2,
                 "MenuButton", this );
-        mChangeFlagButton = new PushButton(100.0f, 300.0f, screen_width / 5, screen_height / 3,
-                "FlagButton", this);
-
-
-        mOptionsBackground = new GameObject(screen_width / 2,
-                screen_height / 2, screen_width, screen_height,
-                getGame().getAssetManager().getBitmap("OptionsBackground"), this);
-
+        mColourButton = new PushButton(spacingX * 2.5f, spacingY * 1.5f, spacingX / 2, spacingY / 2,
+                "ColourShift", this );
+        mChangeFlagButton = new PushButton(spacingX * 4.0f, spacingY * 1.5f, spacingX / 2, spacingY / 2,
+                "FlagButton", this );
 
 
     }
@@ -103,12 +105,23 @@ public class OptionsScreen extends GameScreen {
 
             // Update each button and transition if needed
             mMenuButton.update(elapsedTime);
+            mColourButton.update(elapsedTime);
+            mChangeFlagButton.update(elapsedTime);
 
             if (mMenuButton.isPushTriggered())
                 changeToScreen(new MenuScreen(mGame));
 
             if (mChangeFlagButton.isPushTriggered()) {
                 mGame.setPreference("Flag", !(mGame.getPreference("Flag")));
+            }
+
+            //button to start or stop colour switching
+            if (mColourButton.isPushed()){
+                if (!changeColour){
+                    changeColour = true;
+                } else {
+                    changeColour = false;
+                }
             }
         }
     }
@@ -125,15 +138,42 @@ public class OptionsScreen extends GameScreen {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
+        Rect rectangle = new Rect(0, 0, this.getGame().getScreenWidth(),
+                this.getGame().getScreenHeight());
         graphics2D.clear(Color.WHITE);
-        mMenuButton.draw(elapsedTime, graphics2D, null, null);
-        mChangeFlagButton.draw(elapsedTime, graphics2D);
+        Paint mPaint = new Paint();
+        mPaint.setColorFilter(new LightingColorFilter(Color.rgb(backgroundColour, backgroundColour, backgroundColour), 0));
+        //check if the button has been pressed and if so start shifting the colours
 
+        if (changeColour){
+            if(decreaseColour){
+                backgroundColour -=5;
+                //when background colour reaches 0 start to increase it
+                if (backgroundColour == 0){
+                    decreaseColour = false;
+                }
+            }else {
+                backgroundColour +=5;
+                //when background colour reaches 255 begin decreasing it
+                if (backgroundColour == 255) {
+                    decreaseColour = true;
+                }
+            }
+        }
+
+        //draw the background first and then draw the buttons
+        graphics2D.drawBitmap(getGame().getAssetManager().getBitmap("OptionsBackground"), rectangle, rectangle, mPaint);
+        mMenuButton.draw(elapsedTime, graphics2D, null, null);
+        mColourButton.draw(elapsedTime, graphics2D, null, null);
+        mChangeFlagButton.draw(elapsedTime, graphics2D);
         //Paint the boolean flag value on screen
         Paint textPaint = new Paint();
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(75);
         graphics2D.drawText(String.valueOf(mGame.getPreference("flag")), mMenuButton.getBound().getLeft(), mMenuButton.getBound().getBottom() + mMenuButton.getBound().getHeight() + 100, textPaint);
+
+
     }
+
 
 }
