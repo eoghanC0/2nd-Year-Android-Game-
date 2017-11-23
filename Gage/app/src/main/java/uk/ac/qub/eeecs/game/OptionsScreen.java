@@ -116,7 +116,7 @@ public class OptionsScreen extends GameScreen {
             }
 
             //button to start or stop colour switching
-            if (mColourButton.isPushed()){
+            if (mColourButton.isPushTriggered()){
                 if (!changeColour){
                     changeColour = true;
                 } else {
@@ -168,11 +168,9 @@ public class OptionsScreen extends GameScreen {
         mChangeFlagButton.draw(elapsedTime, graphics2D);
         //Paint the boolean flag value on screen
         Paint textPaint = new Paint();
-        textPaint.setColor(Color.BLACK);
+        textPaint.setColor(Color.RED);
         textPaint.setTextSize(75);
-        graphics2D.drawText(String.valueOf(mGame.getPreference("flag")), mMenuButton.getBound().getLeft(), mMenuButton.getBound().getBottom() + mMenuButton.getBound().getHeight() + 100, textPaint);
-
-
+        graphics2D.drawText(String.valueOf(mGame.getPreference("Flag")), mMenuButton.getBound().getLeft(), mMenuButton.getBound().getBottom() + mMenuButton.getBound().getHeight() + 100, textPaint);
     }
 
 
