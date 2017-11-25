@@ -1,10 +1,17 @@
 package uk.ac.qub.eeecs.game.cardDemo;
 
-
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
+
+import java.io.DataInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -17,7 +24,6 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
-import static android.content.ContentValues.TAG;
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
 
 /**
@@ -47,6 +53,11 @@ public class Card extends Sprite {
      * Variables for touch handling
      */
     private boolean touchDown;
+
+    /**
+     * Variable for the player name on the card
+     */
+    private String playerName;
 
     /**
      * Properties for the card flip animation
@@ -81,6 +92,14 @@ public class Card extends Sprite {
 
         //Show the front of the card by default
         mBitmap = frontBmp;
+
+        //Randomly select a player name
+        try {
+            playerName = getRandomPlayerName();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            playerName = "Player Name";
+        }
 
         //TODO: Remove from constructor and avoid hardcoded numbers.
         screenDimensions.x = mGameScreen.getGame().getScreenWidth();
@@ -198,20 +217,67 @@ public class Card extends Sprite {
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
 
-            int currentPlayerNameSize = defaultPlayerNameSize * ((int) mBound.halfWidth / (int) flatCardBoundHalfWidth);
-            paint.setTextSize(currentPlayerNameSize);
+            //sets text size based on player name
+            setPlayerNameTextSize(paint, playerName);
 
-            graphics2D.drawText("PLAYER NAME", mBound.getLeft(), mBound.getBottom() + 80, paint);
+            //int currentPlayerNameSize = defaultPlayerNameSize * ((int) mBound.halfWidth / (int) flatCardBoundHalfWidth);
+            //paint.setTextSize(currentPlayerNameSize);
+
+            paint.setTextAlign(Paint.Align.CENTER);
+            graphics2D.drawText(playerName, position.x, position.y - 80, paint);
+
             int currentAttributeSize = defaultAttributeSize * ((int) mBound.halfWidth / (int) flatCardBoundHalfWidth);
             paint.setTextSize(currentAttributeSize);
 
-            graphics2D.drawText("PAC", mBound.getLeft(), mBound.getBottom() + 250, paint);
-            graphics2D.drawText("SHO", mBound.getLeft(), mBound.getBottom() + 300, paint);
-            graphics2D.drawText("PAS", mBound.getLeft(), mBound.getBottom() + 350, paint);
+            graphics2D.drawText("PAC", position.x - 50, position.y + 80, paint);
+            graphics2D.drawText("SHO", position.x - 50, position.y + 130, paint);
+            graphics2D.drawText("PAS", position.x - 50, position.y + 180, paint);
 
-            graphics2D.drawText("DRI", mBound.getRight() - 75, mBound.getBottom() + 250, paint);
-            graphics2D.drawText("DEF", mBound.getRight() - 75, mBound.getBottom() + 300, paint);
-            graphics2D.drawText("HEA", mBound.getRight() - 75, mBound.getBottom()+ 350, paint);
+            graphics2D.drawText("DRI", position.x + 95, position.y + 80, paint);
+            graphics2D.drawText("DEF", position.x + 95, position.y + 130, paint);
+            graphics2D.drawText("HEA", position.x + 95, position.y + 180, paint);
         }
+    }
+
+    //Retruns a random player name from a csv file
+    private String getRandomPlayerName()throws FileNotFoundException{
+        //arraylist to store csv content by line
+            ArrayList<String> playerNames = new ArrayList<>();
+        try{
+        DataInputStream textFileStream = new DataInputStream(mGameScreen.getGame().getActivity().getApplicationContext().getAssets()
+                .open(String.format("footballers_real.csv")));
+        Scanner scan = new Scanner(textFileStream);
+            while (scan.hasNextLine()) {
+                String line = scan.nextLine();
+                playerNames.add(line);
+            }
+            scan.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Player_Name";
+        }
+        //Selects from all values in the arraylist except the first which is the csv header
+        return playerNames.get(new Random().nextInt(playerNames.size()-2)+1);
+    }
+
+    //So that player name is never larger than the card
+    private void setPlayerNameTextSize(Paint paint, String text) {
+        //Larger float => greater accuracy
+        final float testTextSize = 50f;
+
+        // Get the bounds of the text using testTestSize
+        paint.setTextSize(testTextSize);
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+
+        // Calculate the desired size as a proportion of our testTextSize.
+        float desiredTextSize = (testTextSize * getBound().getWidth() / bounds.width())-.2f;
+
+        //Ensures short named cards like "Pepe" don't take up the whole card
+        if (desiredTextSize > defaultPlayerNameSize)
+            desiredTextSize = defaultPlayerNameSize;
+
+        // Set the paint for that size.
+        paint.setTextSize(desiredTextSize);
     }
 }
