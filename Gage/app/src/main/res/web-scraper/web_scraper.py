@@ -1,7 +1,6 @@
 import urllib.request as getImage
 import json
 import scipy.stats as stats
-import random as rnd
 
 def generateAttributes(rating):
     lowestBound, highestBound = 20, 99
