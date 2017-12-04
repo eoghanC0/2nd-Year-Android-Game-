@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
+import java.text.DecimalFormat;
+
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -26,7 +28,9 @@ public class PlayScreen extends GameScreen {
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
     private final Paint paint = new Paint();
-    private int playerScore = 0, CPUScore = 0;
+    private final int totalGameTimeLength = 5400;
+    private double currentGameTime;
+    private int playerScore, CPUScore;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -36,12 +40,16 @@ public class PlayScreen extends GameScreen {
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("PlayScreenBackground", "img/pitch.png");
         background = assetManager.getBitmap("PlayScreenBackground");
+        currentGameTime = 0.0;
+        playerScore = 0;
+        CPUScore = 0;
     }
+
     // /////////////////////////////////////////////////////////////////////////
     // Methods
     // /////////////////////////////////////////////////////////////////////////
     public void update(ElapsedTime elapsedTime) {
-        Log.i("Elapsed Time", Double.toString(elapsedTime.totalTime));
+        currentGameTime += elapsedTime.stepTime;
     }
 
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
@@ -51,5 +59,6 @@ public class PlayScreen extends GameScreen {
         paint.setTextSize(45f);
         paint.setColor(Color.BLUE);
         graphics2D.drawText("Player: " + playerScore + " - " + CPUScore + " :CPU", 50, 50, paint);
+        graphics2D.drawText("Timer : " + Double.toString(currentGameTime/totalGameTimeLength*90), this.getGame().getScreenWidth() - 500, 50, paint);
     }
 }
