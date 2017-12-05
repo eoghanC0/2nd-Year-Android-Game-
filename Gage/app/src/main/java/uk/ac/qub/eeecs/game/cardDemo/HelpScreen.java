@@ -15,6 +15,7 @@ import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.MenuScreen;
 
 /**
  * Created by eimhin on 27/11/2017.
@@ -31,7 +32,7 @@ public class HelpScreen extends GameScreen {
     /**
      * Define InfoBar
      */
-    private InfoBar infoBar;
+    //private InfoBar infoBar;
 
     /**
      *
@@ -49,7 +50,7 @@ public class HelpScreen extends GameScreen {
         // Instantiate variables
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
-        GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
+        //GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
 
         AssetStore assetManager = mGame.getAssetManager();
 
@@ -62,15 +63,17 @@ public class HelpScreen extends GameScreen {
 
     @Override
     public void update(ElapsedTime elapsedTime) {
-        infoBar.update(elapsedTime);
+        //infoBar.update(elapsedTime);
         menuScreenButton.update(elapsedTime);
 
-        if(menuScreenButton.isPushTriggered()) changeToScreen(new CardDemoScreen(mGame));
+        if(menuScreenButton.isPushTriggered()) changeToScreen(new MenuScreen(mGame));
     }
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        //infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        menuScreenButton.draw(elapsedTime, graphics2D, null, null);
+
     }
 
     /**

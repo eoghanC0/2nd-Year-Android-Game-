@@ -17,15 +17,10 @@ import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.cardDemo.CardDemoScreen;
+import uk.ac.qub.eeecs.game.cardDemo.InfoBar;
 import uk.ac.qub.eeecs.game.cardDemo.PlayScreen;
 import uk.ac.qub.eeecs.game.cardDemo.HelpScreen;
 import uk.ac.qub.eeecs.gage.engine.audio.Music;
-
-
-import uk.ac.qub.eeecs.game.performance.PerformanceScreen;
-import uk.ac.qub.eeecs.game.platformDemo.PlatformDemoScreen;
-import uk.ac.qub.eeecs.game.spaceDemo.SpaceshipDemoScreen;
 
 /**
  * An exceedingly basic menu screen with a couple of touch buttons
@@ -41,10 +36,7 @@ public class MenuScreen extends GameScreen {
     /**
      * Define the buttons for playing the 'games'
      */
-    private PushButton mSpaceshipDemoButton;
-    private PushButton mPlatformDemoButton;
     private PushButton mHelpButton;
-    private PushButton mPerformanceScreenButton;
     private PushButton mOptionsButton;
     private PushButton mSquadsButton;
     private PushButton musicButton;
@@ -83,7 +75,6 @@ public class MenuScreen extends GameScreen {
         int spacingY = game.getScreenHeight() / 3;
 
         // Create the trigger buttons
-
         mHelpButton = new PushButton(
                 spacingX * 4.6f, spacingY * 2.7f, spacingX/2, spacingY/2, "Help", this);
         mOptionsButton = new PushButton(
@@ -126,11 +117,7 @@ public class MenuScreen extends GameScreen {
             TouchEvent touchEvent = touchEvents.get(0);
 
             // Update each button and transition if needed
-
-            //  mSpaceshipDemoButton.update(elapsedTime);
-            // mCardDemoButton.update(elapsedTime);
             mHelpButton.update(elapsedTime);
-            //mPerformanceScreenButton.update(elapsedTime);
             mOptionsButton.update(elapsedTime);
             mSquadsButton.update(elapsedTime);
             musicButton.update(elapsedTime);
@@ -140,8 +127,8 @@ public class MenuScreen extends GameScreen {
                 changeToScreen(new OptionsScreen(mGame));
             else if (mSquadsButton.isPushTriggered())
                 changeToScreen(new PlayScreen(mGame));
-                //else if (mHelpButton.isPushTriggered())
-                //changeToScreen(new HelpScreen(mGame));
+            else if (mHelpButton.isPushTriggered())
+                changeToScreen(new HelpScreen(mGame));
             else if (musicButton.isPushTriggered())
             if (myMusic.isPlaying())
                 myMusic.pause();
@@ -174,16 +161,12 @@ public class MenuScreen extends GameScreen {
         Paint mPaint = new Paint();
         myPaint.setTextSize(72);
 
-        //mSpaceshipDemoButton.draw(elapsedTime, graphics2D, null, null);
-        //mCardDemoButton.draw(elapsedTime, graphics2D, null, null);
         mHelpButton.draw(elapsedTime, graphics2D, null, null);
-        //mPerformanceScreenButton.draw(elapsedTime, graphics2D, null, null);
         mOptionsButton.draw(elapsedTime, graphics2D, null, null);
         mSquadsButton.draw(elapsedTime, graphics2D, null, null);
         musicButton.draw(elapsedTime, graphics2D, null, null);
         mPacksButton.draw(elapsedTime, graphics2D, null, null);
 
-        graphics2D.drawText("FOOTBALL TRUMPS", 600,1000,myPaint);
         graphics2D.drawText("SQUADS", 570,550,myPaint);
         graphics2D.drawText("PACKS", 1270,380,myPaint);
         graphics2D.drawText("OPTIONS", 1225,750,myPaint);
@@ -193,7 +176,8 @@ public class MenuScreen extends GameScreen {
         myPaint.setTextSize(36);
         graphics2D.drawBitmap(background,null, backGroundRectangle, myPaint);
 
-        //graphics2D.drawText("Record: ", 100,100,myPaint);
-        //graphics2D.drawText("Points: ", 1500,100,myPaint);
+        myPaint.reset();
+        myPaint.setTextSize(100);
+        graphics2D.drawText("FOOTBALL TRUMPS", 575,1000,myPaint);
     }
 }
