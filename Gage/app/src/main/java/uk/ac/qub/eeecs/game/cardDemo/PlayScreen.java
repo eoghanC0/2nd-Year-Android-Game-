@@ -1,15 +1,9 @@
 package uk.ac.qub.eeecs.game.cardDemo;
 
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
-
-import java.text.DecimalFormat;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
@@ -27,8 +21,8 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
-    private final Paint paint = new Paint();
-    private final int totalGameTimeLength = 5400;
+    private final Paint paint = mGame.getPaint();
+    private final int totalGameTimeLength = 300;
     private double currentGameTime;
     private int playerScore, CPUScore;
 
