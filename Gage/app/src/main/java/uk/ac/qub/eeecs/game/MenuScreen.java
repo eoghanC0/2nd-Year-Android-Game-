@@ -50,13 +50,10 @@ public class MenuScreen extends GameScreen {
     private PushButton musicButton;
     private PushButton mPacksButton;
 
+    private Music myMusic;
+
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
-
-    //Get the music file from the resources.
-    //AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
-    //Plays the background song
-        //new Music(afd).play();
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -75,12 +72,8 @@ public class MenuScreen extends GameScreen {
 
         assetManager.loadAndAddBitmap("menuScreenBackground", "img/CampNou.png");
         background = assetManager.getBitmap("menuScreenBackground");
-        //assetManager.loadAndAddBitmap("SpaceshipDemoIcon", "img/Spaceship1.png");
-        //assetManager.loadAndAddBitmap("CardDemoIcon", "img/CardBackground1.png");
         assetManager.loadAndAddBitmap("Help", "img/Help.jpg");
-       // assetManager.loadAndAddBitmap("PerformanceIcon", "img/PerformanceIcon.png");
         assetManager.loadAndAddBitmap("OptionsIcon", "img/options.png");
-        //assetManager.loadAndAddBitmap("pitchIcon", "img/CampNou.png");
         assetManager.loadAndAddBitmap("musicIcon", "img/music.png");
         assetManager.loadAndAddBitmap("packsIcon", "img/packs.png");
         assetManager.loadAndAddBitmap("menuButtons", "img/Button.png");
@@ -90,14 +83,9 @@ public class MenuScreen extends GameScreen {
         int spacingY = game.getScreenHeight() / 3;
 
         // Create the trigger buttons
-        //mSpaceshipDemoButton = new PushButton(
-                //spacingX * 1.0f, spacingY * 1.5f, spacingX, spacingY, "SpaceshipDemoIcon", this);
-        //mCardDemoButton = new PushButton(
-                //spacingX * 2.5f, spacingY * 1.5f, spacingX, spacingY, "CardDemoIcon", this);
+
         mHelpButton = new PushButton(
                 spacingX * 4.6f, spacingY * 2.7f, spacingX/2, spacingY/2, "Help", this);
-        //mPerformanceScreenButton = new PushButton(
-                //spacingX * 1.5f, spacingY * 2.5f, spacingX / 2, spacingY / 2, "PerformanceIcon", this);
         mOptionsButton = new PushButton(
                 spacingX * 3.6f, spacingY * 2.0f, spacingX, spacingY, "menuButtons", this);
         mSquadsButton = new PushButton(
@@ -106,6 +94,12 @@ public class MenuScreen extends GameScreen {
                 spacingX/2, spacingY * 2.7f, spacingX/2, spacingY/2, "musicIcon", this);
         mPacksButton = new PushButton(
                 spacingX * 3.6f, spacingY * 1.0f, spacingX, spacingY, "menuButtons", this);
+
+        //Get the music file from the resources.
+        AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
+        //Plays the background song
+        myMusic = new Music(afd);
+        myMusic.play();
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -133,8 +127,8 @@ public class MenuScreen extends GameScreen {
 
             // Update each button and transition if needed
 
-          //  mSpaceshipDemoButton.update(elapsedTime);
-           // mCardDemoButton.update(elapsedTime);
+            //  mSpaceshipDemoButton.update(elapsedTime);
+            // mCardDemoButton.update(elapsedTime);
             mHelpButton.update(elapsedTime);
             //mPerformanceScreenButton.update(elapsedTime);
             mOptionsButton.update(elapsedTime);
@@ -142,20 +136,17 @@ public class MenuScreen extends GameScreen {
             musicButton.update(elapsedTime);
             mPacksButton.update(elapsedTime);
 
-            //if (mCardDemoButton.isPushTriggered())
-                //changeToScreen(new CardDemoScreen(mGame));
-            //else if (mSpaceshipDemoButton.isPushTriggered())
-                //changeToScreen(new SpaceshipDemoScreen(mGame));
-            //else if (mPlatformDemoButton.isPushTriggered())
-                //changeToScreen(new PlatformDemoScreen(mGame));
-            //if (mPerformanceScreenButton.isPushTriggered())
-                //changeToScreen(new PerformanceScreen(mGame));
-             if (mOptionsButton.isPushTriggered())
+            if (mOptionsButton.isPushTriggered())
                 changeToScreen(new OptionsScreen(mGame));
             else if (mSquadsButton.isPushTriggered())
                 changeToScreen(new PlayScreen(mGame));
-            //else if (mHelpButton.isPushTriggered())
+                //else if (mHelpButton.isPushTriggered())
                 //changeToScreen(new HelpScreen(mGame));
+            else if (musicButton.isPushTriggered())
+            if (myMusic.isPlaying())
+                myMusic.pause();
+            else
+                myMusic.play();
         }
     }
 
