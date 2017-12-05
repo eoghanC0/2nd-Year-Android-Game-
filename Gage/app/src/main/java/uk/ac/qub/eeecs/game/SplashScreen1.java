@@ -45,7 +45,7 @@ public class SplashScreen1 extends GameScreen {
 
         List<TouchEvent> touchEvents = input.getTouchEvents();
 
-        if (elapsedTime.totalTime >= 5.00) {
+        if (elapsedTime.totalTime >= 3.00) {
             //transition to main screen
             changeToScreen(new MenuScreen(mGame));
         }
@@ -67,10 +67,9 @@ public class SplashScreen1 extends GameScreen {
         int screenHeight = mGame.getScreenHeight();
         Matrix myMatrix = new Matrix();
         Paint myPaint = new Paint();
-        graphics2D.clear(Color.WHITE);
+        graphics2D.clear(Color.BLACK);
         myMatrix.reset();
-        myMatrix.setRotate((float)elapsedTime.totalTime * 60, (screenWidth / 2) - 100, (screenHeight / 2) - 100);
-        myMatrix.postTranslate(500.0f,500.0f);
+        myMatrix.setRotate((float)elapsedTime.totalTime * 122, (screenWidth / 2) - 100, (screenHeight / 2) - 100);
         graphics2D.drawBitmap(splashBmp,myMatrix,myPaint);
-    }
+        }
 }
