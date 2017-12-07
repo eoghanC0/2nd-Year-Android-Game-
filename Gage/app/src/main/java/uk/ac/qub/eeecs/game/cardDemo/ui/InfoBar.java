@@ -5,7 +5,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -23,6 +26,13 @@ import uk.ac.qub.eeecs.gage.util.Vector2;
 
 public class InfoBar extends GameObject {
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Properties
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Player data
+     */
     private Bitmap playerBitmap;
     private String playerName;
     private String winLossDraw;
@@ -30,10 +40,16 @@ public class InfoBar extends GameObject {
     private Rect playerIconRect;
     private Paint textPaint;
 
+    /**
+     * Area text content
+     */
     private String areaOneText;
     private String areaTwoText;
     private String areaThreeText;
 
+    /**
+     * Area text coordinates
+     */
     private Vector2 areaOneVector;
     private Vector2 areaTwoVector;
     private Vector2 areaThreeVector;
@@ -43,6 +59,46 @@ public class InfoBar extends GameObject {
      */
     protected Matrix drawMatrix = new Matrix();
 
+    /**
+     * Stores queued notifications
+     */
+    ArrayList<iNotification> notificationArrayList = new ArrayList<iNotification>();
+
+    /**
+     * Current notification
+     */
+    iNotification currentNotification;
+
+    /**
+     * Notification class
+     */
+    // TODO: Continue work on iNotification
+    private class iNotification {
+        private String text;
+        private int type;
+        private float displayTime;
+
+        public iNotification(String text, int type, float displayTime) {
+            this.text = text;
+            this.type = type;
+            this.displayTime = displayTime;
+        }
+    }
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Constructors
+    // /////////////////////////////////////////////////////////////////////////
+
+    // TODO: Clean up constructors
+
+    /**
+     * Main constructor
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param gameScreen
+     */
     public InfoBar(float x, float y, float width, float height, GameScreen gameScreen) {
         super(x, y, width, height, null, gameScreen);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
@@ -57,16 +113,22 @@ public class InfoBar extends GameObject {
         areaOneText = "Area One Text";
         areaTwoText = "Area Two Text";
         areaThreeText = "Area Three Text";
-        textPaint = new Paint();
-        textPaint.setTextSize(height * 0.45f);
-        textPaint.setColor(Color.BLACK);
 
-        drawScreenRect.set((int) (position.x - mBound.halfWidth),
-                (int) (position.y - mBound.halfHeight),
-                (int) (position.x + mBound.halfWidth),
-                (int) (position.y + mBound.halfHeight));
+        setDefaultProperties();
     }
 
+    /**
+     * Overloaded constructor allowing user to pass in player data
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param gameScreen
+     * @param playerIconPath
+     * @param playerName
+     * @param winLossDraw
+     * @param experience
+     */
     public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String playerIconPath, String playerName, String winLossDraw, int experience) {
         super(x, y, width, height, null, gameScreen);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
@@ -81,11 +143,34 @@ public class InfoBar extends GameObject {
         areaTwoText = winLossDraw;
         this.experience = experience;
         areaThreeText = String.valueOf(experience);
-        textPaint = new Paint();
-        textPaint.setTextSize(height * 0.45f);
-        textPaint.setColor(Color.BLACK);
+
+        setDefaultProperties();
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Methods
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Called inside the constructors, this sets default properties of InfoBar
+     */
+    private void setDefaultProperties() {
+        textPaint = new Paint();
+        textPaint.setTextSize(getBound().getHeight() * 0.40f);
+        textPaint.setColor(Color.WHITE);
+
+        drawScreenRect.set((int) (position.x - mBound.halfWidth),
+                (int) (position.y - mBound.halfHeight),
+                (int) (position.x + mBound.halfWidth),
+                (int) (position.y + mBound.halfHeight));
+    }
+
+    // TODO: Add notification queue system
+    public void addNotification(String notification) {
+
+    }
+
+    // TODO: Check notification queue and update current notification
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
@@ -93,14 +178,6 @@ public class InfoBar extends GameObject {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D, LayerViewport layerViewport, ScreenViewport screenViewport) {
-        //super.draw(elapsedTime, graphics2D, layerViewport, screenViewport);
-        Log.d("DEBUG", drawScreenRect.toString() + " this.getbound.getbottom = " + this.getBound().getBottom()  + " this.getbound.gettop = " + this.getBound().getTop() + "position x:y" + position.x + " " +position.y);
-        graphics2D.drawText(areaOneText, this.getBound().getLeft() + 280, -58, textPaint);
-        graphics2D.drawText(areaTwoText, this.getBound().getLeft() + 900, position.y - mBound.halfHeight, textPaint);
-        graphics2D.drawText(areaThreeText, this.getBound().getLeft() + 1600, this.getBound().getBottom(), textPaint);
-
-        //graphics2D.drawBitmap(playerBitmap, null, playerIconRect, new Paint());
-
         if (GraphicsHelper.getSourceAndScreenRect(this, layerViewport,
                 screenViewport, drawSourceRect, drawScreenRect)) {
 
@@ -120,8 +197,46 @@ public class InfoBar extends GameObject {
 
             // Draw the image
             graphics2D.drawBitmap(mBitmap, drawMatrix, null);
-
-            graphics2D.drawText(areaOneText, scaleX * 100, scaleY * mBound.getTop(), textPaint);
         }
+
+        Vector2 areaOneVector = getAreaTextVector(textPaint, areaOneText, getBound().getWidth(), getBound().getHeight(), 0.06f, 0.313f, 0);
+        Vector2 areaTwoVector = getAreaTextVector(textPaint, areaTwoText, getBound().getWidth(), getBound().getHeight(), 0.373f, 0.313f, 1);
+        Vector2 areaThreeVector = getAreaTextVector(textPaint, areaThreeText, getBound().getWidth(), getBound().getHeight(), 0.686f, 0.313f, 2);
+
+        graphics2D.drawText(areaOneText, areaOneVector.x, areaOneVector.y, textPaint);
+        graphics2D.drawText(areaTwoText, areaTwoVector.x, areaTwoVector.y, textPaint);
+        graphics2D.drawText(areaThreeText, areaThreeVector.x, areaThreeVector.y, textPaint);
+    }
+
+    /**
+     * Method to calculate the X position of text elements inserted into InfoBar
+     * @param paint
+     * @param text
+     * @param totalAreaWidth
+     * @param offsetPercent
+     * @param areaWidthPercentage
+     * @param alignment 0 = left | 1 = center | 2 = right
+     * @return Vector2
+     */
+    private Vector2 getAreaTextVector(Paint paint, String text, float totalAreaWidth, float totalAreaHeight, float offsetPercent, float areaWidthPercentage, int alignment) {
+        Rect textBounds = getTextBounds(paint, text);
+        float yVal = (totalAreaHeight * 0.76f) - (textBounds.height());
+
+        switch(alignment) {
+            case 0:
+                return new Vector2((getBound().getWidth() * offsetPercent) + (totalAreaWidth * 0.01f), yVal);
+            case 1:
+                return new Vector2((getBound().getWidth() * offsetPercent) + (((totalAreaWidth * areaWidthPercentage) - getTextBounds(paint, text).width()) / 2), yVal);
+            case 2:
+                return new Vector2((getBound().getWidth() * offsetPercent) + ((totalAreaWidth * areaWidthPercentage) - getTextBounds(paint, text).width()) - (totalAreaWidth * 0.01f), yVal);
+            default:
+                return new Vector2(0,0);
+        }
+    }
+
+    private Rect getTextBounds(Paint paint, String text) {
+        Rect bounds = new Rect();
+        textPaint.getTextBounds(text, 0, text.length(), bounds);
+        return bounds;
     }
 }
