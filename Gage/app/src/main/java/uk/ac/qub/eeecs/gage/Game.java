@@ -12,6 +12,7 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -96,6 +97,11 @@ public abstract class Game extends Fragment {
     protected AssetStore mAssetManager;
 
     /**
+     * Paint
+     */
+    protected Paint mPaint;
+
+    /**
      * Shared Preferences
      */
     protected SharedPreferences mSharedPreferences;
@@ -108,6 +114,11 @@ public abstract class Game extends Fragment {
     public AssetStore getAssetManager() {
         return mAssetManager;
     }
+
+    /**
+     * Get the games Paint
+     */
+    public Paint getPaint() {return mPaint;}
 
     /**
      * Screen Manager
@@ -246,6 +257,9 @@ public abstract class Game extends Fragment {
 
         // Request control of the volume
         getActivity().setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        //Create the paint
+        mPaint = new Paint();
     }
 
     /*
@@ -417,7 +431,8 @@ public abstract class Game extends Fragment {
      *
      * @version 1.0
      */
-    private class GameLoop implements Runnable {
+    private class
+    GameLoop implements Runnable {
 
         // ////////////////////////////////////////////////////////////////////
         // Properties
