@@ -139,7 +139,7 @@ public class OptionsScreen extends GameScreen {
         Rect rectangle = new Rect(0, 0, this.getGame().getScreenWidth(),
                 this.getGame().getScreenHeight());
         graphics2D.clear(Color.WHITE);
-        Paint mPaint = new Paint();
+        Paint mPaint = mGame.getPaint();
         mPaint.setColorFilter(new LightingColorFilter(Color.rgb(backgroundColour, backgroundColour, backgroundColour), 0));
         //check if the button has been pressed and if so start shifting the colours
 
@@ -165,10 +165,11 @@ public class OptionsScreen extends GameScreen {
         mColourButton.draw(elapsedTime, graphics2D, null, null);
         mChangeFlagButton.draw(elapsedTime, graphics2D);
         //Paint the boolean flag value on screen
-        Paint textPaint = new Paint();
-        textPaint.setColor(Color.RED);
-        textPaint.setTextSize(75);
-        graphics2D.drawText(String.valueOf(mGame.getPreference("Flag")), mMenuButton.getBound().getLeft(), mMenuButton.getBound().getBottom() + mMenuButton.getBound().getHeight() + 100, textPaint);
+
+        mPaint.reset();
+        mPaint.setColor(Color.RED);
+        mPaint.setTextSize(75);
+        graphics2D.drawText(String.valueOf(mGame.getPreference("Flag")), mMenuButton.getBound().getLeft(), mMenuButton.getBound().getBottom() + mMenuButton.getBound().getHeight() + 100, mPaint);
     }
 
 

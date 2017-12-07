@@ -37,7 +37,7 @@ public class InfoBar extends GameObject {
         this.playerName = playerName;
         this.winLossDraw = winLossDraw;
         this.experience = experience;
-        textPaint = new Paint();
+        textPaint = mGameScreen.getGame().getPaint();
         textPaint.setTextSize(45f);
         textPaint.setColor(Color.WHITE);
     }
@@ -55,6 +55,6 @@ public class InfoBar extends GameObject {
         graphics2D.drawText(String.valueOf(experience), this.getBound().getLeft() + 900, this.getBound().getBottom() - 235, textPaint);
         graphics2D.drawText(winLossDraw, this.getBound().getLeft() + 1600, this.getBound().getBottom() - 235, textPaint);
 
-        graphics2D.drawBitmap(playerBitmap, null, playerIconRect, new Paint());
+        graphics2D.drawBitmap(playerBitmap, null, playerIconRect,null);
     }
 }

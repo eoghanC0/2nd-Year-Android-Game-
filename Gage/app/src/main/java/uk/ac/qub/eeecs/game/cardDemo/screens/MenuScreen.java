@@ -163,9 +163,7 @@ public class MenuScreen extends GameScreen {
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         // Clear the screen and draw the buttons
         graphics2D.clear(Color.WHITE);
-        Paint myPaint = new Paint();
-        Paint mPaint = new Paint();
-        myPaint.reset();
+        Paint myPaint = mGame.getPaint();
         myPaint.setAlpha(100);
         myPaint.setTextSize(36);
         graphics2D.drawBitmap(background,null, backGroundRectangle, myPaint);
@@ -180,8 +178,6 @@ public class MenuScreen extends GameScreen {
         graphics2D.drawText("SQUADS", 570,550,myPaint);
         graphics2D.drawText("PACKS", 1270,380,myPaint);
         graphics2D.drawText("OPTIONS", 1225,750,myPaint);
-
-
 
         myPaint.reset();
         myPaint.setTextSize(100);
