@@ -168,7 +168,7 @@ public class MenuScreen extends GameScreen {
         myPaint.reset();
         myPaint.setAlpha(100);
         myPaint.setTextSize(36);
-        //graphics2D.drawBitmap(background,null, backGroundRectangle, myPaint);
+        graphics2D.drawBitmap(background,null, backGroundRectangle, myPaint);
         myPaint.setTextSize(72);
 
         mHelpButton.draw(elapsedTime, graphics2D, null, null);
