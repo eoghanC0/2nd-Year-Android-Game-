@@ -118,7 +118,10 @@ public abstract class Game extends Fragment {
     /**
      * Get the games Paint
      */
-    public Paint getPaint() {return mPaint;}
+    public Paint getPaint() {
+        mPaint.reset();
+        return mPaint;
+    }
 
     /**
      * Screen Manager

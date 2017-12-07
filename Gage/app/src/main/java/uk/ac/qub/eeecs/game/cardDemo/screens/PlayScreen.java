@@ -21,7 +21,6 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
-    private final Paint paint = mGame.getPaint();
     private final int totalGameTimeLength = 300;
     private double currentGameTime;
     private int playerScore, CPUScore;
@@ -47,9 +46,10 @@ public class PlayScreen extends GameScreen {
     }
 
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        paint.reset();
+        Paint paint = mGame.getPaint();
         paint.setAlpha(100);
         graphics2D.drawBitmap(background,null, backGroundRectangle, paint);
+        paint.reset();
         paint.setTextSize(45f);
         paint.setColor(Color.BLUE);
         graphics2D.drawText("Player: " + playerScore + " - " + CPUScore + " :CPU", 50, 50, paint);

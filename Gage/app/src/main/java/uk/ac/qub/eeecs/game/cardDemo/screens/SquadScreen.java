@@ -24,7 +24,6 @@ public class SquadScreen extends GameScreen {
      */
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
-    private final Paint paint = mGame.getPaint();
 
     /**
      * Define buttons /
@@ -75,9 +74,7 @@ public class SquadScreen extends GameScreen {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        paint.reset();
-        graphics2D.drawBitmap(background,null, backGroundRectangle, paint);
-
+        graphics2D.drawBitmap(background,null, backGroundRectangle, null);
         mBackButton.draw(elapsedTime, graphics2D, null, null);
         mPlayButton.draw(elapsedTime, graphics2D, null, null);
     }

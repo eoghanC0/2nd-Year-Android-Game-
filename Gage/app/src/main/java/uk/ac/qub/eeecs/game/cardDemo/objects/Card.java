@@ -214,7 +214,7 @@ public class Card extends Sprite {
 
         if (mBitmap == frontBmp) {
             //Draw on the card
-            Paint paint = new Paint();
+            Paint paint = mGameScreen.getGame().getPaint();
             paint.setColor(Color.BLACK);
 
             //sets text size based on player name
