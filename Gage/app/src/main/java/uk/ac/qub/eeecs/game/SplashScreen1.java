@@ -14,7 +14,7 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-
+import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
 
 /**
  * Created by Eoghan on 17/11/2017.
@@ -70,6 +70,6 @@ public class SplashScreen1 extends GameScreen {
         graphics2D.clear(Color.BLACK);
         myMatrix.reset();
         myMatrix.setRotate((float)elapsedTime.totalTime * 122, (screenWidth / 2) - 100, (screenHeight / 2) - 100);
-        graphics2D.drawBitmap(splashBmp,myMatrix,myPaint);
-        }
+        //graphics2D.drawBitmap(splashBmp,myMatrix,myPaint);
+    }
 }

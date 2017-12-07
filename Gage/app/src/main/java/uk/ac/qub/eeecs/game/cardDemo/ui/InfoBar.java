@@ -1,4 +1,4 @@
-package uk.ac.qub.eeecs.game.cardDemo;
+package uk.ac.qub.eeecs.game.cardDemo.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
