@@ -1,21 +1,16 @@
-package uk.ac.qub.eeecs.game.cardDemo;
+package uk.ac.qub.eeecs.game.cardDemo.screens;
 
-import android.content.res.AssetManager;
 import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
-import uk.ac.qub.eeecs.game.MenuScreen;
+import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
  * Created by eimhin on 27/11/2017.
@@ -32,7 +27,7 @@ public class HelpScreen extends GameScreen {
     /**
      * Define InfoBar
      */
-    //private InfoBar infoBar;
+    private InfoBar infoBar;
 
     /**
      *
@@ -51,6 +46,9 @@ public class HelpScreen extends GameScreen {
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
         //GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
+        Log.d("DEBUG", "SCREEN WIDTH: " + mGame.getScreenWidth() + " SCREEN HEIGHT: " + mGame.getScreenHeight());
+        //infoBar = new InfoBar(960, 270, 1920, 108, this);
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this);
 
         AssetStore assetManager = mGame.getAssetManager();
 
@@ -63,7 +61,7 @@ public class HelpScreen extends GameScreen {
 
     @Override
     public void update(ElapsedTime elapsedTime) {
-        //infoBar.update(elapsedTime);
+        infoBar.update(elapsedTime);
         menuScreenButton.update(elapsedTime);
 
         if(menuScreenButton.isPushTriggered()) changeToScreen(new MenuScreen(mGame));
@@ -71,7 +69,7 @@ public class HelpScreen extends GameScreen {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        //infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
 
     }
