@@ -276,7 +276,7 @@ public abstract class Button extends GameObject {
             }
         } else {
             // If in screen space just draw the whole thing
-            draw(elapsedTime, graphics2D);
+            //draw(elapsedTime, graphics2D);
         }
     }
 

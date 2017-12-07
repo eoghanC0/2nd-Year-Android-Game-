@@ -1,21 +1,13 @@
-package uk.ac.qub.eeecs.game.cardDemo;
-
-import android.content.res.AssetManager;
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Random;
+package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
-import uk.ac.qub.eeecs.game.MenuScreen;
 
 /**
  * Created by eimhin on 27/11/2017.
