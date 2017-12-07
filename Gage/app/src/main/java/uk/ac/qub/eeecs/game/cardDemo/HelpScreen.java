@@ -62,7 +62,7 @@ public class HelpScreen extends GameScreen {
 
     @Override
     public void update(ElapsedTime elapsedTime) {
-        infoBar.update(elapsedTime);
+        //infoBar.update(elapsedTime);
         menuScreenButton.update(elapsedTime);
 
         if(menuScreenButton.isPushTriggered()) changeToScreen(new CardDemoScreen(mGame));
@@ -70,7 +70,8 @@ public class HelpScreen extends GameScreen {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        //infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        menuScreenButton.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
     }
 
     /**
