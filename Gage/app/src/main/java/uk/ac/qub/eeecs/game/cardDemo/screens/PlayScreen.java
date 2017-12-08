@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import java.text.DecimalFormat;
+
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -53,6 +55,6 @@ public class PlayScreen extends GameScreen {
         paint.setTextSize(45f);
         paint.setColor(Color.BLUE);
         graphics2D.drawText("Player: " + playerScore + " - " + CPUScore + " :CPU", 50, 50, paint);
-        graphics2D.drawText("Timer : " + Double.toString(currentGameTime/totalGameTimeLength*90), this.getGame().getScreenWidth() - 500, 50, paint);
+        graphics2D.drawText("Timer : " + String.format("%2.2f",currentGameTime/totalGameTimeLength*90), this.getGame().getScreenWidth() - 500, 50, paint);
     }
 }
