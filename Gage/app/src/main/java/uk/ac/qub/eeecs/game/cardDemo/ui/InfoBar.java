@@ -5,10 +5,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.util.Log;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -60,28 +60,64 @@ public class InfoBar extends GameObject {
     protected Matrix drawMatrix = new Matrix();
 
     /**
+     * Current background bitmap
+     */
+    private String currentBitmap;
+
+    /**
+     * Stores whether a notification is currently displayed
+     */
+    private boolean notificationDisplayed = false;
+
+    /**
+     * Stores time that last notification was displayed
+     */
+    private long currentNotificationDisplayTime;
+
+    /**
      * Stores queued notifications
      */
-    ArrayList<iNotification> notificationArrayList = new ArrayList<iNotification>();
+    private Queue<iNotification> notificationQueue = new LinkedList();
 
     /**
      * Current notification
      */
-    iNotification currentNotification;
+    private iNotification currentNotification;
 
     /**
      * Notification class
      */
     // TODO: Continue work on iNotification
-    private class iNotification {
+    public class iNotification {
         private String text;
         private int type;
         private float displayTime;
 
         public iNotification(String text, int type, float displayTime) {
             this.text = text;
-            this.type = type;
+
+            if(!(type >= 0 && type <= 2)) this.type = 0;
+            else this.type = type;
+
+            if(!(displayTime > 0)) displayTime = 1f;
             this.displayTime = displayTime;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Notification: '%1$s' | Type: %2$d | Display Time: %3$.2f", text, type, displayTime);
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public float getDisplayTime() {
+            return displayTime;
         }
     }
 
@@ -100,9 +136,13 @@ public class InfoBar extends GameObject {
      * @param gameScreen
      */
     public InfoBar(float x, float y, float width, float height, GameScreen gameScreen) {
-        super(x, y, width, height, null, gameScreen);
+        super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
+        if(width < 0) width = 100;
+        if(height < 0) height = 100;
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("InfoBar", "img/InfoBar.png");
+        assetManager.loadAndAddBitmap("InfoBarRed", "img/InfoBarRed.png");
+        assetManager.loadAndAddBitmap("InfoBarGreen", "img/InfoBarGreen.png");
         assetManager.loadAndAddBitmap("PlayerIcon", "img/Ball.png");
         mBitmap = assetManager.getBitmap("InfoBar");
         playerBitmap = assetManager.getBitmap("InfoBar");
@@ -130,7 +170,7 @@ public class InfoBar extends GameObject {
      * @param experience
      */
     public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String playerIconPath, String playerName, String winLossDraw, int experience) {
-        super(x, y, width, height, null, gameScreen);
+        super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("InfoBar", "img/InfoBar.png");
         assetManager.loadAndAddBitmap("PlayerIcon", "img/Ball.png");
@@ -165,15 +205,144 @@ public class InfoBar extends GameObject {
                 (int) (position.y + mBound.halfHeight));
     }
 
-    // TODO: Add notification queue system
-    public void addNotification(String notification) {
+    /*  = = = = = = = = = = = = = = = =
+        Notification Management Methods
+        = = = = = = = = = = = = = = = = */
 
+    /**
+     * Adds notification to notification queue
+     * @param notification
+     * @param type
+     * @param duration
+     */
+    public void addNotification(String notification, int type, float duration) {
+        if(notification != null && type >= 0 && type <= 2 && duration > 0) {
+            notificationQueue.add(new iNotification(notification, type, duration));
+            Log.d("DEBUG", "Successfully added notification. Current queue: " + notificationQueue.toString());
+        }
+
+    }
+
+    /**
+     * Checks whether any notifications are ready in the queue and displays
+     * the next notification
+     */
+    private void checkNotifications() {
+       boolean notificationAvailable = false;
+       // Notification present in queue
+       if(notificationQueue.size() > 0) notificationAvailable = true;
+
+       // Is a notification currently displayed?
+       if(notificationDisplayed) {
+           // States whether the current notification should be removed or not
+           // true = remove false = remain
+           boolean currentNotificationStatus = checkCurrentNotification();
+
+           // If notification should be removed then display next notification if a notification is
+           // present in the queue else return to default state
+           if(!currentNotificationStatus && notificationAvailable) displayNextNotification();
+           else if(!currentNotificationStatus && !notificationAvailable) setDefaultState();
+
+           return;
+       } else if(!notificationDisplayed && notificationAvailable){
+           displayNextNotification();
+       }
+    }
+
+    /**
+     * Sets InfoBar back to default non-notification state
+     */
+    private void setDefaultState() {
+        setBitmap("InfoBar");
+        areaOneText = playerName;
+        areaTwoText = getLevel();
+        areaThreeText = winLossDraw;
+        notificationDisplayed = false;
+    }
+
+    /**
+     * Sets InfoBar to notification state based on the type passed in
+     * @param type
+     */
+    private void setNotificationState(int type) {
+        switch(type) {
+            case 0:
+                setBitmap("InfoBar");
+                areaOneText = "";
+                areaTwoText = currentNotification.text;
+                areaThreeText = "";
+                notificationDisplayed = true;
+                break;
+            case 1:
+                setBitmap("InfoBarRed");
+                areaOneText = "";
+                areaTwoText = currentNotification.text;
+                areaThreeText = "";
+                notificationDisplayed = true;
+                break;
+            case 2:
+                setBitmap("InfoBarGreen");
+                areaOneText = "";
+                areaTwoText = currentNotification.text;
+                areaThreeText = "";
+                notificationDisplayed = true;
+                break;
+        }
+
+    }
+
+    /**
+     * Checks whether the current notification displayed has exceeded its display time or not
+     * @return
+     */
+    private boolean checkCurrentNotification() {
+        if(System.nanoTime() - currentNotificationDisplayTime > (currentNotification.displayTime * 1e+9)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Assigns the next notification in the queue as the current notification
+     */
+    private void displayNextNotification() {
+        currentNotification = notificationQueue.element();
+        notificationQueue.remove();
+        currentNotificationDisplayTime = System.nanoTime();
+        setNotificationState(currentNotification.type);
+    }
+
+    public void clearNotifications() {
+        if(!(notificationQueue.size() > 0)) return;
+        for (iNotification i : notificationQueue) {
+            notificationQueue.remove(i);
+        }
+    }
+
+    /*  = = = = = = = = = = = = = = = = = = = =
+        End Of Notification Management Methods
+        = = = = = = = = = = = = = = = = = = = =*/
+
+    /**
+     * Sets the bitmap of the InfoBar
+     * @param bg
+     */
+    private void setBitmap(String bg) {
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        if(bg == "InfoBar" || bg == "InfoBarRed" || bg == "InfoBarGreen") mBitmap = assetManager.getBitmap(bg);
+    }
+
+    private String getLevel() {
+        return String.format("%1$d XP", experience);
     }
 
     // TODO: Check notification queue and update current notification
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
+        checkNotifications();
+
     }
 
     @Override
@@ -239,4 +408,32 @@ public class InfoBar extends GameObject {
         textPaint.getTextBounds(text, 0, text.length(), bounds);
         return bounds;
     }
+
+    /*  = = = = = = = = = = = = = = = =
+      GETTERS AND SETTERS FOR TESTING
+    = = = = = = = = = = = = = = = = */
+
+    public void setCurrentNotificationDisplayTime(long time) {
+        currentNotificationDisplayTime = time;
+    }
+
+    public iNotification getCurrentNotification() {
+        return currentNotification;
+    }
+
+    public boolean getNotificationDisplayed() {
+        return notificationDisplayed;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public String getWinLossDraw() {
+        return winLossDraw;
+    }
+    public int getExperience() {
+        return experience;
+    }
+
 }
