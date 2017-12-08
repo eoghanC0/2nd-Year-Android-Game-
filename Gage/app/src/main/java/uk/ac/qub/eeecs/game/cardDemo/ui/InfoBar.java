@@ -191,10 +191,16 @@ public class InfoBar extends GameObject {
                 (int) (position.y + mBound.halfHeight));
     }
 
-    /**
-     *  Notification Management Methods
-     */
+    /*  = = = = = = = = = = = = = = = =
+        Notification Management Methods
+        = = = = = = = = = = = = = = = = */
 
+    /**
+     * Adds notification to notification queue
+     * @param notification
+     * @param type
+     * @param duration
+     */
     public void addNotification(String notification, int type, float duration) {
         if(notification != null && type >= 0 && type <= 2 && duration > 0) {
             notificationQueue.add(new iNotification(notification, type, duration));
@@ -203,11 +209,19 @@ public class InfoBar extends GameObject {
 
     }
 
+    /**
+     * Checks whether any notifications are ready in the queue and displays
+     * the next notification
+     */
     private void checkNotifications() {
        boolean notificationAvailable = false;
+       // Notification present in queue
        if(notificationQueue.size() > 0) notificationAvailable = true;
 
+       // Is a notification currently displayed?
        if(notificationDisplayed) {
+           // States whether the current notification should be removed or not
+           // true = remove false = remain
            boolean currentNotificationStatus = checkCurrentNotification();
            if(!currentNotificationStatus && notificationAvailable) displayNextNotification();
            else if(!currentNotificationStatus && !notificationAvailable) setDefaultState();
@@ -219,6 +233,9 @@ public class InfoBar extends GameObject {
        return;
     }
 
+    /**
+     * Sets InfoBar back to default non-notification state
+     */
     private void setDefaultState() {
         setBitmap("InfoBar");
         areaOneText = playerName;
@@ -227,6 +244,10 @@ public class InfoBar extends GameObject {
         notificationDisplayed = false;
     }
 
+    /**
+     * Sets InfoBar to notification state based on the type passed in
+     * @param type
+     */
     private void setNotificationState(int type) {
         switch(type) {
             case 0:
@@ -254,6 +275,10 @@ public class InfoBar extends GameObject {
 
     }
 
+    /**
+     * Checks whether the current notification displayed has exceeded its display time or not
+     * @return
+     */
     private boolean checkCurrentNotification() {
         if(System.nanoTime() - currentNotificationDisplayTime > (currentNotification.displayTime * 1e+9)) {
             return false;
@@ -262,12 +287,19 @@ public class InfoBar extends GameObject {
         }
     }
 
+    /**
+     * Assigns the next notification in the queue as the current notification
+     */
     private void displayNextNotification() {
         currentNotification = notificationQueue.element();
         notificationQueue.remove();
         currentNotificationDisplayTime = System.nanoTime();
         setNotificationState(currentNotification.type);
     }
+
+    /*  = = = = = = = = = = = = = = = = = = = =
+        End Of Notification Management Methods
+        = = = = = = = = = = = = = = = = = = = =*/
 
     /**
      * Sets the bitmap of the InfoBar
