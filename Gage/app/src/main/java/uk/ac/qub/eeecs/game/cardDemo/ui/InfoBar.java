@@ -337,6 +337,16 @@ public class InfoBar extends GameObject {
         return String.format("%1$d XP", experience);
     }
 
+    /**
+     * Updates the text areas with new data if a notification is not being displayed
+     */
+    public void updateTextAreas() {
+        if(!notificationDisplayed) return;
+        areaOneText = playerName;
+        areaTwoText = getLevel();
+        areaThreeText = winLossDraw;
+    }
+
     // TODO: Check notification queue and update current notification
     @Override
     public void update(ElapsedTime elapsedTime) {
@@ -347,15 +357,10 @@ public class InfoBar extends GameObject {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D, LayerViewport layerViewport, ScreenViewport screenViewport) {
-        if (GraphicsHelper.getSourceAndScreenRect(this, layerViewport,
-                screenViewport, drawSourceRect, drawScreenRect)) {
+        if (GraphicsHelper.getSourceAndScreenRect(this, layerViewport, screenViewport, drawSourceRect, drawScreenRect)) {
 
-            float scaleX =
-                    (float) drawScreenRect.width()
-                            / (float) drawSourceRect.width();
-            float scaleY =
-                    (float) drawScreenRect.height()
-                            / (float) drawSourceRect.height();
+            float scaleX = (float) drawScreenRect.width() / (float) drawSourceRect.width();
+            float scaleY = (float) drawScreenRect.height() / (float) drawSourceRect.height();
 
             // Build an appropriate transformation matrix
             drawMatrix.reset();
@@ -432,8 +437,23 @@ public class InfoBar extends GameObject {
     public String getWinLossDraw() {
         return winLossDraw;
     }
+
     public int getExperience() {
         return experience;
     }
 
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+        updateTextAreas();
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+        updateTextAreas();
+    }
+
+    public void setWinLossDraw(String winLossDraw) {
+        this.winLossDraw = winLossDraw;
+        updateTextAreas();
+    }
 }
