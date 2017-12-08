@@ -215,7 +215,7 @@ public abstract class Game extends Fragment {
 
     /**
      * Add/Retrieve Shared Preferences
-     * Only have to get/set boolean preferences at the moment
+     * Only have to get/set boolean or string preferences at the moment
      */
     public void setPreference(String tag, boolean value) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
@@ -223,8 +223,37 @@ public abstract class Game extends Fragment {
         editor.apply();
     }
 
-    public boolean getPreference(String tag) {
+    public void setPreference(String tag, int value){
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putInt(tag, value);
+        editor.apply();
+    }
+
+    public int getIntPreference(String tag) {
+        if (tag.equals("GameLength")){
+            return mSharedPreferences.getInt(tag, 300);
+        } else if (tag.equals("ScreenType")){
+            return mSharedPreferences.getInt(tag, 1);
+        }
+        return mSharedPreferences.getInt(tag, 0);
+    }
+
+    public void setPreference(String tag, String value){
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(tag, value);
+        editor.apply();
+    }
+
+    public boolean getBooleanPreference(String tag) {
         return mSharedPreferences.getBoolean(tag, false);
+    }
+
+    public String getStringPreference(String tag) {
+        if (tag.equals("Difficulty")) {
+            return mSharedPreferences.getString(tag, "Amateur");
+        } else
+            return mSharedPreferences.getString(tag, null);
+
     }
 
     // /////////////////////////////////////////////////////////////////////////

@@ -1,9 +1,11 @@
 package uk.ac.qub.eeecs.game.cardDemo.screens;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 import java.util.List;
 
@@ -32,15 +34,17 @@ public class OptionsScreen extends GameScreen {
     private LayerViewport mLayerViewport;
 
 
-    // Define the variables to change the colour of the background
-    private int backgroundColour = 255;
-    private boolean decreaseColour = true;
-    private boolean changeColour = false;
-
     //define the buttons
     private PushButton mMenuButton;
-    private PushButton mColourButton;
-    private PushButton mChangeFlagButton;
+    private PushButton mDifficultyUp;
+    private PushButton mDifficultyDown;
+    private PushButton mTimeUp;
+    private PushButton mTimeDown;
+    private PushButton mScreenUp;
+    private PushButton mScreenDown;
+
+    private int spacingX = getGame().getScreenWidth() / 5;
+    private int spacingY = getGame().getScreenHeight() / 3;
 
     /**
      * Create a new game screen associated with the specified game instance
@@ -67,29 +71,34 @@ public class OptionsScreen extends GameScreen {
                     * mScreenViewport.height / mScreenViewport.width, 240);
 
         AssetStore assetManager = mGame.getAssetManager();
-        assetManager.loadAndAddBitmap("OptionsBackground", "img/optionBG.jpg");
+        assetManager.loadAndAddBitmap("Increase", "img/difficultyUp.png");
         assetManager.loadAndAddBitmap("MenuButton", "img/menu button.png");
-        assetManager.loadAndAddBitmap("FlagButton", "img/round_arrow.png");
-        assetManager.loadAndAddBitmap("ColourShift", "img/colourButton.png");
+        assetManager.loadAndAddBitmap("Decrease", "img/difficultyDown.png");
+        assetManager.loadAndAddBitmap("Background", "img/bernabeu.jpg");
 
-
-
-        int spacingX = game.getScreenWidth() / 5;
-        int spacingY = game.getScreenHeight() / 3;
 
         //create the buttons for the screen
-        mMenuButton = new PushButton(spacingX * 1.0f, spacingY * 1.5f, spacingX / 2, spacingY / 2,
+        mMenuButton = new PushButton(spacingX * 1.0f, spacingY * 2.5f, spacingX / 2, spacingY / 2,
                 "MenuButton", this );
-        mColourButton = new PushButton(spacingX * 2.5f, spacingY * 1.5f, spacingX / 2, spacingY / 2,
-                "ColourShift", this );
-        mChangeFlagButton = new PushButton(spacingX * 4.0f, spacingY * 1.5f, spacingX / 2, spacingY / 2,
-                "FlagButton", this );
-
+        mDifficultyUp = new PushButton(spacingX * 2.85f, spacingY * 1f, spacingX / 5, spacingY / 5,
+                "Increase", this );
+        mDifficultyDown = new PushButton(spacingX * 1.85f, spacingY * 1f, spacingX / 5, spacingY / 5,
+                "Decrease", this );
+        mTimeUp = new PushButton(spacingX * 2.85f, spacingY * 1.5f, spacingX / 5, spacingY / 5,
+                "Increase", this );
+        mTimeDown = new PushButton(spacingX * 1.85f, spacingY * 1.5f, spacingX / 5, spacingY / 5,
+                "Decrease", this );
+        mScreenUp = new PushButton(spacingX * 2.85f, spacingY * 2f, spacingX / 5, spacingY / 5,
+                "Increase", this );
+        mScreenDown = new PushButton(spacingX * 1.85f, spacingY * 2f, spacingX / 5, spacingY / 5,
+                "Decrease", this );
 
     }
 
     @Override
     public void update(ElapsedTime elapsedTime) {
+
+
         // Process any touch events occurring since the last update
         Input input = mGame.getInput();
 
@@ -103,24 +112,66 @@ public class OptionsScreen extends GameScreen {
 
             // Update each button and transition if needed
             mMenuButton.update(elapsedTime);
-            mColourButton.update(elapsedTime);
-            mChangeFlagButton.update(elapsedTime);
+            mDifficultyDown.update(elapsedTime);
+            mDifficultyUp.update(elapsedTime);
+            mTimeDown.update(elapsedTime);
+            mTimeUp.update(elapsedTime);
+            mScreenDown.update(elapsedTime);
+            mScreenUp.update(elapsedTime);
 
             if (mMenuButton.isPushTriggered())
                 changeToScreen(new MenuScreen(mGame));
 
-            if (mChangeFlagButton.isPushTriggered()) {
-                mGame.setPreference("Flag", !(mGame.getPreference("Flag")));
-            }
-
-            //button to start or stop colour switching
-            if (mColourButton.isPushTriggered()){
-                if (!changeColour){
-                    changeColour = true;
-                } else {
-                    changeColour = false;
+            if (mDifficultyDown.isPushTriggered()) {
+                if(mGame.getStringPreference("Difficulty").equals("Amateur")){
+                    mGame.setPreference("Difficulty", "Beginner" );
+                }else if (mGame.getStringPreference("Difficulty").equals("Difficult")){
+                    mGame.setPreference("Difficulty", "Amateur" );
                 }
             }
+
+            if (mDifficultyUp.isPushTriggered()){
+                if(mGame.getStringPreference("Difficulty").equals("Amateur")){
+                    mGame.setPreference("Difficulty", "Difficult" );
+                }else if (mGame.getStringPreference("Difficulty").equals("Beginner")){
+                    mGame.setPreference("Difficulty", "Amateur" );
+                }
+            }
+
+            int length = (mGame.getIntPreference("GameLength"));
+            if (mTimeUp.isPushTriggered()){
+               if (length < 360){
+                   length += 60;
+                   mGame.setPreference("GameLength", length);
+               }
+            }
+            if (mTimeDown.isPushTriggered()){
+                if (length > 240){
+                    length -= 60;
+                    mGame.setPreference("GameLength", length);
+                }
+            }
+
+            int screenType = mGame.getIntPreference("ScreenType");
+            if (mScreenDown.isPushTriggered()){
+                if (screenType > 1){
+                    screenType--;
+                    mGame.setPreference("ScreenType", screenType);
+                }
+            }
+            if (mScreenUp.isPushTriggered()){
+                if (screenType < 3){
+                    screenType++;
+                    mGame.setPreference("ScreenType", screenType);
+                }
+            }
+
+
+
+
+
+
+
         }
     }
 
@@ -138,38 +189,35 @@ public class OptionsScreen extends GameScreen {
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         Rect rectangle = new Rect(0, 0, this.getGame().getScreenWidth(),
                 this.getGame().getScreenHeight());
+
         graphics2D.clear(Color.WHITE);
         Paint mPaint = mGame.getPaint();
-        mPaint.setColorFilter(new LightingColorFilter(Color.rgb(backgroundColour, backgroundColour, backgroundColour), 0));
-        //check if the button has been pressed and if so start shifting the colours
+        mPaint.setAlpha(75);
+        graphics2D.drawBitmap(mGame.getAssetManager().getBitmap("Background"), null, rectangle, mPaint);
+        mPaint.reset();
+        mDifficultyUp.draw(elapsedTime, graphics2D);
+        mDifficultyDown.draw(elapsedTime, graphics2D);
+        mTimeUp.draw(elapsedTime, graphics2D);
+        mTimeDown.draw(elapsedTime, graphics2D);
+        mScreenUp.draw(elapsedTime, graphics2D);
+        mScreenDown.draw(elapsedTime, graphics2D);
+        mMenuButton.draw(elapsedTime, graphics2D);
 
-        if (changeColour){
-            if(decreaseColour){
-                backgroundColour -=5;
-                //when background colour reaches 0 start to increase it
-                if (backgroundColour == 0){
-                    decreaseColour = false;
-                }
-            }else {
-                backgroundColour +=5;
-                //when background colour reaches 255 begin decreasing it
-                if (backgroundColour == 255) {
-                    decreaseColour = true;
-                }
-            }
-        }
-
-        //draw the background first and then draw the buttons
-        graphics2D.drawBitmap(getGame().getAssetManager().getBitmap("OptionsBackground"), rectangle, rectangle, mPaint);
-        mMenuButton.draw(elapsedTime, graphics2D, null, null);
-        mColourButton.draw(elapsedTime, graphics2D, null, null);
-        mChangeFlagButton.draw(elapsedTime, graphics2D);
-        //Paint the boolean flag value on screen
 
         mPaint.reset();
-        mPaint.setColor(Color.RED);
+        mPaint.setColor(Color.BLACK);
         mPaint.setTextSize(75);
-        graphics2D.drawText(String.valueOf(mGame.getPreference("Flag")), mMenuButton.getBound().getLeft(), mMenuButton.getBound().getBottom() + mMenuButton.getBound().getHeight() + 100, mPaint);
+        graphics2D.drawText("Difficulty: ",spacingX * 0.5f, spacingY * 1.05f, mPaint );
+        graphics2D.drawText("Game Length: ",spacingX * 0.5f, spacingY * 1.55f, mPaint );
+        graphics2D.drawText("Game Screen: ",spacingX * 0.5f, spacingY * 2.05f, mPaint );
+        graphics2D.drawText(String.valueOf(mGame.getStringPreference("Difficulty")),spacingX * 1.95f, spacingY * 1.05f, mPaint);
+        graphics2D.drawText(String.valueOf((mGame.getIntPreference("GameLength") / 60)) + " mins",spacingX * 2.05f, spacingY * 1.55f, mPaint);
+        graphics2D.drawText(String.valueOf("Screen " + mGame.getIntPreference("ScreenType")),spacingX * 1.95f, spacingY * 2.05f, mPaint);
+
+
+        mPaint.setTextSize(150);
+        graphics2D.drawText("Options", spacingX * 2f, spacingY * 0.5f, mPaint);
+
     }
 
 
