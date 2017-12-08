@@ -47,7 +47,6 @@ public class HelpScreen extends GameScreen {
         mScreenViewport = new ScreenViewport();
         //GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
         Log.d("DEBUG", "SCREEN WIDTH: " + mGame.getScreenWidth() + " SCREEN HEIGHT: " + mGame.getScreenHeight());
-        //infoBar = new InfoBar(960, 270, 1920, 108, this);
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this);
 
         AssetStore assetManager = mGame.getAssetManager();
@@ -57,6 +56,10 @@ public class HelpScreen extends GameScreen {
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
 
         menuScreenButton = new PushButton(100,100,100,100, "LeftArrow", "LeftArrowActive", this);
+
+        infoBar.addNotification("Test notification 1", 1, 5);
+        infoBar.addNotification("Test notification 2", 2, 2);
+        infoBar.addNotification("Test notification 3", -1, 5);
     }
 
     @Override
