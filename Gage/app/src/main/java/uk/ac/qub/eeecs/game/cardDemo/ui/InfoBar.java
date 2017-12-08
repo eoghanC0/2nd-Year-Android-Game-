@@ -77,18 +77,18 @@ public class InfoBar extends GameObject {
     /**
      * Stores queued notifications
      */
-    Queue<iNotification> notificationQueue = new LinkedList();
+    private Queue<iNotification> notificationQueue = new LinkedList();
 
     /**
      * Current notification
      */
-    iNotification currentNotification;
+    private iNotification currentNotification;
 
     /**
      * Notification class
      */
     // TODO: Continue work on iNotification
-    private class iNotification {
+    public class iNotification {
         private String text;
         private int type;
         private float displayTime;
@@ -107,6 +107,18 @@ public class InfoBar extends GameObject {
         public String toString() {
             return String.format("Notification: '%1$s' | Type: %2$d | Display Time: %3$.2f", text, type, displayTime);
         }
+
+        public String getText() {
+            return text;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public float getDisplayTime() {
+            return displayTime;
+        }
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -124,7 +136,9 @@ public class InfoBar extends GameObject {
      * @param gameScreen
      */
     public InfoBar(float x, float y, float width, float height, GameScreen gameScreen) {
-        super(x, y, width, height, null, gameScreen);
+        super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
+        if(width < 0) width = 100;
+        if(height < 0) height = 100;
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("InfoBar", "img/InfoBar.png");
         assetManager.loadAndAddBitmap("InfoBarRed", "img/InfoBarRed.png");
@@ -156,7 +170,7 @@ public class InfoBar extends GameObject {
      * @param experience
      */
     public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String playerIconPath, String playerName, String winLossDraw, int experience) {
-        super(x, y, width, height, null, gameScreen);
+        super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("InfoBar", "img/InfoBar.png");
         assetManager.loadAndAddBitmap("PlayerIcon", "img/Ball.png");
@@ -223,14 +237,16 @@ public class InfoBar extends GameObject {
            // States whether the current notification should be removed or not
            // true = remove false = remain
            boolean currentNotificationStatus = checkCurrentNotification();
+
+           // If notification should be removed then display next notification if a notification is
+           // present in the queue else return to default state
            if(!currentNotificationStatus && notificationAvailable) displayNextNotification();
            else if(!currentNotificationStatus && !notificationAvailable) setDefaultState();
+
            return;
        } else if(!notificationDisplayed && notificationAvailable){
            displayNextNotification();
        }
-
-       return;
     }
 
     /**
@@ -295,6 +311,13 @@ public class InfoBar extends GameObject {
         notificationQueue.remove();
         currentNotificationDisplayTime = System.nanoTime();
         setNotificationState(currentNotification.type);
+    }
+
+    public void clearNotifications() {
+        if(!(notificationQueue.size() > 0)) return;
+        for (iNotification i : notificationQueue) {
+            notificationQueue.remove(i);
+        }
     }
 
     /*  = = = = = = = = = = = = = = = = = = = =
@@ -384,6 +407,33 @@ public class InfoBar extends GameObject {
         Rect bounds = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), bounds);
         return bounds;
+    }
+
+    /*  = = = = = = = = = = = = = = = =
+      GETTERS AND SETTERS FOR TESTING
+    = = = = = = = = = = = = = = = = */
+
+    public void setCurrentNotificationDisplayTime(long time) {
+        currentNotificationDisplayTime = time;
+    }
+
+    public iNotification getCurrentNotification() {
+        return currentNotification;
+    }
+
+    public boolean getNotificationDisplayed() {
+        return notificationDisplayed;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public String getWinLossDraw() {
+        return winLossDraw;
+    }
+    public int getExperience() {
+        return experience;
     }
 
 }
