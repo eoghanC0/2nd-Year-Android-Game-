@@ -21,7 +21,7 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
-    private final int totalGameTimeLength = 300;
+    private final int totalGameTimeLength = mGame.getIntPreference("GameLength");
     private double currentGameTime;
     private int playerScore, CPUScore;
 
