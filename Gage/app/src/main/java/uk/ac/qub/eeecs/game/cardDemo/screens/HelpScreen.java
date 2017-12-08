@@ -55,7 +55,7 @@ public class HelpScreen extends GameScreen {
         assetManager.loadAndAddBitmap("LeftArrow", "img/LeftArrow.png");
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
 
-        menuScreenButton = new PushButton(100,100,100,100, "LeftArrow", "LeftArrowActive", this);
+        menuScreenButton = new PushButton(mGame.getScreenHeight() * 0.06f,mGame.getScreenHeight() * 0.94f, mGame.getScreenHeight() * 0.1f,mGame.getScreenHeight() * 0.1f, "LeftArrow", "LeftArrowActive", this);
 
         infoBar.addNotification("Test notification 1", 1, 5);
         infoBar.addNotification("Test notification 2", 2, 2);
