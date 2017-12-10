@@ -21,9 +21,9 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
-    private final Bitmap background;
-    private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
-    private final int totalGameTimeLength = mGame.getIntPreference("GameLength");
+    public final Bitmap background;
+    private final Rect backgroundRectangle;
+    private final int totalGameTimeLength;
     private double currentGameTime;
     private int playerScore, CPUScore;
 
@@ -32,10 +32,15 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     public PlayScreen(Game game) {
         super("PlayScreen", game);
+
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("PlayScreenBackground", "img/pitch.png");
         background = assetManager.getBitmap("PlayScreenBackground");
+        backgroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
+
+        totalGameTimeLength = mGame.getIntPreference("GameLength");
         currentGameTime = 0.0;
+
         playerScore = 0;
         CPUScore = 0;
     }
@@ -43,14 +48,16 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Methods
     // /////////////////////////////////////////////////////////////////////////
+    @Override
     public void update(ElapsedTime elapsedTime) {
         currentGameTime += elapsedTime.stepTime;
     }
 
+    @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         Paint paint = mGame.getPaint();
         paint.setAlpha(100);
-        graphics2D.drawBitmap(background,null, backGroundRectangle, paint);
+        graphics2D.drawBitmap(background,null, backgroundRectangle, paint);
         paint.reset();
         paint.setTextSize(45f);
         paint.setColor(Color.BLUE);
