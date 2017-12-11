@@ -244,6 +244,13 @@ public abstract class Game extends Fragment {
         editor.apply();
     }
 
+    //method to clear the preferences
+    public void clearPreferences(){
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
     public boolean getBooleanPreference(String tag) {
         return mSharedPreferences.getBoolean(tag, false);
     }
