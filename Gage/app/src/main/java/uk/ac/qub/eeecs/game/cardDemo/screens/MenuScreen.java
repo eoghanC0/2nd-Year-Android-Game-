@@ -132,7 +132,7 @@ public class MenuScreen extends GameScreen {
             if (mOptionsButton.isPushTriggered())
                 changeToScreen(new OptionsScreen(mGame));
             else if (mSquadsButton.isPushTriggered())
-                changeToScreen(new PlayScreen(mGame));
+                changeToScreen(new SquadScreen(mGame));
             else if (mHelpButton.isPushTriggered())
                 changeToScreen(new HelpScreen(mGame));
             else if (musicButton.isPushTriggered());
