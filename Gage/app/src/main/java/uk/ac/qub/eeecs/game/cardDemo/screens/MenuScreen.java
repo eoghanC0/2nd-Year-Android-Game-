@@ -148,7 +148,7 @@ public class MenuScreen extends GameScreen {
      *
      * @param screen game screen to become active
      */
-    private void changeToScreen(GameScreen screen) {
+    public void changeToScreen(GameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }
