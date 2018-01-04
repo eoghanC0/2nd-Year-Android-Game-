@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import java.text.DecimalFormat;
+
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -19,10 +21,9 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
-    private final Bitmap background;
-    private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
-    private final Paint paint = mGame.getPaint();
-    private final int totalGameTimeLength = 300;
+    public final Bitmap background;
+    private final Rect backgroundRectangle;
+    private final int totalGameTimeLength;
     private double currentGameTime;
     private int playerScore, CPUScore;
 
@@ -31,10 +32,15 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     public PlayScreen(Game game) {
         super("PlayScreen", game);
+
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("PlayScreenBackground", "img/pitch.png");
         background = assetManager.getBitmap("PlayScreenBackground");
+        backgroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
+
+        totalGameTimeLength = mGame.getIntPreference("GameLength");
         currentGameTime = 0.0;
+
         playerScore = 0;
         CPUScore = 0;
     }
@@ -42,17 +48,20 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Methods
     // /////////////////////////////////////////////////////////////////////////
+    @Override
     public void update(ElapsedTime elapsedTime) {
         currentGameTime += elapsedTime.stepTime;
     }
 
+    @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        paint.reset();
+        Paint paint = mGame.getPaint();
         paint.setAlpha(100);
-        graphics2D.drawBitmap(background,null, backGroundRectangle, paint);
+        graphics2D.drawBitmap(background,null, backgroundRectangle, paint);
+        paint.reset();
         paint.setTextSize(45f);
         paint.setColor(Color.BLUE);
         graphics2D.drawText("Player: " + playerScore + " - " + CPUScore + " :CPU", 50, 50, paint);
-        graphics2D.drawText("Timer : " + Double.toString(currentGameTime/totalGameTimeLength*90), this.getGame().getScreenWidth() - 500, 50, paint);
+        graphics2D.drawText("Timer : " + String.format("%2.2f",currentGameTime/totalGameTimeLength*90), this.getGame().getScreenWidth() - 500, 50, paint);
     }
 }
