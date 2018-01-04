@@ -140,12 +140,8 @@ public class InfoBar extends GameObject {
         if(width < 0) width = 100;
         if(height < 0) height = 100;
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("InfoBar", "img/InfoBar.png");
-        assetManager.loadAndAddBitmap("InfoBarRed", "img/InfoBarRed.png");
-        assetManager.loadAndAddBitmap("InfoBarGreen", "img/InfoBarGreen.png");
         assetManager.loadAndAddBitmap("PlayerIcon", "img/Ball.png");
-        mBitmap = assetManager.getBitmap("InfoBar");
-        playerBitmap = assetManager.getBitmap("InfoBar");
+        playerBitmap = assetManager.getBitmap("PlayerIcon");
         playerIconRect = new Rect(200,200,200,200);
         this.playerName = "Player Name";
         this.winLossDraw = "0-0-0";
@@ -172,10 +168,14 @@ public class InfoBar extends GameObject {
     public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String playerIconPath, String playerName, String winLossDraw, int experience) {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("InfoBar", "img/InfoBar.png");
-        assetManager.loadAndAddBitmap("PlayerIcon", "img/Ball.png");
-        mBitmap = assetManager.getBitmap("InfoBar");
+        assetManager.loadAndAddBitmap("PlayerIcon", playerIconPath);
         playerBitmap = assetManager.getBitmap("PlayerIcon");
+
+        if(playerBitmap == null) {
+            assetManager.loadAndAddBitmap("PlayerIcon", "img/Ball.png");
+            playerBitmap = assetManager.getBitmap("PlayerIcon");
+        }
+
         playerIconRect = new Rect(200,200,200,200);
         this.playerName = playerName;
         areaOneText = playerName;
@@ -203,6 +203,13 @@ public class InfoBar extends GameObject {
                 (int) (position.y - mBound.halfHeight),
                 (int) (position.x + mBound.halfWidth),
                 (int) (position.y + mBound.halfHeight));
+
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        assetManager.loadAndAddBitmap("InfoBar", "img/InfoBar.png");
+        assetManager.loadAndAddBitmap("InfoBarRed", "img/InfoBarRed.png");
+        assetManager.loadAndAddBitmap("InfoBarGreen", "img/InfoBarGreen.png");
+
+        mBitmap = assetManager.getBitmap("InfoBar");
     }
 
     /*  = = = = = = = = = = = = = = = =
@@ -362,6 +369,18 @@ public class InfoBar extends GameObject {
             float scaleX = (float) drawScreenRect.width() / (float) drawSourceRect.width();
             float scaleY = (float) drawScreenRect.height() / (float) drawSourceRect.height();
 
+            // TODO: Profile icon needs more work. Probably doesn't work on different resolutions.
+            // Build an appropriate transformation matrix
+            drawMatrix.reset();
+            drawMatrix.postScale(scaleX, scaleY);
+            drawMatrix.postRotate(0, scaleX * playerBitmap.getWidth()
+                    / 2.0f, scaleY * playerBitmap.getHeight() / 2.0f);
+            drawMatrix.postTranslate(drawScreenRect.left, drawScreenRect.top);
+            drawMatrix.setScale(0.35f, 0.35f);
+
+            // Draw the image
+            graphics2D.drawBitmap(playerBitmap, drawMatrix,null);
+
             // Build an appropriate transformation matrix
             drawMatrix.reset();
             drawMatrix.postScale(scaleX, scaleY);
@@ -371,6 +390,8 @@ public class InfoBar extends GameObject {
 
             // Draw the image
             graphics2D.drawBitmap(mBitmap, drawMatrix, null);
+
+
         }
 
         Vector2 areaOneVector = getAreaTextVector(textPaint, areaOneText, getBound().getWidth(), getBound().getHeight(), 0.06f, 0.313f, 0);
