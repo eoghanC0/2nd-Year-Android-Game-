@@ -48,7 +48,7 @@ public class HelpScreenTest {
         HelpScreen helpScreen = new HelpScreen(game);
 
         // Call test
-        //menuScreen.changeToScreen(helpScreen);
+        menuScreen.changeToScreen(helpScreen);
 
         // Check return
         assertEquals(game.getScreenManager().getCurrentScreen().getName(), helpScreen.getName());
