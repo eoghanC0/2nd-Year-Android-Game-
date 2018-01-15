@@ -95,6 +95,16 @@ public class CanvasGraphics2D implements IGraphics2D {
         mCanvas.drawText(text, x, y, paint);
     }
 
+    @Override
+    public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint) {
+        mCanvas.drawLine(startX,startY,stopX,stopY,paint);
+    }
+
+    @Override
+    public void drawRect(float left, float top, float right, float bottom, Paint paint) {
+        mCanvas.drawRect(left, top, right, bottom, paint);
+    }
+
     /*
      * (non-Javadoc)
      *

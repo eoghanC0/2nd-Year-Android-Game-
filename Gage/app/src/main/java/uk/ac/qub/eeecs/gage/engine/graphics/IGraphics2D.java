@@ -52,6 +52,10 @@ public interface IGraphics2D {
      */
     public void drawText(String text, float x, float y, Paint paint);
 
+    public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint);
+
+    public void drawRect(float left, float top, float right, float bottom, Paint paint);
+
     /**
      * Draw the specified bitmap
      *
