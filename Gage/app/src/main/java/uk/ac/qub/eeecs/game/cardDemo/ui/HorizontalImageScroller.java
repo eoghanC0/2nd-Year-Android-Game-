@@ -9,6 +9,7 @@ import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
+import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
@@ -35,6 +36,27 @@ public class HorizontalImageScroller extends GameObject {
     private int[] displayedBitmapIndexes = {-1,-1,-1,-1,-1};
 
     /**
+     * Vector positions to draw displayed bitmaps
+     */
+    private Vector2[] displayedBitmapVectors = new Vector2[5];
+    /**
+     * Prevents user from moving scroller
+     */
+    private boolean lockScroller = false;
+
+    /**
+     * Determines whether an animation is occuring
+     */
+    private boolean animationTriggered = false;
+
+    /**
+     * Direction of scroller movement
+     * false = left
+     * true = right
+     */
+    private boolean scrollDirection = false;
+
+    /**
      * Internal matrix use to support draw requests
      */
     protected Matrix drawMatrix = new Matrix();
@@ -58,6 +80,7 @@ public class HorizontalImageScroller extends GameObject {
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("Test","img/help-image-test.png");
 
+        bitmaps = new ArrayList<Bitmap>();
         mBitmap = assetManager.getBitmap("Test");
 
         drawScreenRect.set((int) (position.x - mBound.halfWidth),
@@ -65,6 +88,26 @@ public class HorizontalImageScroller extends GameObject {
                 (int) (position.x + mBound.halfWidth),
                 (int) (position.y + mBound.halfHeight));
 
+        for (int i = 0; i < 5; i++) {
+            displayedBitmapVectors[i] = new Vector2(0,0);
+        }
+
+        // TODO: Position to draw bitmap
+        Vector2 vector = new Vector2(0,0);
+
+        // Update positions of each bitmap
+        // Calculate best positions based on parameters passed in constructor
+        for (int i = 0; i < 5; i++) {
+            if(displayedBitmapIndexes[i] != -1) {
+                // TODO: Update vector for next bitmap
+                if(i < 2)
+                    vector.add(1,1);
+                else if(i == 2)
+                    vector.set(-2,-2);
+                else
+                    vector.add(1,1);
+            }
+        }
 
     }
 
@@ -89,26 +132,43 @@ public class HorizontalImageScroller extends GameObject {
 
     /**
      * Updates the currently displayed bitmaps and hidden bitmaps
-     * TODO: Animation
-     * @param direction Specifies whether direction is positive or negative (right or left)
+     * Should be called after animation moving images has completed
+     * @param direction Specifies direction to move in (true = right false = left)
      */
     private void updateDisplayedBitmaps(boolean direction) {
-        // Move everything in direction
+        // Move everything in specified direction
         if(!bitmaps.isEmpty() && bitmaps.size() > 1) {
             int directionInt = direction ? 1 : -1;
             for (int i = 0; i < 5; i++) {
                 displayedBitmapIndexes[i] = (displayedBitmapIndexes[i] + bitmaps.size() + directionInt) % bitmaps.size();
             }
         }
-        // Update displayedBitmaps
-
-
     }
 
     @Override
     public void update(ElapsedTime elapsedTime) {
         // TODO: Check for touch to change picture
-        // TODO: Animation
+
+        // Set animation in motion if a touch is detected
+        if(/*Touch event triggered*/true && !animationTriggered) {
+            animationTriggered = true;
+
+            // Set direction to scroll images
+            if(/*touch/ left side/swipe left*/true)
+                scrollDirection = false;
+            else
+                scrollDirection = true;
+        }
+
+        // Perform animation
+        if(animationTriggered) {
+            // TODO: Animation
+
+            if(/* Animation complete */ true) {
+                animationTriggered = false;
+                updateDisplayedBitmaps(scrollDirection);
+            }
+        }
         super.update(elapsedTime);
 
     }
@@ -131,6 +191,11 @@ public class HorizontalImageScroller extends GameObject {
             // Draw the image
             graphics2D.drawBitmap(mBitmap, drawMatrix, null);
         }*/
+
+        // TODO: Draw bitmaps
+        for (int i = 0; i < 5; i++) {
+            // Draw bitmap i.e. graphics2D.drawBitmap(bitmaps[displayedBitmapIndexes[i]], ...);
+        }
 
         super.draw(elapsedTime, graphics2D);
     }
