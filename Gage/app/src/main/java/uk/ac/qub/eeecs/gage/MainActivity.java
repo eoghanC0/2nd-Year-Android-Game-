@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.gage;
 
 import uk.ac.qub.eeecs.game.DemoGame;
+import uk.ac.qub.eeecs.game.FootballGame;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -46,7 +47,7 @@ public class MainActivity extends Activity {
         mGame = (Game) fm.findFragmentById(R.id.activity_fragment_id);
 
         if (mGame == null) {
-            mGame = new DemoGame();
+            mGame = new FootballGame();
 
             fm.beginTransaction().add(R.id.activity_fragment_id, mGame)
                     .commit();
