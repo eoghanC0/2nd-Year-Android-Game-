@@ -83,12 +83,17 @@ public class ListBox extends GameObject {
         this.selectionColor = Color.BLUE;
         this.textColor = Color.BLACK;
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("boxBackground", "img/white.png");
+        if (assetManager.getBitmap("boxBackground") == null)
+            assetManager.loadAndAddBitmap("boxBackground", "img/white.png");
+        if (assetManager.getBitmap("downArrow") == null)
+            assetManager.loadAndAddBitmap("downArrow", "img/DownArrow.png");
+        if (assetManager.getBitmap("upArrow") == null)
+            assetManager.loadAndAddBitmap("upArrow", "img/UpArrow.png");
+        if (assetManager.getBitmap("downArrowActive") == null)
+            assetManager.loadAndAddBitmap("downArrowActive", "img/DownArrowActive.png");
+        if (assetManager.getBitmap("upArrowActive") == null)
+            assetManager.loadAndAddBitmap("upArrowActive", "img/UpArrowActive.png");
         mBitmap = assetManager.getBitmap("boxBackground");
-        assetManager.loadAndAddBitmap("downArrow", "img/DownArrow.png");
-        assetManager.loadAndAddBitmap("upArrow", "img/UpArrow.png");
-        assetManager.loadAndAddBitmap("downArrowActive", "img/DownArrowActive.png");
-        assetManager.loadAndAddBitmap("upArrowActive", "img/UpArrowActive.png");
         btnPreviousPage = new PushButton(mBound.getRight() + 30, mBound.getBottom() + 25, 60,50, "upArrow","upArrowActive", gameScreen);
         btnNextPage = new PushButton(mBound.getRight() + 30, mBound.getTop() - 25,60, 50,"downArrow","downArrowActive",  gameScreen);
     }
