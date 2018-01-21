@@ -108,6 +108,7 @@ public class ListBox extends GameObject {
     //////////////////////////////////////////////////////
     //  Setters
     //////////////////////////////////////////////////////
+    public void setArray(ArrayList<String> array) {this.items = new ArrayList<>(array);}
     public void setBackColor(int color) {backColor = color;}
     public void setBorderColor(int color) {borderColor = color;}
     public void setSelectionColor(int color) {selectionColor = color;}

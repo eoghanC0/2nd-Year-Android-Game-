@@ -3,11 +3,18 @@ package uk.ac.qub.eeecs.gage;
 import uk.ac.qub.eeecs.game.DemoGame;
 import uk.ac.qub.eeecs.game.FootballGame;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Main game activity
@@ -51,6 +58,31 @@ public class MainActivity extends Activity {
 
             fm.beginTransaction().add(R.id.activity_fragment_id, mGame)
                     .commit();
+        }
+        isWriteStoragePermissionGranted();
+    }
+
+    /*
+    Check if the activity has permission to read/write to the external storage.
+    If not - request permission
+     */
+    public  boolean isWriteStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Write Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Write Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                return false;
+            }
+        }
+        else {
+            //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
         }
     }
 

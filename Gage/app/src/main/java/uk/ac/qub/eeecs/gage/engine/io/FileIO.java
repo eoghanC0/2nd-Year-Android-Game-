@@ -10,13 +10,16 @@ import android.graphics.BitmapFactory.Options;
 import android.media.SoundPool;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 import uk.ac.qub.eeecs.gage.R;
 import uk.ac.qub.eeecs.gage.engine.audio.Music;
@@ -161,26 +164,97 @@ public class FileIO {
     // Device Storage IO //
     // /////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Open an input stream to the name file in device storage.
-     *
-     * @param fileName Name of the file to open for reading
-     * @return InputStream that can be used to read the file
-     * @throws IOException if the asset cannot be opened.
-     */
-    public InputStream readFile(String fileName) throws IOException {
-        return new FileInputStream(mExternalStoragePath + fileName);
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Checks if external storage is available to at least read */
+    public boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Open an output stream to the name file in device storage.
-     *
-     * @param fileName Name of the file to open for writing
-     * @return OutputStream that can be used to write to the file
-     * @throws IOException if the asset cannot be opened for writing
+     * @return a string (i.e. the data stored in the file)
      */
-    public OutputStream writeFile(String fileName) throws IOException {
-        return new FileOutputStream(mExternalStoragePath + fileName);
+    public String readFile(String fileName) throws IOException {
+        if (isExternalStorageReadable()) {
+            File file = new File(mExternalStoragePath, fileName);
+            if (file != null) {
+                FileReader fileReader = new FileReader(file);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ((receiveString = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(receiveString);
+                }
+                bufferedReader.close();
+                fileReader.close();
+                return stringBuilder.toString();
+            }
+            Log.e("Error", "File not found");
+            return "";
+        }
+        Log.e("Error","External Storage is not readable");
+        return "";
+    }
+
+    /**
+     * @param fileName filepath given to the file to be written
+     * @param data the data to be written to the file
+     */
+    public void writeFile(String fileName, String data) throws IOException {
+        if (isExternalStorageWritable()) {
+            File file = new File(mExternalStoragePath, fileName);
+            FileOutputStream out = new FileOutputStream(file);
+            OutputStreamWriter outWriter = new OutputStreamWriter(out);
+            outWriter.append(data);
+            outWriter.close();
+            out.close();
+        } else {
+            Log.i("Error","External Storage is not writable");
+        }
+    }
+
+    /*
+    Get all of the files stored in external storage
+     */
+    public ArrayList<File> getFiles() {
+        if (isExternalStorageReadable()) {
+            ArrayList<File> files = new ArrayList<>();
+            File dir = new File(mExternalStoragePath);
+            File[] items = dir.listFiles();
+            if (items != null) {
+                for (File f : items) {
+                    if (f.isFile()) files.add(f);
+                }
+            }
+            return files;
+        }
+        Log.i("Error","External Storage is not readable");
+        return null;
+    }
+
+    /*
+    Get the names of all files stored in external storage
+     */
+    public ArrayList<String> getFileList() {
+        ArrayList<String> files = new ArrayList<>();
+        for (File f : getFiles()) {
+            files.add(f.getName());
+        }
+        return files;
     }
 
     // /////////////////////////////////////////////////////////////////////////

@@ -5,7 +5,9 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import uk.ac.qub.eeecs.gage.engine.audio.Music;
@@ -65,6 +67,43 @@ public class AssetStore {
     // /////////////////////////////////////////////////////////////////////////
     // Store //
     // /////////////////////////////////////////////////////////////////////////
+    /**
+     * @return an array of all files stores in external storage
+     */
+    public ArrayList<File> getFiles() {
+        return mFileIO.getFiles();
+    }
+
+    /**
+     * @return a list of all the names of the files stored in external storage
+     */
+    public ArrayList<String> getFileList() {
+        return mFileIO.getFileList();
+    }
+
+    /**
+     * @param fileName filepath given to the file to be written
+     * @param data the data to be written to the file
+     */
+    public void writeFile(String fileName, String data) {
+        try {
+            mFileIO.writeFile(fileName, data);
+        } catch (IOException e) {
+            Log.e("Error", "IOException", e);
+        }
+    }
+
+    /**
+     * @param fileName filepath given to the file to be written
+     */
+    public String readFile(String fileName) {
+        try {
+            return mFileIO.readFile(fileName);
+        } catch (IOException e) {
+            Log.e("Error", "IOException", e);
+            return "";
+        }
+    }
 
     /**
      * Add the specified bitmap asset to the store
