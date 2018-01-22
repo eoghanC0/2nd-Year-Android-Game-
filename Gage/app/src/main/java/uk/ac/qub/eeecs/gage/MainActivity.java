@@ -9,7 +9,7 @@ import android.app.FragmentManager;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
+//import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -59,13 +59,13 @@ public class MainActivity extends Activity {
             fm.beginTransaction().add(R.id.activity_fragment_id, mGame)
                     .commit();
         }
-        isWriteStoragePermissionGranted();
+        //isWriteStoragePermissionGranted();
     }
 
     /*
     Check if the activity has permission to read/write to the external storage.
     If not - request permission
-     */
+     *//*
     public  boolean isWriteStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
             Log.v(TAG,"Permission is granted");
             return true;
         }
-    }
+    }*/
 
     /*
      * (non-Javadoc)
