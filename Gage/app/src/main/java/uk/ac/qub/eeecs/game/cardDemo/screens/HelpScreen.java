@@ -1,5 +1,7 @@
 package uk.ac.qub.eeecs.game.cardDemo.screens;
 
+import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.Game;
@@ -26,6 +28,16 @@ public class HelpScreen extends GameScreen {
     private LayerViewport mLayerViewport;
 
     /**
+     * Background image
+     */
+    private Bitmap background;
+
+    /**
+     * Background image draw rect
+     */
+    private Rect backgroundRect = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
+
+    /**
      * Define InfoBar
      */
     private InfoBar infoBar;
@@ -38,6 +50,7 @@ public class HelpScreen extends GameScreen {
     /**
      * Allows user to scroll between help images
      */
+    //private HorizontalImageScroller horizontalImageScroller;
     private HorizontalImageScroller horizontalImageScroller;
 
     /**
@@ -58,8 +71,11 @@ public class HelpScreen extends GameScreen {
         AssetStore assetManager = mGame.getAssetManager();
 
         // Load in bitmaps
+        assetManager.loadAndAddBitmap("HelpBackground", "img/help-background.jpg");
         assetManager.loadAndAddBitmap("LeftArrow", "img/LeftArrow.png");
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
+
+        background = assetManager.getBitmap("HelpBackground");
 
         menuScreenButton = new PushButton(mGame.getScreenHeight() * 0.06f,mGame.getScreenHeight() * 0.94f, mGame.getScreenHeight() * 0.1f,mGame.getScreenHeight() * 0.1f, "LeftArrow", "LeftArrowActive", this);
 
@@ -67,7 +83,9 @@ public class HelpScreen extends GameScreen {
         infoBar.addNotification("Test notification 2", 2, 2);
         infoBar.addNotification("Test notification 3", -1, 5);
 
-        horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, 500, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.6f, this);
+        //horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, 800, mGame.getScreenWidth() * 2, mGame.getScreenHeight() * 0.6f, this);
+        horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, 550, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.75f, this);
+
     }
 
     @Override
@@ -82,6 +100,8 @@ public class HelpScreen extends GameScreen {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
+        graphics2D.clear(0xe6ffff);
+        graphics2D.drawBitmap(background,null, backgroundRect, null);
         infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
         horizontalImageScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
