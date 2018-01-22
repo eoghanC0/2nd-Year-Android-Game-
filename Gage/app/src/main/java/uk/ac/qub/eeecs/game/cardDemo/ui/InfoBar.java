@@ -31,21 +31,26 @@ public class InfoBar extends GameObject {
     // /////////////////////////////////////////////////////////////////////////
 
     /**
-     * Player data
+     * Icon bitmap
      */
-    private Bitmap playerBitmap;
-    private String playerName;
-    private String winLossDraw;
-    private int experience;
-    private Rect playerIconRect;
+    private Bitmap iconBitmap;
+
+    /**
+     * Paint object for text
+     */
     private Paint textPaint;
 
     /**
-     * Area text content
+     * Area text content container
      */
     private String areaOneText;
     private String areaTwoText;
     private String areaThreeText;
+
+    /**
+     * Area text content data
+     */
+    private String[] areaTextData = new String[3];
 
     /**
      * Area text coordinates
@@ -89,10 +94,19 @@ public class InfoBar extends GameObject {
      */
     // TODO: Continue work on iNotification
     public class iNotification {
+        /**
+         * Data
+         */
         private String text;
         private int type;
         private float displayTime;
 
+        /**
+         * iNotification constructor
+         * @param text Notification message
+         * @param type 0 = Default | 1 = Red | 2 = Green
+         * @param displayTime Seconds to display notification
+         */
         public iNotification(String text, int type, float displayTime) {
             this.text = text;
 
@@ -111,11 +125,9 @@ public class InfoBar extends GameObject {
         public String getText() {
             return text;
         }
-
         public int getType() {
             return type;
         }
-
         public float getDisplayTime() {
             return displayTime;
         }
@@ -140,49 +152,50 @@ public class InfoBar extends GameObject {
         if(width < 0) width = 100;
         if(height < 0) height = 100;
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("PlayerIcon", "img/Ball.png");
-        playerBitmap = assetManager.getBitmap("PlayerIcon");
-        playerIconRect = new Rect(200,200,200,200);
-        this.playerName = "Player Name";
-        this.winLossDraw = "0-0-0";
-        this.experience = 0;
-        areaOneText = "Area One Text";
-        areaTwoText = "Area Two Text";
-        areaThreeText = "Area Three Text";
+        assetManager.loadAndAddBitmap("IconBitmap", "img/empty.png");
+        iconBitmap = assetManager.getBitmap("IconBitmap");
+
+        areaTextData[0] = "";
+        areaTextData[1] = "";
+        areaTextData[2] = "";
+
+        areaOneText = areaTextData[0];
+        areaTwoText = areaTextData[1];
+        areaThreeText = areaTextData[2];
 
         setDefaultProperties();
     }
 
     /**
-     * Overloaded constructor allowing user to pass in player data
+     * Overloaded constructor allowing user to pass in text data
      * @param x
      * @param y
      * @param width
      * @param height
      * @param gameScreen
-     * @param playerIconPath
-     * @param playerName
-     * @param winLossDraw
-     * @param experience
+     * @param iconPath
+     * @param areaOneText
+     * @param areaTwoText
+     * @param areaThreeText
      */
-    public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String playerIconPath, String playerName, String winLossDraw, int experience) {
+    public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String iconPath, String areaOneText, String areaTwoText, String areaThreeText) {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("PlayerIcon", playerIconPath);
-        playerBitmap = assetManager.getBitmap("PlayerIcon");
+        assetManager.loadAndAddBitmap("IconBitmap", iconPath);
+        iconBitmap = assetManager.getBitmap("IconBitmap");
 
-        if(playerBitmap == null) {
-            assetManager.loadAndAddBitmap("PlayerIcon", "img/Ball.png");
-            playerBitmap = assetManager.getBitmap("PlayerIcon");
+        if(iconBitmap == null) {
+            assetManager.loadAndAddBitmap("IconBitmap", "img/empty.png");
+            iconBitmap = assetManager.getBitmap("IconBitmap");
         }
 
-        playerIconRect = new Rect(200,200,200,200);
-        this.playerName = playerName;
-        areaOneText = playerName;
-        this.winLossDraw = winLossDraw;
-        areaTwoText = winLossDraw;
-        this.experience = experience;
-        areaThreeText = String.valueOf(experience);
+        areaTextData[0] = areaOneText;
+        areaTextData[1] = areaTwoText;
+        areaTextData[2] = areaThreeText;
+
+        this.areaOneText = areaOneText;
+        this.areaTwoText = areaTwoText;
+        this.areaThreeText = areaThreeText;
 
         setDefaultProperties();
     }
@@ -227,7 +240,6 @@ public class InfoBar extends GameObject {
             notificationQueue.add(new iNotification(notification, type, duration));
             Log.d("DEBUG", "Successfully added notification. Current queue: " + notificationQueue.toString());
         }
-
     }
 
     /**
@@ -260,16 +272,17 @@ public class InfoBar extends GameObject {
      * Sets InfoBar back to default non-notification state
      */
     private void setDefaultState() {
+        Log.d("DEBUG", "Returning to default..." + areaTextData[0]);
         setBitmap("InfoBar");
-        areaOneText = playerName;
-        areaTwoText = getLevel();
-        areaThreeText = winLossDraw;
+        areaOneText = areaTextData[0];
+        areaTwoText = areaTextData[1];
+        areaThreeText = areaTextData[2];
         notificationDisplayed = false;
     }
 
     /**
      * Sets InfoBar to notification state based on the type passed in
-     * @param type
+     * @param type 0 = Default | 1 = Red | 2 = Green
      */
     private void setNotificationState(int type) {
         switch(type) {
@@ -340,21 +353,16 @@ public class InfoBar extends GameObject {
         if(bg == "InfoBar" || bg == "InfoBarRed" || bg == "InfoBarGreen") mBitmap = assetManager.getBitmap(bg);
     }
 
-    private String getLevel() {
-        return String.format("%1$d XP", experience);
-    }
-
     /**
-     * Updates the text areas with new data if a notification is not being displayed
+     * Sets data of an element within areaTextData array
+     * @param data
+     * @param index
      */
-    public void updateTextAreas() {
-        if(!notificationDisplayed) return;
-        areaOneText = playerName;
-        areaTwoText = getLevel();
-        areaThreeText = winLossDraw;
+    private void setAreaTextDataByIndex(String data, int index) {
+        if(index >= 0 && index <= 3)
+            areaTextData[index] = data;
     }
 
-    // TODO: Check notification queue and update current notification
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
@@ -373,13 +381,13 @@ public class InfoBar extends GameObject {
             // Build an appropriate transformation matrix
             drawMatrix.reset();
             drawMatrix.postScale(scaleX, scaleY);
-            drawMatrix.postRotate(0, scaleX * playerBitmap.getWidth()
-                    / 2.0f, scaleY * playerBitmap.getHeight() / 2.0f);
+            drawMatrix.postRotate(0, scaleX * iconBitmap.getWidth()
+                    / 2.0f, scaleY * iconBitmap.getHeight() / 2.0f);
             drawMatrix.postTranslate(drawScreenRect.left, drawScreenRect.top);
             drawMatrix.setScale(0.35f, 0.35f);
 
             // Draw the image
-            graphics2D.drawBitmap(playerBitmap, drawMatrix,null);
+            graphics2D.drawBitmap(iconBitmap, drawMatrix,null);
 
             // Build an appropriate transformation matrix
             drawMatrix.reset();
@@ -390,13 +398,11 @@ public class InfoBar extends GameObject {
 
             // Draw the image
             graphics2D.drawBitmap(mBitmap, drawMatrix, null);
-
-
         }
 
-        Vector2 areaOneVector = getAreaTextVector(textPaint, areaOneText, getBound().getWidth(), getBound().getHeight(), 0.06f, 0.313f, 0);
-        Vector2 areaTwoVector = getAreaTextVector(textPaint, areaTwoText, getBound().getWidth(), getBound().getHeight(), 0.373f, 0.313f, 1);
-        Vector2 areaThreeVector = getAreaTextVector(textPaint, areaThreeText, getBound().getWidth(), getBound().getHeight(), 0.686f, 0.313f, 2);
+        areaOneVector = getAreaTextVector(textPaint, areaOneText, getBound().getWidth(), getBound().getHeight(), 0.06f, 0.313f, 0);
+        areaTwoVector = getAreaTextVector(textPaint, areaTwoText, getBound().getWidth(), getBound().getHeight(), 0.373f, 0.313f, 1);
+        areaThreeVector = getAreaTextVector(textPaint, areaThreeText, getBound().getWidth(), getBound().getHeight(), 0.686f, 0.313f, 2);
 
         graphics2D.drawText(areaOneText, areaOneVector.x, areaOneVector.y, textPaint);
         graphics2D.drawText(areaTwoText, areaTwoVector.x, areaTwoVector.y, textPaint);
@@ -429,6 +435,12 @@ public class InfoBar extends GameObject {
         }
     }
 
+    /**
+     * Gets area occupied by block of text
+     * @param paint
+     * @param text
+     * @return area occupied
+     */
     private Rect getTextBounds(Paint paint, String text) {
         Rect bounds = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), bounds);
@@ -451,30 +463,4 @@ public class InfoBar extends GameObject {
         return notificationDisplayed;
     }
 
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public String getWinLossDraw() {
-        return winLossDraw;
-    }
-
-    public int getExperience() {
-        return experience;
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-        updateTextAreas();
-    }
-
-    public void setExperience(int experience) {
-        this.experience = experience;
-        updateTextAreas();
-    }
-
-    public void setWinLossDraw(String winLossDraw) {
-        this.winLossDraw = winLossDraw;
-        updateTextAreas();
-    }
 }

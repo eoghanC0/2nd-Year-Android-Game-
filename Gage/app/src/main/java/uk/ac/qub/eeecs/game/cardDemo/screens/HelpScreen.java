@@ -10,6 +10,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
@@ -30,9 +31,14 @@ public class HelpScreen extends GameScreen {
     private InfoBar infoBar;
 
     /**
-     *
+     * Button to return to MenuScreen
      */
     private PushButton menuScreenButton;
+
+    /**
+     * Allows user to scroll between help images
+     */
+    private HorizontalImageScroller horizontalImageScroller;
 
     /**
      * Create a new game screen associated with the specified game instance
@@ -47,7 +53,7 @@ public class HelpScreen extends GameScreen {
         mScreenViewport = new ScreenViewport();
         //GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
         Log.d("DEBUG", "SCREEN WIDTH: " + mGame.getScreenWidth() + " SCREEN HEIGHT: " + mGame.getScreenHeight());
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this);
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "H E L P  S C R E E N", "");
 
         AssetStore assetManager = mGame.getAssetManager();
 
@@ -60,6 +66,8 @@ public class HelpScreen extends GameScreen {
         infoBar.addNotification("Test notification 1", 1, 5);
         infoBar.addNotification("Test notification 2", 2, 2);
         infoBar.addNotification("Test notification 3", -1, 5);
+
+        horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, 500, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.6f, this);
     }
 
     @Override
@@ -68,13 +76,15 @@ public class HelpScreen extends GameScreen {
         menuScreenButton.update(elapsedTime);
 
         if(menuScreenButton.isPushTriggered()) changeToScreen(new MenuScreen(mGame));
+
+        horizontalImageScroller.update(elapsedTime);
     }
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
-
+        horizontalImageScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
     }
 
     /**

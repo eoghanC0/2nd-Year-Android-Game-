@@ -53,7 +53,7 @@ public class CardDemoScreen extends GameScreen {
         mScreenViewport = new ScreenViewport();
         GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
         // Create info bar
-        infoBar = new InfoBar(mLayerViewport.getWidth() / 2,mLayerViewport.getHeight() - mLayerViewport.getHeight() * 0.05f, mLayerViewport.getWidth(),mLayerViewport.getHeight() * 0.1f, this, "", "Test Player", "4 | 1 | 2", 100);
+        infoBar = new InfoBar(mLayerViewport.getWidth() / 2,mLayerViewport.getHeight() - mLayerViewport.getHeight() * 0.05f, mLayerViewport.getWidth(),mLayerViewport.getHeight() * 0.1f, this, "", "Test Player", "4 | 1 | 2", "100");
     }
     // /////////////////////////////////////////////////////////////////////////
     // Methods
