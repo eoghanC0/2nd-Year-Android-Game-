@@ -12,7 +12,7 @@ import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ScreenManager;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.game.DemoGame;
-import uk.ac.qub.eeecs.game.PackScreen;
+import uk.ac.qub.eeecs.game.cardDemo.screens.PackScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.OptionsScreen;
