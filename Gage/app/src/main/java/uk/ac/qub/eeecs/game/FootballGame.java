@@ -27,7 +27,6 @@ public class FootballGame extends DemoGame {
 
     private final int SAVE_SLOT_MAX = 3;
 
-    private AssetStore mAssetStore;
 
     ///////////////////////////////////////////////////////////////////////////
     // Constructor
@@ -90,7 +89,7 @@ public class FootballGame extends DemoGame {
             gameSavesObj.put("gameLength", gameLength);
             gameSavesObj.put("pitchBackGround", pitchBackGround);
             Log.d("JSON", gameSavesObj.toString());
-            // mAssetStore.writeFile("saves.json",gameSavesObj.toString());
+            mAssetManager.writeFile("saves.json",gameSavesObj.toString());
         }
         catch(JSONException e){
             Log.d("JSON", "Save fail : " + e.getMessage());
