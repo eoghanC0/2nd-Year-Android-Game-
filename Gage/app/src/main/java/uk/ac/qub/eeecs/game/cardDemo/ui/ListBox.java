@@ -142,7 +142,7 @@ public class ListBox extends GameObject {
                     showingPageNum--;
                 }
             } else if (btnNextPage.isPushTriggered()) {
-                if ((int)mBound.getHeight() / 100 * (showingPageNum + 1) < items.size()) {
+                if (isNextButtonEnabled()) {
                     showingPageNum++;
                 }
             }
@@ -193,13 +193,19 @@ public class ListBox extends GameObject {
 
             //Finally, draw the buttons
             paint.reset();
-            if ((int)mBound.getHeight() / 100 * (showingPageNum + 1) < items.size()) {
+            if (isNextButtonEnabled()) {
                 btnNextPage.draw(elapsedTime, graphics2D);
             }
             if (showingPageNum != 0) {
                 btnPreviousPage.draw(elapsedTime, graphics2D);
             }
         }
+    }
+
+    public boolean isNextButtonEnabled() {
+        if ((int)mBound.getHeight() / 100 * (showingPageNum + 1) < items.size())
+            return true;
+        return false;
     }
 
     public void addItem(String item) {items.add(item);}
