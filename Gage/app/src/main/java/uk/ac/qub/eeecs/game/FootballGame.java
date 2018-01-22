@@ -1,10 +1,15 @@
 package uk.ac.qub.eeecs.game;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.util.ArrayList;
+
+import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 
 /**
@@ -19,6 +24,11 @@ public class FootballGame extends DemoGame {
     private int difficulty;
     private int gameLength;
     private String pitchBackGround;
+
+    private final int SAVE_SLOT_MAX = 3;
+
+    private AssetStore mAssetStore;
+
     ///////////////////////////////////////////////////////////////////////////
     // Constructor
     ///////////////////////////////////////////////////////////////////////////
@@ -66,17 +76,83 @@ public class FootballGame extends DemoGame {
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
-    public void saveGame() throws JSONException {
+    public void saveGame(int saveSlot) {
         JSONObject gameSavesObj = new JSONObject();
-        gameSavesObj.put("gameID", gameID);
-        JSONArray clubArray = new JSONArray();
-        clubArray.put(club);
-        gameSavesObj.put("club", clubArray);
+        try {
+            gameSavesObj.put("gameID", gameID);
+            JSONArray clubArray = new JSONArray();
+            clubArray.put(club);
+            gameSavesObj.put("wins", wins);
+            gameSavesObj.put("losses", losses);
+            gameSavesObj.put("draws", draws);
+            gameSavesObj.put("xp", xp);
+            gameSavesObj.put("difficulty", difficulty);
+            gameSavesObj.put("gameLength", gameLength);
+            gameSavesObj.put("pitchBackGround", pitchBackGround);
+            Log.d("JSON", gameSavesObj.toString());
+            // mAssetStore.writeFile("saves.json",gameSavesObj.toString());
+        }
+        catch(JSONException e){
+            Log.d("JSON", "Save fail : " + e.getMessage());
+        }
 
+        //TODO: Save JSON to storage
 
+//        try {
+//            String filePath = this.getActivity().getFilesDir().getPath().toString() + "/saves.json";
+//            File f = new File(filePath);
+//
+//            FileWriter fileWriter = new FileWriter(f);
+//            fileWriter.write(gameSavesObj.toString());
+//            fileWriter.flush();
+//            Log.d("JSON", "Save success");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Log.d("JSON", "Save fail " + e.getMessage());
+//        }
+//        System.out.println(gameSavesObj);
     }
 
     public void loadGame(int gameID) {
         this.gameID = gameID;
+        try {
+            //JSON examples below are just for testing
+            JSONObject selectedSave;
+            //TODO: Obtain JSONs from storage
+            JSONObject save0 = new JSONObject("{\"gameID\":0,\"wins\":0,\"losses\":0,\"draws\":0,\"xp\":0,\"difficulty\":0,\"gameLength\":0,\"pitchBackGround\":\"\"}");
+            JSONObject save1 = new JSONObject("{\"gameID\":1,\"wins\":1,\"losses\":1,\"draws\":1,\"xp\":1,\"difficulty\":1,\"gameLength\":1,\"pitchBackGround\":\"camp nou\"}");
+            JSONObject save2 = new JSONObject("{\"gameID\":2,\"wins\":2,\"losses\":2,\"draws\":2,\"xp\":2,\"difficulty\":2,\"gameLength\":2,\"pitchBackGround\":\"old trafford\"}");
+
+            switch (gameID) {
+                case 0: selectedSave = save0;
+                    break;
+                case 1: selectedSave = save1;
+                    break;
+                case 2: selectedSave = save2;
+                    break;
+                default: Log.d("JSON", "Invalid save slot selected");
+                    return;
+            }
+
+            wins = (int) selectedSave.get("wins");
+            losses = (int) selectedSave.get("losses");
+            draws = (int) selectedSave.get("draws");
+            xp = (int) selectedSave.get("xp");
+            difficulty = (int) selectedSave.get("difficulty");
+            gameLength = (int) selectedSave.get("gameLength");
+            pitchBackGround = selectedSave.get("pitchBackGround").toString();
+
+            //for testing TODO: remove logs
+            Log.d("JSON", String.valueOf(wins));
+            Log.d("JSON", String.valueOf(losses));
+            Log.d("JSON", String.valueOf(draws));
+            Log.d("JSON", String.valueOf(xp));
+            Log.d("JSON", String.valueOf(difficulty));
+            Log.d("JSON", String.valueOf(gameLength));
+            Log.d("JSON", pitchBackGround);
+
+        } catch (JSONException e) {
+            Log.d("JSON", "Load Failed : " + e.getMessage());
+        }
     }
 }
