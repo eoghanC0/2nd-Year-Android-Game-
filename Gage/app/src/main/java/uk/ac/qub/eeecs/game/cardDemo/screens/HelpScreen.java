@@ -79,12 +79,7 @@ public class HelpScreen extends GameScreen {
 
         menuScreenButton = new PushButton(mGame.getScreenHeight() * 0.06f,mGame.getScreenHeight() * 0.94f, mGame.getScreenHeight() * 0.1f,mGame.getScreenHeight() * 0.1f, "LeftArrow", "LeftArrowActive", this);
 
-        infoBar.addNotification("Test notification 1", 1, 5);
-        infoBar.addNotification("Test notification 2", 2, 2);
-        infoBar.addNotification("Test notification 3", -1, 5);
-
-        //horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, 800, mGame.getScreenWidth() * 2, mGame.getScreenHeight() * 0.6f, this);
-        horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, 550, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.75f, this);
+        horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
 
     }
 
