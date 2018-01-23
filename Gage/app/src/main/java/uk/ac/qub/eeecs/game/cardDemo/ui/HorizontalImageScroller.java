@@ -105,11 +105,9 @@ public class HorizontalImageScroller extends GameObject {
         if(height < 0) height = 100;
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("Empty", "img/empty.png");
-        //assetManager.loadAndAddBitmap("TestRed", "img/TestImageRed.png");
         assetManager.loadAndAddBitmap("Test","img/help-image-test.png");
-        assetManager.loadAndAddBitmap("HIS Background", "img/his-background.png");
         bitmaps = new ArrayList<Bitmap>();
-        mBitmap = assetManager.getBitmap("HIS Background");
+        mBitmap = assetManager.getBitmap("Empty");
 
         drawScreenRect.set((int) (position.x - mBound.halfWidth),
                 (int) (position.y - mBound.halfHeight),
@@ -125,13 +123,12 @@ public class HorizontalImageScroller extends GameObject {
         pushButtonRight = new PushButton((mBound.getRight() - (mBound.getWidth() * 0.25f)), position.y, mBound.getWidth() / 2, mBound.getHeight(), "Empty", gameScreen);
 
         // Test images to determine scroller functions as intended
-        assetManager.loadAndAddBitmap("Red", "img/red.png");
+        assetManager.loadAndAddBitmap("Red", "img/help-image-test.png");
         assetManager.loadAndAddBitmap("Green", "img/green.png");
         assetManager.loadAndAddBitmap("Blue", "img/blue.png");
         addBitmap(assetManager.getBitmap("Red"));
         addBitmap(assetManager.getBitmap("Green"));
         addBitmap(assetManager.getBitmap("Blue"));
-
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -158,6 +155,31 @@ public class HorizontalImageScroller extends GameObject {
             int directionInt = direction ? 1 : -1;
             nextBitmapIndex = (currentBitmapIndex + bitmaps.size() + directionInt) % bitmaps.size();
         }
+    }
+
+    /**
+     * Gets the scaled dimensions of a bitmap based on a maximum height
+     * If the height of the bitmap is less than maxHeight, original dimensions are returned
+     * @param maxHeight
+     * @return Vector2 containing the half width and half height of the bitmap
+     */
+    private Vector2 getNewBitmapDimensions(Bitmap bitmap, int maxHeight, boolean occupyFullHeight) {
+        if(maxHeight == 0 || (bitmap.getHeight() < maxHeight && !occupyFullHeight)) return new Vector2(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+
+        float scaleFactor = (float) maxHeight / bitmap.getHeight();
+        int newWidth = (int) (bitmap.getWidth() * scaleFactor);
+        int newHeight = (int) (bitmap.getHeight() * scaleFactor);
+
+        return new Vector2(newWidth / 2, newHeight / 2);
+    }
+
+    /**
+     * Sets the background bitmap of the scroller
+     * @param bitmap
+     */
+    private void setBackground(Bitmap bitmap) {
+        if(!(mBitmap == null)) return;
+        mBitmap = bitmap;
     }
 
     @Override
@@ -191,16 +213,12 @@ public class HorizontalImageScroller extends GameObject {
 
             // Reset distance moved to base value of 0
             distanceMoved = 0;
-            Log.d("DEBUG", "Starting animation moving " + (leftPushed ? "left" : "right") + " Current bitmap:" + currentBitmapIndex + " Next bitmap: " + nextBitmapIndex);
-
         }
 
         // Perform animation if an animation has been triggered
         if(animationTriggered) {
             // TODO: Animation
             boolean isAnimationComplete = false;
-
-            Log.d("DEBUG", "CurrentBitmapVector: " + currentBitmapVector.x +  "," + currentBitmapVector.y + " NextBitmapVector: " + nextBitmapVector.x + "," + nextBitmapVector.y);
 
             // Move current bitmap and next bitmap
             float moveBy = 0;
@@ -211,21 +229,16 @@ public class HorizontalImageScroller extends GameObject {
             nextBitmapVector.add(moveBy, 0);
 
             distanceMoved += Math.abs(moveBy);
-            Log.d("DEBUG", "Distancemoved: " + distanceMoved + " imagedistance: " + imageDistance);
+
             if(distanceMoved >= imageDistance) isAnimationComplete = true;
-            // System.nanoTime() - animationStartTime > (moveTime * 1e+9)
 
             if(isAnimationComplete) {
                 animationTriggered = false;
                 currentBitmapIndex = nextBitmapIndex;
                 currentBitmapVector = new Vector2(position.x, position.y);
                 distanceMoved = 0;
-                Log.d("DEBUG", "Finished animation " + " Current bitmap:" + currentBitmapIndex);
-                Log.d("DEBUG", "Final CurrentBitmapVector: " + currentBitmapVector.x +  "," + currentBitmapVector.y + " NextBitmapVector: " + nextBitmapVector.x + "," + nextBitmapVector.y);
             }
         }
-
-
     }
 
     @Override
@@ -235,20 +248,23 @@ public class HorizontalImageScroller extends GameObject {
         super.draw(elapsedTime, graphics2D);
 
         if(currentBitmapIndex == -1) return;
+        Vector2 currentBitmapDimensions = getNewBitmapDimensions(bitmaps.get(currentBitmapIndex), (int) mBound.getHeight(), true);
 
         Rect currentBitmapRect = new Rect();
-        currentBitmapRect.set((int) (currentBitmapVector.x - mBound.halfWidth * 0.5),
-                (int) (position.y - mBound.halfHeight),
-                (int) (currentBitmapVector.x + mBound.halfWidth * 0.5),
-                (int) (position.y + mBound.halfHeight));
+        currentBitmapRect.set((int) (currentBitmapVector.x - currentBitmapDimensions.x),
+                (int) (position.y - currentBitmapDimensions.y),
+                (int) (currentBitmapVector.x + currentBitmapDimensions.x),
+                (int) (position.y + currentBitmapDimensions.y));
         graphics2D.drawBitmap(bitmaps.get(currentBitmapIndex), null, currentBitmapRect, null);
 
         if(nextBitmapIndex == -1) return;
+        Vector2 nextBitmapDimensions = getNewBitmapDimensions(bitmaps.get(nextBitmapIndex), (int) mBound.getHeight(), true);
+
         Rect nextBitmapRect = new Rect();
-        nextBitmapRect.set((int) (nextBitmapVector.x - mBound.halfWidth * 0.5),
-                (int) (position.y - mBound.halfHeight),
-                (int) (nextBitmapVector.x + mBound.halfWidth * 0.5),
-                (int) (position.y + mBound.halfHeight));
+        nextBitmapRect.set((int) (nextBitmapVector.x - nextBitmapDimensions.x),
+                (int) (position.y - nextBitmapDimensions.y),
+                (int) (nextBitmapVector.x + nextBitmapDimensions.x),
+                (int) (position.y + nextBitmapDimensions.y));
         graphics2D.drawBitmap(bitmaps.get(nextBitmapIndex), null, nextBitmapRect, null);
 
     }
