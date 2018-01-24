@@ -14,6 +14,7 @@ import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
+import uk.ac.qub.eeecs.game.cardDemo.ui.iHorizontalImageScroller;
 
 /**
  * Created by eimhin on 27/11/2017.
@@ -80,6 +81,7 @@ public class HelpScreen extends GameScreen {
         menuScreenButton = new PushButton(mGame.getScreenHeight() * 0.06f,mGame.getScreenHeight() * 0.94f, mGame.getScreenHeight() * 0.1f,mGame.getScreenHeight() * 0.1f, "LeftArrow", "LeftArrowActive", this);
 
         horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
+        horizontalImageScroller.setDisplayMaxBitmaps(true, 60);
 
     }
 
