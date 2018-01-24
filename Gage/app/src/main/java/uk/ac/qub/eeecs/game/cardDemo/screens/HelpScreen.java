@@ -66,7 +66,6 @@ public class HelpScreen extends GameScreen {
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
         //GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
-        Log.d("DEBUG", "SCREEN WIDTH: " + mGame.getScreenWidth() + " SCREEN HEIGHT: " + mGame.getScreenHeight());
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "H E L P  S C R E E N", "");
 
         AssetStore assetManager = mGame.getAssetManager();
@@ -82,7 +81,6 @@ public class HelpScreen extends GameScreen {
 
         horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
         horizontalImageScroller.setDisplayMaxBitmaps(true, 60);
-
     }
 
     @Override
