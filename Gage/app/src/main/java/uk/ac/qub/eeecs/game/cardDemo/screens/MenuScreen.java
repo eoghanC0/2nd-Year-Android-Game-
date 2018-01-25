@@ -69,7 +69,7 @@ public class MenuScreen extends GameScreen {
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
 
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "H E L P  S C R E E N", "");
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "M A I N  M E N U", "0 | 0 | 0");
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
@@ -97,17 +97,6 @@ public class MenuScreen extends GameScreen {
                 spacingX/2, spacingY * 2.7f, spacingX/2, spacingY/2, "musicIcon", this);
         mPacksButton = new PushButton(
                 spacingX * 3.6f, spacingY * 1.0f, spacingX, spacingY, "menuButtons", this);
-
-        //Get the music file from the resources.
-        //AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
-        //Plays the background song
-        //myMusic = new Music(afd);
-        //myMusic.play();
-
-
-        infoBar.addNotification("Test notification 1", 1, 5);
-        infoBar.addNotification("Test notification 2", 2, 2);
-        infoBar.addNotification("Test notification 3", -1, 5);
     }
 
     // /////////////////////////////////////////////////////////////////////////
