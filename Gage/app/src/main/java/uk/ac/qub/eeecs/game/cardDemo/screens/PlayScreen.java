@@ -14,7 +14,10 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.Button;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.LayerViewport;
+import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
+import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
  * Created by stephenmcveigh on 04/12/2017.
@@ -32,11 +35,17 @@ public class PlayScreen extends GameScreen {
     private PushButton mScenarioButton;
     public Match currentMatch;
 
+    private LayerViewport mLayerViewport;
+    private ScreenViewport mScreenViewport;
+    private InfoBar infoBar;
+
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
     public PlayScreen(Game game) {
         super("PlayScreen", game);
+        mLayerViewport = new LayerViewport();
+        mScreenViewport = new ScreenViewport();
         currentMatch = new Match(this);
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("PlayScreenBackground", "img/pitch.png");
@@ -51,22 +60,29 @@ public class PlayScreen extends GameScreen {
 
         playerScore = currentMatch.getPlayerAScore();
         CPUScore = currentMatch.getPlayerBScore();
+
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "M A I N  M E N U", "0 | 0 | 0");
     }
 
     // /////////////////////////////////////////////////////////////////////////
     // Methods
     // /////////////////////////////////////////////////////////////////////////
+    private void updateInfoBar() {
+        infoBar.setAreaOneText(String.format("Player %1$d | %2$d CPU", playerScore, CPUScore));
+        infoBar.setAreaTwoText("Currently at MIDFIELD");
+        infoBar.setAreaThreeText(String.format("%2.2f", currentGameTime / totalGameTimeLength * 90));
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         mScenarioButton.update(elapsedTime);
-
 
         currentGameTime += elapsedTime.stepTime;
         if (mScenarioButton.isPushTriggered()){
             currentMatch.scenario();
         }
 
-
+        updateInfoBar();
     }
 
     @Override
@@ -79,12 +95,9 @@ public class PlayScreen extends GameScreen {
         paint.reset();
         paint.setTextSize(45f);
         paint.setColor(Color.BLUE);
-        graphics2D.drawText("Player: " + playerScore + " - " + CPUScore + " :CPU", 50, 50, paint);
-        graphics2D.drawText("Timer : " + String.format("%2.2f", currentGameTime/totalGameTimeLength*90), this.getGame().getScreenWidth() - 500, 50, paint);
-        graphics2D.drawText("State : " + ( currentMatch.getGameState().name() ), this.getGame().getScreenWidth() - 1500, 50, paint);
 
         mScenarioButton.draw(elapsedTime, graphics2D);
 
-
+        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
     }
 }
