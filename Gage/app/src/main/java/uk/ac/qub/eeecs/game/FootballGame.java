@@ -33,9 +33,6 @@ public class FootballGame extends DemoGame {
 
     private final int SAVE_SLOT_MAX = 3;
 
-
-    //AssetStore assetManager = getAssetManager();
-
     ///////////////////////////////////////////////////////////////////////////
     // Constructor
     ///////////////////////////////////////////////////////////////////////////
@@ -53,10 +50,6 @@ public class FootballGame extends DemoGame {
         difficulty = 0;
         gameLength = 0;
         pitchBackGround = "";
-
-      //  assetManager = getAssetManager();
-  //      saveGame(1);
-//        Log.d("JSON", assetManager.readFile("test5.txt"));
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -87,11 +80,9 @@ public class FootballGame extends DemoGame {
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
-    public void saveGame(int saveSlot, Context context) {
-        JSONObject gameSavesObj = new JSONObject();
-        String filePath = context.getFilesDir().getPath().toString() + "/save" + saveSlot + ".json";
-        File f = new File(filePath);
+    public void saveGame(int saveSlot) {
         try {
+            JSONObject gameSavesObj = new JSONObject();
             gameSavesObj.put("gameID", gameID);
             JSONArray clubArray = new JSONArray();
             clubArray.put(club);
@@ -102,40 +93,16 @@ public class FootballGame extends DemoGame {
             gameSavesObj.put("difficulty", difficulty);
             gameSavesObj.put("gameLength", gameLength);
             gameSavesObj.put("pitchBackGround", pitchBackGround);
-            //Log.d("JSON", gameSavesObj.toString());
-            //Log.d("JSON", mAssetManager.readFile("saves.json"));
+            mAssetManager.writeFile("save_" + saveSlot + ".json", gameSavesObj.toString());
         }
         catch(JSONException e){
             Log.d("JSON", "Save fail : " + e.getMessage());
         }
-
-        try {
-            Log.d("JSON", filePath);
-            FileWriter fileWriter = new FileWriter(f);
-            fileWriter.write(gameSavesObj.toString());
-            fileWriter.flush();
-            Log.d("JSON", "Save success");
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("JSON", "Save fail " + e.getMessage());
-        }
-//        System.out.println(gameSavesObj);
     }
 
-    public void loadGame(int saveSlot, Context context) {
-        JSONObject gameSavesObj = new JSONObject();
-        //TODO Limit to 3 save slots
-        String filePath = context.getFilesDir().getPath().toString() + "/save" + saveSlot + ".json";
-        File f = new File(filePath);
+    public void loadGame(int saveSlot) {
         try {
-            BufferedReader in = new BufferedReader(new FileReader(f));
-            gameSavesObj = new JSONObject(in.readLine());
-            Log.d("JSON", "Load Success: ");
-        } catch (Exception e){
-            e.printStackTrace();
-            Log.d("JSON", "Load fail " + e.getMessage());
-        }
-        try {
+            JSONObject gameSavesObj = new JSONObject(mAssetManager.readFile("save_" + saveSlot + ".json"));
 //            //JSON examples below are just for testing
 //            JSONObject selectedSave;
 //            //TODO: Obtain JSONs from storage

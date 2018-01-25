@@ -80,7 +80,7 @@ public class HelpScreen extends GameScreen {
         menuScreenButton = new PushButton(mGame.getScreenHeight() * 0.06f,mGame.getScreenHeight() * 0.94f, mGame.getScreenHeight() * 0.1f,mGame.getScreenHeight() * 0.1f, "LeftArrow", "LeftArrowActive", this);
 
         horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
-        horizontalImageScroller.setDisplayMaxBitmaps(true, 60);
+        //horizontalImageScroller.setDisplayMaxBitmaps(true, 60);
     }
 
     @Override
