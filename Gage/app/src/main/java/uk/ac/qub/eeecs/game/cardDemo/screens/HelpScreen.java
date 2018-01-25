@@ -14,7 +14,7 @@ import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
-import uk.ac.qub.eeecs.game.cardDemo.ui.iHorizontalImageScroller;
+import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 
 /**
  * Created by eimhin on 27/11/2017.

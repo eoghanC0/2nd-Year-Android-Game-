@@ -67,6 +67,16 @@ public class AssetStore {
     // /////////////////////////////////////////////////////////////////////////
     // Store //
     // /////////////////////////////////////////////////////////////////////////
+
+    public String readAsset(String fileName) {
+        try {
+            return mFileIO.readAsset(fileName);
+        } catch (IOException e){
+            Log.e("Error","The asset file could not be read", e);
+        }
+        return "";
+    }
+
     /**
      * @return an array of all files stores in external storage
      */

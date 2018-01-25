@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
@@ -78,8 +79,17 @@ public class FileIO {
      * @return InputStream that can be used to read the asset
      * @throws IOException if the asset cannot be opened
      */
-    public InputStream readAsset(String assetName) throws IOException {
-        return mAssetManager.open(assetName);
+    public String readAsset(String assetName) throws IOException {
+        InputStream in = mAssetManager.open(assetName);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuilder out = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            out.append(line);
+        }
+        reader.close();
+        in.close();
+        return out.toString();
     }
 
     /**
