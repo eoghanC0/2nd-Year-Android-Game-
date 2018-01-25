@@ -49,8 +49,8 @@ public class PlayScreen extends GameScreen {
         totalGameTimeLength = mGame.getIntPreference("GameLength");
         currentGameTime = 0.0;
 
-        playerScore = 0;
-        CPUScore = 0;
+        playerScore = currentMatch.getPlayerAScore();
+        CPUScore = currentMatch.getPlayerBScore();
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,10 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     @Override
     public void update(ElapsedTime elapsedTime) {
+
         currentGameTime += elapsedTime.stepTime;
+
+
     }
 
     @Override
@@ -74,7 +77,7 @@ public class PlayScreen extends GameScreen {
         graphics2D.drawText("Timer : " + String.format("%2.2f", currentGameTime/totalGameTimeLength*90), this.getGame().getScreenWidth() - 500, 50, paint);
         graphics2D.drawText("State : " + ( currentMatch.getGameState().name() ), this.getGame().getScreenWidth() - 900, 50, paint);
 
-        //mScenarioButton.draw(elapsedTime, graphics2D);
+        mScenarioButton.draw(elapsedTime, graphics2D);
 
 
     }

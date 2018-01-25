@@ -44,6 +44,53 @@ public class Match {
 
     public GameState getGameState() {return gameState;}
 
+    public void scenario(){
+        MatchEvent newEvent = new MatchEvent(gameState);
+        String winner = newEvent.runScenario();
+        if (winner.equals("PlayerA")){
+            if (gameState.equals(GameState.PLAYERADANGEROUSATTACK)){
+                setPlayerAScore(getPlayerAScore() + 1);
+                setGameState(gameState.MIDFIELD);
+            } else{
+                switch (getGameState()){
+                    case MIDFIELD:
+                        setGameState(gameState.PLAYERAATTACK);
+                        break;
+                    case PLAYERAATTACK:
+                        setGameState(gameState.PLAYERADANGEROUSATTACK);
+                        break;
+                    case PLAYERBATTACK:
+                        setGameState(gameState.MIDFIELD);
+                        break;
+                    case PLAYERBDANGEROUSATTACK:
+                        setGameState(gameState.PLAYERBATTACK);
+                        break;
+                }
+            }
+        } else {
+            if (gameState.equals(GameState.PLAYERBDANGEROUSATTACK)){
+                setPlayerAScore(getPlayerBScore() + 1);
+                setGameState(gameState.MIDFIELD);
+            } else{
+                switch (getGameState()){
+                    case MIDFIELD:
+                        setGameState(gameState.PLAYERBATTACK);
+                        break;
+                    case PLAYERBATTACK:
+                        setGameState(gameState.PLAYERBDANGEROUSATTACK);
+                        break;
+                    case PLAYERAATTACK:
+                        setGameState(gameState.MIDFIELD);
+                        break;
+                    case PLAYERADANGEROUSATTACK:
+                        setGameState(gameState.PLAYERAATTACK);
+                        break;
+                }
+            }
+        }
+
+    }
+
 
 
 }

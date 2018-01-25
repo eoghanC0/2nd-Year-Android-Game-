@@ -47,7 +47,7 @@ public class CardDemoScreen extends GameScreen {
         super("CardScreen", game);
 
         // Create the player card
-        mCard = new Card(500, 500, this);
+       // mCard = new Card(500, 500, this);
         // Create the view ports
         mLayerViewport = new LayerViewport(240, 160, 240, 160);
         mScreenViewport = new ScreenViewport();

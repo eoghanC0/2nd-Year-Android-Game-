@@ -4,6 +4,8 @@ import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Random;
 
+import uk.ac.qub.eeecs.gage.world.GameObject;
+import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
 
 /**
@@ -13,20 +15,24 @@ import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
 public class MatchEvent {
 
     private Match.GameState gameState;
+    GameScreen mGameScreen;
 
     public MatchEvent(Match.GameState gameState){
         gameState = gameState;
     }
 
-    public void runScenario(){
+    public String runScenario(){
         String chosenScenario = generateSccenario();
         Card[] selectedPlayers = selectPlayers(chosenScenario);
         int[] stats = getStats(chosenScenario, selectedPlayers[0], selectedPlayers[1]);
-        //scenarioWinner()
+        String winner = (scenarioWinner(stats[0], stats[1]));
+
+        return winner;
+
     }
 
     //method to generate a random scenario
-    public String generateSccenario(){
+    private String generateSccenario(){
 
         ArrayList<String> possibleScenarios = new ArrayList<String>();
         switch (gameState){
@@ -79,7 +85,10 @@ public class MatchEvent {
 
     private Card[] selectPlayers(String chosenScenario){
         Card[] selectedPlayers = new Card[2];
-
+        Card randomCardA = new Card(100f, 100f, 100f, mGameScreen, true, 80, 85 );
+        Card randomCardB = new Card(100f, 100f, 100f, mGameScreen, true, 70, 75 );
+        selectedPlayers[0] = randomCardA;
+        selectedPlayers[1] = randomCardB;
 
         return selectedPlayers;
     }
@@ -94,7 +103,7 @@ public class MatchEvent {
            }
 
 
-           /*switch (scenario[i]) {
+           switch (scenario[i]) {
                case "DEF":
                    stats[i] = currentPlayer.getDefending();
                    break;
@@ -117,7 +126,7 @@ public class MatchEvent {
                    stats[i] = currentPlayer.getRating();
                    break;
              }
-                   */
+
 
 
        }
