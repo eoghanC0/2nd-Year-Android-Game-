@@ -463,4 +463,16 @@ public class InfoBar extends GameObject {
         return notificationDisplayed;
     }
 
+    public void setAreaOneText(String areaOneText) {
+        this.areaOneText = areaOneText;
+    }
+
+    public void setAreaTwoText(String areaTwoText) {
+        this.areaTwoText = areaTwoText;
+    }
+
+    public void setAreaThreeText(String areaThreeText) {
+        this.areaThreeText = areaThreeText;
+    }
+
 }
