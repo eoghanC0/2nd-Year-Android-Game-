@@ -22,6 +22,11 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 public class ListBox extends GameObject {
     //////////////////////////////////////////////////////
+    //  Constants
+    //////////////////////////////////////////////////////
+    private int ITEM_HEIGHT = 100;
+
+    //////////////////////////////////////////////////////
     //  Properties
     //////////////////////////////////////////////////////
     /*
@@ -56,11 +61,6 @@ public class ListBox extends GameObject {
     private int textColor;
 
     /*
-    True when the listbox should be displayed and enabled, false otherwise
-     */
-    private boolean visible = true;
-
-    /*
     Keeps track of the page number that is currently displayed
      */
     private int showingPageNum = 0;
@@ -74,7 +74,7 @@ public class ListBox extends GameObject {
     //  Constructors
     //////////////////////////////////////////////////////
     public ListBox(float x, float y, float width, float height, GameScreen gameScreen) {
-        //The height will be rounded to the nearest 100, since each selection is 100 high
+        //The height will be rounded to the nearest ITEM_HEIGHT -- Cannot be referenced here until super is called (100)
         super(x, y, width, Math.round(((int)height + 50)/100)*100, null, gameScreen);
         this.items = new ArrayList<>();
         this.selectedIndex = -1;
@@ -82,6 +82,54 @@ public class ListBox extends GameObject {
         this.borderColor = Color.BLACK;
         this.selectionColor = Color.BLUE;
         this.textColor = Color.BLACK;
+        loadAssets();
+        btnPreviousPage = new PushButton(mBound.getRight() + 30, mBound.getBottom() + 25, 60,50, "upArrow","upArrowActive", gameScreen);
+        btnNextPage = new PushButton(mBound.getRight() + 30, mBound.getTop() - 25,60, 50,"downArrow","downArrowActive",  gameScreen);
+    }
+
+    //////////////////////////////////////////////////////
+    //  Getters
+    //////////////////////////////////////////////////////
+    public int getSelectedIndex() { return selectedIndex;}
+    public int getShowingPageNum() {return showingPageNum;}
+    public ArrayList<String> getItems() {return items;}
+
+    //////////////////////////////////////////////////////
+    //  Setters
+    //////////////////////////////////////////////////////
+    public void setArray(ArrayList<String> array) {this.items = new ArrayList<>(array);}
+    public void setBackColor(int color) {backColor = color;}
+    public void setBorderColor(int color) {borderColor = color;}
+    public void setSelectionColor(int color) {selectionColor = color;}
+    public void setTextColor(int color) {textColor = color;}
+
+    //////////////////////////////////////////////////////
+    //  Methods
+    //////////////////////////////////////////////////////
+    private void handleTouchEvents(Float touchY) {
+        if (touchY > mBound.getTop() || touchY < mBound.getBottom()) return;
+        int drawnIndex = (int)((touchY - mBound.getBottom()) / 100);
+        selectedIndex = (int)(showingPageNum * mBound.getHeight()/ 100 + drawnIndex);
+        if (selectedIndex > items.size() - 1) selectedIndex = -1;
+    }
+
+    private void handlePrevButtonTrigger() {
+        if (showingPageNum > 0) {
+            showingPageNum--;
+        }
+    }
+
+    private void handleNextButtonTrigger() {
+        if (isNextButtonEnabled()) {
+            showingPageNum++;
+        }
+    }
+
+    private int getNumberOfItemsPerPage() {
+        return (int)(mBound.getHeight() / ITEM_HEIGHT);
+    }
+
+    private void loadAssets() {
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         if (assetManager.getBitmap("boxBackground") == null)
             assetManager.loadAndAddBitmap("boxBackground", "img/white.png");
@@ -94,121 +142,90 @@ public class ListBox extends GameObject {
         if (assetManager.getBitmap("upArrowActive") == null)
             assetManager.loadAndAddBitmap("upArrowActive", "img/UpArrowActive.png");
         mBitmap = assetManager.getBitmap("boxBackground");
-        btnPreviousPage = new PushButton(mBound.getRight() + 30, mBound.getBottom() + 25, 60,50, "upArrow","upArrowActive", gameScreen);
-        btnNextPage = new PushButton(mBound.getRight() + 30, mBound.getTop() - 25,60, 50,"downArrow","downArrowActive",  gameScreen);
     }
 
-    //////////////////////////////////////////////////////
-    //  Getters
-    //////////////////////////////////////////////////////
-    public int getSelectedIndex() { return selectedIndex;}
-    public boolean isVisible() {return visible;}
-    public int getShowingPageNum() {return showingPageNum;}
-
-    //////////////////////////////////////////////////////
-    //  Setters
-    //////////////////////////////////////////////////////
-    public void setArray(ArrayList<String> array) {this.items = new ArrayList<>(array);}
-    public void setBackColor(int color) {backColor = color;}
-    public void setBorderColor(int color) {borderColor = color;}
-    public void setSelectionColor(int color) {selectionColor = color;}
-    public void setTextColor(int color) {textColor = color;}
-    public void setVisible(boolean isVisible) {visible = isVisible;}
-
-    //////////////////////////////////////////////////////
-    //  Methods
-    //////////////////////////////////////////////////////
     public void update(ElapsedTime elapsedTime) {
-        if (visible) {  //Only update if visible and enabled
-            // Consider any touch events occurring in this update
-            Input input = mGameScreen.getGame().getInput();
+        // Consider any touch events occurring in this update
+        Input input = mGameScreen.getGame().getInput();
 
-            // Check for a touch event on this listBox
-            for (TouchEvent touchEvent : input.getTouchEvents()) {
-                if (getBound().contains(touchEvent.x, touchEvent.y)) {
-                    int drawnIndex = (int)((touchEvent.y - mBound.getBottom()) / 100);
-                    selectedIndex = (int)(showingPageNum * mBound.getHeight()/ 100 + drawnIndex);
-                    if (selectedIndex > items.size() - 1) selectedIndex = -1;
-                }
+        // Check for a touch event on this listBox
+        for (TouchEvent touchEvent : input.getTouchEvents()) {
+            if (getBound().contains(touchEvent.x, touchEvent.y)) {
+                handleTouchEvents(touchEvent.y);
             }
+        }
 
-            //Update the two buttons
-            btnPreviousPage.update(elapsedTime);
-            btnNextPage.update(elapsedTime);
+        //Update the two buttons
+        btnPreviousPage.update(elapsedTime);
+        btnNextPage.update(elapsedTime);
 
-            //Check for interaction with these buttons to switch between page numbers and handle appropriately
-            if (btnPreviousPage.isPushTriggered()) {
-                if (showingPageNum != 0) {
-                    showingPageNum--;
-                }
-            } else if (btnNextPage.isPushTriggered()) {
-                if (isNextButtonEnabled()) {
-                    showingPageNum++;
-                }
-            }
+        //Check for interaction with these buttons to switch between page numbers and handle appropriately
+        if (btnPreviousPage.isPushTriggered()) {
+            handlePrevButtonTrigger();
+        } else if (btnNextPage.isPushTriggered()) {
+           handleNextButtonTrigger();
         }
     }
 
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        if (visible) {  //Only draw if visible
-            drawScreenRect.set((int) (position.x - mBound.halfWidth),
-                    (int) (position.y - mBound.halfHeight),
-                    (int) (position.x + mBound.halfWidth),
-                    (int) (position.y + mBound.halfHeight));
+        drawScreenRect.set((int) (position.x - mBound.halfWidth),
+                (int) (position.y - mBound.halfHeight),
+                (int) (position.x + mBound.halfWidth),
+                (int) (position.y + mBound.halfHeight));
 
-            Paint paint = mGameScreen.getGame().getPaint(); //Get the game's paint object
+        Paint paint = mGameScreen.getGame().getPaint(); //Get the game's paint object
 
-            //Draw the border
-            paint.setColor(borderColor);
-            graphics2D.drawRect(mBound.getLeft() - 10, mBound.getBottom() - 10, mBound.getRight(), mBound.getTop() + 10, paint);
-            graphics2D.drawRect(mBound.getRight(), mBound.getBottom() - 10, mBound.getRight() + 60, mBound.getTop() + 10, paint);
+        //Draw the border
+        paint.setColor(borderColor);
+        graphics2D.drawRect(mBound.getLeft() - 10, mBound.getBottom() - 10, mBound.getRight(), mBound.getTop() + 10, paint);
+        graphics2D.drawRect(mBound.getRight(), mBound.getBottom() - 10, mBound.getRight() + 60, mBound.getTop() + 10, paint);
 
-            //Draw the listbox itself
-            paint.reset();
-            paint.setColorFilter(new LightingColorFilter(backColor, 0));
-            graphics2D.drawBitmap(mBitmap, null, drawScreenRect, paint);
+        //Draw the listbox itself
+        paint.reset();
+        paint.setColorFilter(new LightingColorFilter(backColor, 0));
+        graphics2D.drawBitmap(mBitmap, null, drawScreenRect, paint);
 
-            //Draw the highlight on the selected index
-            paint.reset();
-            paint.setColor(selectionColor);
-            if (selectedIndex / (int)(mBound.getHeight() / 100) == showingPageNum && selectedIndex > -1) {
-                int rectIndex = selectedIndex % (int)(mBound.getHeight() / 100);
-                graphics2D.drawRect(mBound.getLeft(),mBound.getBottom() + rectIndex * 100,  mBound.getRight(), mBound.getBottom() + (rectIndex + 1) * 100, paint);
+        //Draw the highlight on the selected index
+        paint.reset();
+        paint.setColor(selectionColor);
+        if (selectedIndex / getNumberOfItemsPerPage() == showingPageNum && selectedIndex > -1) {
+            int rectIndex = selectedIndex % getNumberOfItemsPerPage();
+            graphics2D.drawRect(mBound.getLeft(),mBound.getBottom() + rectIndex * 100,  mBound.getRight(), mBound.getBottom() + (rectIndex + 1) * 100, paint);
+        }
+
+        //Draw the text
+        paint.reset();
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(30);
+        for (int i = showingPageNum * getNumberOfItemsPerPage(); i < (showingPageNum + 1) * getNumberOfItemsPerPage(); i++) {
+            if (i == items.size()) break;
+            paint.setColor(textColor);
+            graphics2D.drawText(items.get(i), position.x, mBound.getBottom() + 60 + (ITEM_HEIGHT * (i - showingPageNum * getNumberOfItemsPerPage())), paint);
+            paint.setColor(Color.GRAY);
+            float lineY = mBound.getBottom() + (ITEM_HEIGHT * (i + 1 - showingPageNum * getNumberOfItemsPerPage()));
+            if (lineY < mBound.getTop()) {
+                graphics2D.drawLine(mBound.getLeft() + 10, lineY, mBound.getRight() - 10, lineY, paint);
             }
+        }
 
-            //Draw the text
-            paint.reset();
-            paint.setTextAlign(Paint.Align.CENTER);
-            paint.setTextSize(30);
-            for (int i = showingPageNum * (int)(mBound.getHeight() / 100); i < showingPageNum * (int)(mBound.getHeight() / 100) + (int)(mBound.getHeight() / 100); i++) {
-                if (i == items.size()) break;
-                paint.setColor(textColor);
-                graphics2D.drawText(items.get(i), position.x, mBound.getBottom() + 60 + (100 * (i - showingPageNum * (int)(mBound.getHeight() / 100))), paint);
-                paint.setColor(Color.GRAY);
-                float lineY = mBound.getBottom() + (100 * (i + 1 - showingPageNum * (int)(mBound.getHeight() / 100)));
-                if (lineY < mBound.getTop()) {
-                    graphics2D.drawLine(mBound.getLeft() + 10, lineY, mBound.getRight() - 10, lineY, paint);
-                }
-            }
-
-            //Finally, draw the buttons
-            paint.reset();
-            if (isNextButtonEnabled()) {
-                btnNextPage.draw(elapsedTime, graphics2D);
-            }
-            if (showingPageNum != 0) {
-                btnPreviousPage.draw(elapsedTime, graphics2D);
-            }
+        //Finally, draw the buttons
+        paint.reset();
+        if (isNextButtonEnabled()) {
+            btnNextPage.draw(elapsedTime, graphics2D);
+        }
+        if (showingPageNum > 0) {
+            btnPreviousPage.draw(elapsedTime, graphics2D);
         }
     }
 
-    public boolean isNextButtonEnabled() {
-        if ((int)mBound.getHeight() / 100 * (showingPageNum + 1) < items.size())
+    private boolean isNextButtonEnabled() {
+        if (getNumberOfItemsPerPage() * (showingPageNum + 1) < items.size())
             return true;
         return false;
     }
 
     public void addItem(String item) {items.add(item);}
+
     public void removeItem(int index) {
         if (index == selectedIndex) {
             selectedIndex = -1;
