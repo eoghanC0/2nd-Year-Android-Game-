@@ -1,7 +1,6 @@
 package uk.ac.qub.eeecs.game.cardDemo.ui;
 
 import android.graphics.Bitmap;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
@@ -43,7 +42,7 @@ import uk.ac.qub.eeecs.gage.world.ScreenViewport;
  *      Scroller cycles in a loop
  *
  * Default Settings:
- * - multiBitmapMode = false
+ * - multiMode = false
  * - selectMode = false
  *
  * TODO: Create tests.
@@ -59,37 +58,32 @@ public class HorizontalImageScroller extends GameObject {
     // /////////////////////////////////////////////////////////////////////////
 
     /**
-     * All the images to be displayed
+     * Index of currently displayed item
      */
-    private ArrayList<Bitmap> bitmaps;
+    private int currentItemIndex = -1;
 
     /**
-     * Index of currently displayed bitmap
+     * Index of next item to be displayed
      */
-    private int currentBitmapIndex = -1;
+    private int nextItemIndex = -1;
 
     /**
-     * Index of next bitmap to be displayed
+     * Vector position of current item
      */
-    private int nextBitmapIndex = -1;
+    private Vector2 currentItemPosition;
 
     /**
-     * Vector position of current bitmap
+     * Vector position of current item
      */
-    private Vector2 currentBitmapVector;
+    private Vector2 nextItemPosition;
 
     /**
-     * Vector position of current bitmap
+     * Distance between moving batches of items. Used to calculate how far to move
      */
-    private Vector2 nextBitmapVector;
+    private float itemDistance = 0;
 
     /**
-     * Distance between bitmaps. Used to calculate how far to move
-     */
-    private float imageDistance = 0;
-
-    /**
-     * Distance moved by bitmaps
+     * Distance moved by items
      */
     private float distanceMoved = 0;
 
@@ -106,18 +100,13 @@ public class HorizontalImageScroller extends GameObject {
     private boolean scrollDirection = false;
 
     /**
-     * Push buttons to change the bitmap displayed
+     * Push buttons to activate scroller
      */
     private PushButton pushButtonLeft;
     private PushButton pushButtonRight;
 
     /**
-     * Paint object for drawing bitmaps
-     */
-    private Paint mPaint = new Paint();
-
-    /**
-     * MULTI-BITMAP VARIABLES
+     * MULTI MODE VARIABLES
      */
 
     /**
@@ -128,47 +117,32 @@ public class HorizontalImageScroller extends GameObject {
      * = = = = = = = = = = = = =
      * This should only be used if the bitmaps all have the same dimensions
      */
-    private boolean multiBitmapMode = false;
+    private boolean multiMode = false;
 
     /**
      * Maximum bitmaps that can be displayed
      */
-    private int maxDisplayedBitmaps = 0;
+    private int maxDisplayedItems = 0;
 
     /**
      * Spacing between bitmaps
      */
-    private int maxBitmapSpacing = 0;
+    private int maxItemSpacing = 0;
 
     /**
      * Absolute maximum number of bitmaps that can be displayed at a time
      */
-    private final int MAX_DISPLAYED_BITMAPS_ALLOWED = 15;
+    private final int MAX_DISPLAYED_ITEMS_ALLOWED = 15;
 
     /**
      * Dimensions of bitmaps
      */
-    private Vector2 maxBitmapDimensions = new Vector2();
-
-    /**
-     * Indexes used to retrieve bitmaps from bitmaps ArrayList for currently displayed bitmaps
-     */
-    private int[] currentBitmapIndexes = new int[MAX_DISPLAYED_BITMAPS_ALLOWED];
-
-    /**
-     * Indexes used to retrieve bitmaps from bitmaps ArrayList for next displayed bitmaps
-     */
-    private int[] nextBitmapIndexes = new int[MAX_DISPLAYED_BITMAPS_ALLOWED];
+    private Vector2 maxItemDimensions = new Vector2();
 
     /**
      * Positions of currently displayed bitmaps
      */
-    private Vector2[] currentBitmapVectors = new Vector2[MAX_DISPLAYED_BITMAPS_ALLOWED];
-
-    /**
-     * Positions of next displayed bitmaps
-     */
-    private Vector2[] nextBitmapVectors = new Vector2[MAX_DISPLAYED_BITMAPS_ALLOWED];
+    private Vector2[] currentItemPositions = new Vector2[MAX_DISPLAYED_ITEMS_ALLOWED];
 
     /**
      * INTERACTIVITY VARIABLES
@@ -177,18 +151,17 @@ public class HorizontalImageScroller extends GameObject {
     /**
      * Whether or not selecting is allowed
      */
-    private boolean selectMode = true;
+    private boolean selectMode = false;
 
     /**
      * Tells whether a bitmap has been selected
      */
-    private boolean bitmapSelected = false;
+    private boolean itemSelected = false;
 
     /**
-     * Stores the index of the bitmap currently selected
-     * Index is used to get the bitmap from currentBitmap's
+     * Stores the index of the item currently selected
      */
-    private int selectedBitmapIndex;
+    private int selectedItemIndex;
 
     /**
      * Determines whether a bitmap select animation is occuring
@@ -217,6 +190,14 @@ public class HorizontalImageScroller extends GameObject {
      */
     private BoundingBox selectBound = new BoundingBox();
 
+    /* * * * * *
+        NEW VARIABLES
+     */
+    /**
+     * ArrayList containing all the scroller's items
+     */
+    private ArrayList<ImageScrollerItem> imageScrollerItems = new ArrayList<ImageScrollerItem>();
+
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
@@ -236,7 +217,6 @@ public class HorizontalImageScroller extends GameObject {
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("Empty", "img/empty.png");
         assetManager.loadAndAddBitmap("Test","img/help-image-test.png");
-        bitmaps = new ArrayList<Bitmap>();
         mBitmap = assetManager.getBitmap("Empty");
 
         drawScreenRect.set((int) (position.x - mBound.halfWidth),
@@ -244,15 +224,10 @@ public class HorizontalImageScroller extends GameObject {
                 (int) (position.x + mBound.halfWidth),
                 (int) (position.y + mBound.halfHeight));
 
-        currentBitmapVector = new Vector2(position.x,position.y);
-        nextBitmapVector = new Vector2(position.x + imageDistance,position.y);
+        currentItemPosition = new Vector2(position.x,position.y);
+        calculateNextSingleVector();
 
-        for (int i = 0; i < MAX_DISPLAYED_BITMAPS_ALLOWED; i++) {
-            currentBitmapVectors[i] = new Vector2();
-            nextBitmapVectors[i] = new Vector2();
-        }
-
-        imageDistance = mBound.getWidth();
+        itemDistance = mBound.getWidth();
 
         // Buttons occupy whole scroller
         //pushButtonLeft = new PushButton((mBound.getLeft() + (mBound.getWidth() * 0.25f)), position.y, mBound.getWidth() / 2, mBound.getHeight(), "Empty", gameScreen);
@@ -278,16 +253,20 @@ public class HorizontalImageScroller extends GameObject {
         assetManager.loadAndAddBitmap("Card 6", "img/card-6.png");
         assetManager.loadAndAddBitmap("Card 7", "img/card-7.png");
         assetManager.loadAndAddBitmap("Green", "img/green.png");
-        /*assetManager.loadAndAddBitmap("Blue", "img/blue.png");
-        assetManager.loadAndAddBitmap("Vertical Test", "img/vertical-test.png");*/
-        addBitmap(assetManager.getBitmap("Card 0"));
-        addBitmap(assetManager.getBitmap("Card 1"));
-        addBitmap(assetManager.getBitmap("Card 2"));
-        addBitmap(assetManager.getBitmap("Card 3"));
-        addBitmap(assetManager.getBitmap("Card 4"));
-        addBitmap(assetManager.getBitmap("Card 5"));
-        addBitmap(assetManager.getBitmap("Card 6"));
-        addBitmap(assetManager.getBitmap("Card 7"));
+
+        addScrollerItem(assetManager.getBitmap("Card 0"));
+        addScrollerItem(assetManager.getBitmap("Card 1"));
+        addScrollerItem(assetManager.getBitmap("Card 2"));
+        addScrollerItem(assetManager.getBitmap("Card 3"));
+        addScrollerItem(assetManager.getBitmap("Card 4"));
+        addScrollerItem(assetManager.getBitmap("Card 5"));
+        addScrollerItem(assetManager.getBitmap("Card 6"));
+        addScrollerItem(assetManager.getBitmap("Card 7"));
+
+        /*for (ImageScrollerItem i : imageScrollerItems) {
+            getNewBitmapDimensions(i.getBitmap(), (int) mBound.getHeight(), true);
+        }*/
+
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -295,24 +274,20 @@ public class HorizontalImageScroller extends GameObject {
     // /////////////////////////////////////////////////////////////////////////
 
     /**
-     * Adds bitmap to bitmaps ArrayList
+     * Sets the background bitmap of the scroller
      * @param bitmap
      */
-    public void addBitmap(Bitmap bitmap) {
-        if(bitmap != null) {
-            if(bitmaps.size() == 0) currentBitmapIndex = 0;
-            bitmaps.add(bitmap);
-        }
+    private void setBackground(Bitmap bitmap) {
+        if(!(mBitmap == null)) return;
+        mBitmap = bitmap;
     }
 
     /**
-     * Gets the next bitmap in the bitmaps ArrayList based on the direction
+     * Sets the value of selectMode
+     * @param value
      */
-    private void getNextBitmap() {
-        if(bitmaps.size() > 1) {
-            int directionInt = scrollDirection ? -1 : 1;
-            nextBitmapIndex = (currentBitmapIndex + bitmaps.size() + directionInt) % bitmaps.size();
-        }
+    public void setSelectMode(boolean value) {
+        selectMode = value;
     }
 
     /**
@@ -332,136 +307,325 @@ public class HorizontalImageScroller extends GameObject {
     }
 
     /**
-     * Sets the background bitmap of the scroller
+     * Adds item to scroller
      * @param bitmap
      */
-    private void setBackground(Bitmap bitmap) {
-        if(!(mBitmap == null)) return;
-        mBitmap = bitmap;
+    private void addScrollerItem(Bitmap bitmap) {
+        if(bitmap != null) {
+            if(imageScrollerItems.size() == 0) currentItemIndex = 0;
+            else if(imageScrollerItems.size() == 1) nextItemIndex = 1;
+
+            Vector2 dimensions;
+            // Get postion and dimensions based on scroller mode
+            if(multiMode) {
+
+            } else {
+                dimensions = getNewBitmapDimensions(bitmap, (int) mBound.getHeight(), true);
+                imageScrollerItems.add(new ImageScrollerItem(position.x, position.y, dimensions.x * 2, dimensions.y * 2, bitmap, mGameScreen));
+            }
+        }
     }
 
     /**
-     * Calculates the maximum number of bitmaps that can be displayed
-     * @param templateBitmap Bitmap from which is used as the basis to perform all calculations
-     * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
+     * Checks if nextIndex exists
+     * @return
      */
-    private void calculateMaxDisplayedBitmaps(Bitmap templateBitmap, float heightOccupyPercentage) {
-        if(heightOccupyPercentage <= 0 || heightOccupyPercentage > 100)
-            heightOccupyPercentage = 1;
-        else
-            heightOccupyPercentage /= 100;
-
-        int maxHeight = (int) (mBound.getHeight() * heightOccupyPercentage);
-        Vector2 scaledBitmapDimensions = getNewBitmapDimensions(templateBitmap, maxHeight, true);
-
-        maxBitmapDimensions.x = scaledBitmapDimensions.x;
-        maxBitmapDimensions.y = scaledBitmapDimensions.y;
-
-        int maxImages = (int) (mBound.getWidth() / (scaledBitmapDimensions.x * 2));
-        maxImages = maxImages > MAX_DISPLAYED_BITMAPS_ALLOWED ? MAX_DISPLAYED_BITMAPS_ALLOWED : maxImages;
-        int remainder = (int) (mBound.getWidth() % (scaledBitmapDimensions.x * 2));
-        int spacing = remainder <= 0 ? 0 : remainder / (maxImages + 1);
-
-        maxDisplayedBitmaps = maxImages;
-        maxBitmapSpacing = spacing;
-
-        for (int i = 0; i < maxImages; i++) {
-            if(i < bitmaps.size()) currentBitmapIndexes[i] = i;
-        }
-
-        calculateCurrentBitmapVectors();
+    private boolean checkDoesNextExist() {
+        if(imageScrollerItems.size() > 1) return true;
+        else return false;
     }
 
     /**
-     * Calculates positions of current bitmaps
+     * * * * * * * * * * *
+     * SINGLE MODE METHODS
+     * * * * * * * * * * *
      */
-    private void calculateCurrentBitmapVectors() {
-        currentBitmapVectors[0] = new Vector2(mBound.getLeft() + maxBitmapSpacing + maxBitmapDimensions.x, position.y);
 
-        int counter = maxDisplayedBitmaps > bitmaps.size() ? bitmaps.size() : maxDisplayedBitmaps;
-        for(int i = 1; i < maxDisplayedBitmaps; i++) {
-            currentBitmapVectors[i] = new Vector2(currentBitmapVectors[0].x + (i * (maxBitmapSpacing + (maxBitmapDimensions.x * 2))), position.y);
+    /**
+     * Calculates position of next vector for single image mode
+     */
+    private void calculateNextSingleVector() {
+        if(nextItemIndex == -1) return;
+        if(scrollDirection) {
+            nextItemPosition = new Vector2(currentItemPosition.x - itemDistance, currentItemPosition.y);
+        }
+        else {
+            nextItemPosition = new Vector2(currentItemPosition.x + itemDistance, currentItemPosition.y);
+        }
+
+        imageScrollerItems.get(nextItemIndex).position = nextItemPosition;
+    }
+
+    /**
+     * Gets the next imageScrollerItem from ArrayList based on the direction
+     */
+    private void calculateNextSingleIndex() {
+        if(imageScrollerItems.size() > 1) {
+            int directionInt = scrollDirection ? -1 : 1;
+            nextItemIndex = (currentItemIndex + imageScrollerItems.size() + directionInt) % imageScrollerItems.size();
         }
     }
+
+    /**
+     * * * * * * * * * * *
+     * MULTI MODE METHODS
+     * * * * * * * * * * *
+     */
 
     /**
      * Toggles scroller from single bitmap to multi bitmap mode
      * @param value
      * @param heightOccupyPercentage
      */
-    public void setDisplayMaxBitmaps(boolean value, int heightOccupyPercentage) {
-        if(!(bitmaps.size() > 0) || !value) {
+    public void setMultiMode(boolean value, int heightOccupyPercentage) {
+        if(!(imageScrollerItems.size() > 0) || !value) {
             Log.e("ERROR", "You cannot set multi-image mode unless there is at least 1 bitmap in bitmaps");
             return;
         }
 
-        multiBitmapMode = true;
-        calculateMaxDisplayedBitmaps(bitmaps.get(0), heightOccupyPercentage);
+        multiMode = true;
+        calculateMultiItemsDisplayed(imageScrollerItems.get(0).getBitmap(), heightOccupyPercentage);
+    }
+
+    /**
+     * Calculates thenumber of bitmaps that can be displayed
+     * @param templateBitmap Bitmap from which is used as the basis to perform all calculations
+     * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
+     */
+    private void calculateMultiItemsDisplayed(Bitmap templateBitmap, float heightOccupyPercentage) {
+        // Ensure heightOccupyPercentage is within bounds then divide by 100, else set to 1 (100%)
+        if(heightOccupyPercentage <= 0 || heightOccupyPercentage > 100)
+            heightOccupyPercentage = 1;
+        else
+            heightOccupyPercentage /= 100;
+
+        // Find the maximum height allowed for the bitmap
+        int maxHeight = (int) (mBound.getHeight() * heightOccupyPercentage);
+        // Rescale bitmap dimensions using the maxHeight
+        Vector2 scaledBitmapDimensions = getNewBitmapDimensions(templateBitmap, maxHeight, true);
+
+        // Set maxItemDimensions
+        maxItemDimensions.x = scaledBitmapDimensions.x;
+        maxItemDimensions.y = scaledBitmapDimensions.y;
+
+        // Find the max images that can be displayed
+        int maxImages = (int) (mBound.getWidth() / (scaledBitmapDimensions.x * 2));
+        maxImages = maxImages > MAX_DISPLAYED_ITEMS_ALLOWED ? MAX_DISPLAYED_ITEMS_ALLOWED : maxImages;
+        // Find the remaining screen space
+        int remainder = (int) (mBound.getWidth() % (scaledBitmapDimensions.x * 2));
+        // Use the remainder to determine the spacing between displayed items
+        int spacing = remainder <= 0 ? 0 : remainder / (maxImages + 1);
+
+        // Set the maxDisplayedItems and maxItemSpacing
+        maxDisplayedItems = maxImages;
+        maxItemSpacing = spacing;
+
+        // Set dimensions of all items to be the same
+        for (ImageScrollerItem i : imageScrollerItems) {
+            i.setWidthAndHeight(scaledBitmapDimensions.x * 2, scaledBitmapDimensions.y * 2);
+        }
+
+        calculateCurrentMultiVectors();
+    }
+
+    /**
+     * Gets vectors for currently displayed items
+     */
+    private void calculateCurrentMultiVectors() {
+        // If a current item exists, draw any current items else return
+        if(currentItemIndex == -1) return;
+
+        // Set position of current item
+        imageScrollerItems.get(currentItemIndex).position = new Vector2(mBound.getLeft() + maxItemSpacing + imageScrollerItems.get(0).getBound().halfWidth, position.y);
+
+        // Set positions of any other current items
+        int breaker = currentItemIndex + maxDisplayedItems >= imageScrollerItems.size() ? imageScrollerItems.size() - currentItemIndex : maxDisplayedItems;
+        for(int i = 0; i < breaker; i++) {
+            imageScrollerItems.get(currentItemIndex + i).position = new Vector2(imageScrollerItems.get(currentItemIndex).position.x + (i * (maxItemSpacing + imageScrollerItems.get(currentItemIndex + i).getBound().getWidth())), position.y);
+        }
     }
 
     /**
      * Calculates the positions of the next bitmaps based on the direction the scroller
      * is being moved in
      */
-    private void calculateNextBitmapVectors() {
-        if(!multiBitmapMode) {
-            if(scrollDirection) {
-                nextBitmapVector = new Vector2(currentBitmapVector.x - imageDistance, currentBitmapVector.y);
-            }
-            else {
-                nextBitmapVector = new Vector2(currentBitmapVector.x + imageDistance, currentBitmapVector.y);
+    private void calculateNextMultiVectors() {
+        // Get starting position of next items based on the direction the scroller is going to move
+        float startPosition = 0;
+        startPosition = scrollDirection ? mBound.getLeft() - mBound.getWidth() : mBound.getRight();
+
+        // Set the new item index
+        nextItemIndex = currentItemIndex + maxDisplayedItems > imageScrollerItems.size() ? 0 : currentItemIndex + maxDisplayedItems;
+        nextItemIndex = nextItemIndex == imageScrollerItems.size() ?  0 : nextItemIndex;
+
+        // Set  position of first next item
+        imageScrollerItems.get(nextItemIndex).position = new Vector2(startPosition + maxItemSpacing + maxItemDimensions.x, position.y);
+
+        // Set positions of any other next items
+        int breaker = nextItemIndex + maxDisplayedItems >= imageScrollerItems.size() ? imageScrollerItems.size() - nextItemIndex : maxDisplayedItems;
+        for(int i = 1; i < breaker; i++) {
+            imageScrollerItems.get(nextItemIndex + i).position = new Vector2(imageScrollerItems.get(nextItemIndex).position.x + (i * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
+        }
+    }
+
+    /**
+     * Adds moveBy to distanceMoved then checks if distanceMoved
+     * has reached the item distance
+     * @param moveBy
+     * @param animation false = scroll true = select
+     * @return
+     */
+    private boolean addAndCheckDistanceMoved(float moveBy, boolean animation) {
+        // Add to distance moved
+        distanceMoved += Math.abs(moveBy);
+
+        float distance = animation == false ? itemDistance : selectDistance;
+
+        // If intended distance has been moved, end animation
+        if(distanceMoved >= distance) return true;
+        else return false;
+    }
+
+    /**
+     * Executes the updating of positions of items for scroll animation if
+     * scrollAnimationTriggered is true
+     */
+    private void checkAndPerformScrollAnimation() {
+        if(!scrollAnimationTriggered) return;
+
+        // Move current bitmap and next bitmap
+        float moveBy = 0;
+        if(!scrollDirection) moveBy = -1 * itemDistance * 0.05f;
+        else moveBy = itemDistance * 0.05f;
+
+        // Branch based on whether multi mode or single mode is enabled
+        if(multiMode) {
+            // Move any currently displayed items
+            int breaker = currentItemIndex + maxDisplayedItems >= imageScrollerItems.size() ? imageScrollerItems.size() - currentItemIndex : maxDisplayedItems;
+            for (int i = 0; i < breaker; i++) {
+                imageScrollerItems.get(i + currentItemIndex).position.add(moveBy, 0);
             }
 
-            getNextBitmap();
+            // Move any next items
+            breaker = nextItemIndex + maxDisplayedItems >= imageScrollerItems.size() ? imageScrollerItems.size() - nextItemIndex : maxDisplayedItems;
+            for (int i = 0; i < breaker; i++) {
+                imageScrollerItems.get(nextItemIndex + i).position.add(moveBy, 0);
+            }
         } else {
-            if(scrollDirection) {
-                nextBitmapIndex = currentBitmapIndex - maxDisplayedBitmaps < 0 ? bitmaps.size() - (bitmaps.size() % maxDisplayedBitmaps) : currentBitmapIndex - maxDisplayedBitmaps;
-                nextBitmapIndex = nextBitmapIndex == bitmaps.size() ? bitmaps.size() - maxDisplayedBitmaps : nextBitmapIndex;
+            // Draw current item
+            imageScrollerItems.get(currentItemIndex).position.add(moveBy, 0);
+            if(checkDoesNextExist())
+                imageScrollerItems.get(nextItemIndex).position.add(moveBy, 0);
+        }
 
-                nextBitmapVectors[0] = new Vector2((mBound.getLeft() - mBound.getWidth()) + maxBitmapSpacing + maxBitmapDimensions.x, position.y);
+        // Carry out completing steps if the move distance has been reached
+        if(addAndCheckDistanceMoved(moveBy, false)) {
+            // Stop animation
+            scrollAnimationTriggered = false;
 
-                int counter = nextBitmapIndex + maxDisplayedBitmaps >= bitmaps.size() ? bitmaps.size() - nextBitmapIndex : MAX_DISPLAYED_BITMAPS_ALLOWED;
+            // Branch based on whether multi mode or single mode is enabled
+            if(multiMode) {
+                // Calculate the vectors for the new current items
+                calculateCurrentMultiVectors();
+            } else {
+                // Set position of new current item to scroller position
+                imageScrollerItems.get(currentItemIndex).position = new Vector2(position);
+            }
+            // Set current index to the next index, as next index is now at the position
+            // current index was at originally before the animation
+            currentItemIndex = nextItemIndex;
+            // Reset distance moved
+            distanceMoved = 0;
+        }
+    }
 
-                for(int k = 1; k < counter; k++) {
-                    nextBitmapVectors[k] = new Vector2(nextBitmapVectors[0].x + (k * (maxBitmapSpacing + (maxBitmapDimensions.x * 2))), position.y);
+    /**
+     * Executes the updating of positions of items for select animation if
+     * selectAnimationTriggered is true and select mode is enabled
+     */
+    private void checkAndPerformSelectAnimation() {
+        if(!selectAnimationTriggered || !selectMode) return;
+
+        // Move current item and next item
+        float moveBy = 0;
+        if(!selectDirection) moveBy = -1 * selectDistance * 0.4f;
+        else moveBy = selectDistance * 0.4f;
+
+        imageScrollerItems.get(selectedItemIndex).position.add(0, moveBy);
+
+        // Carry out completing steps if the move distance has been reached
+        if(addAndCheckDistanceMoved(moveBy, true)) {
+            // Stop animation
+            selectAnimationTriggered = false;
+            // Toggle item selected and selectDirection
+            itemSelected = !itemSelected;
+            selectDirection = !selectDirection;
+            // Reset distance moved
+            distanceMoved = 0;
+        }
+    }
+
+    /**
+     * Checks if an item is touched by the user
+     * If an item is touched, the select animation will be triggered
+     */
+    private void checkForItemTouch() {
+        // Check for any touch events on scroller
+        Input input = mGameScreen.getGame().getInput();
+        boolean scrollerTouched = false;
+        if (input.existsTouch(0)) {
+            touchLocation = new Vector2(input.getTouchX(0), input.getTouchY(0));
+            // Touch detected within the allowed bounds of the scroller
+            if (selectBound.contains(touchLocation.x, touchLocation.y)) {
+                scrollerTouched = true;
+            }
+        }
+
+        // Scroller was touched
+        if(scrollerTouched) {
+            if(multiMode) {
+                // Check if an item was touched by looping through each of the currently displayed item
+                int breaker = currentItemIndex + maxDisplayedItems >= imageScrollerItems.size() ? imageScrollerItems.size() - currentItemIndex : maxDisplayedItems;
+                for (int i = 0; i < breaker; i++) {
+                    // Bitmap touched
+                    if(imageScrollerItems.get(currentItemIndex + i).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
+                            /* If a bitmap has not been selected yet, set the selectedItemIndex to i
+                               and start animation
+                               else if a bitmap has been selected, the bitmap clicked here is the same as
+                               the one selected, start animation */
+                        if(!itemSelected) {
+                            selectedItemIndex = currentItemIndex + i;
+                            selectAnimationTriggered = true;
+                            distanceMoved = 0;
+                        }
+                        else if (selectedItemIndex == currentItemIndex + i){
+                            selectAnimationTriggered = true;
+                            distanceMoved = 0;
+                        }
+                    }
                 }
             } else {
-                nextBitmapIndex = currentBitmapIndex + maxDisplayedBitmaps > bitmaps.size() ? 0 : currentBitmapIndex + maxDisplayedBitmaps;
-                nextBitmapIndex = nextBitmapIndex == bitmaps.size() ?  0 : nextBitmapIndex;
-
-                nextBitmapVectors[0] = new Vector2(mBound.getRight() + maxBitmapSpacing + maxBitmapDimensions.x, position.y);
-
-                int counter = nextBitmapIndex + maxDisplayedBitmaps >= bitmaps.size() ? bitmaps.size() - nextBitmapIndex : MAX_DISPLAYED_BITMAPS_ALLOWED;
-
-                for(int k = 1; k < counter; k++) {
-                    nextBitmapVectors[k] = new Vector2(nextBitmapVectors[0].x + (k * (maxBitmapSpacing + (maxBitmapDimensions.x * 2))), position.y);
+                // Start animation if click is within the bitmap's bounds
+                if(imageScrollerItems.get(currentItemIndex).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
+                    selectedItemIndex = currentItemIndex;
+                    selectAnimationTriggered = true;
+                    distanceMoved = 0;
                 }
             }
         }
     }
 
     /**
-     * Sets the value of selectMode
-     * @param value
+     * Checks for a touch event on the scroller and carries out
+     * necessary actions depending on what is touched
      */
-    public void setSelectMode(boolean value) {
-        selectMode = value;
-    }
-
-    @Override
-    public void update(ElapsedTime elapsedTime) {
-        super.update(elapsedTime);
-        pushButtonLeft.update(elapsedTime);
-        pushButtonRight.update(elapsedTime);
-
+    private void checkForTouchEvent() {
         boolean leftPushed = pushButtonLeft.isPushTriggered();
         boolean rightPushed = pushButtonRight.isPushTriggered();
 
-        if(bitmaps == null) return;
-
-        // Check for input to determine if animation should be triggered to move the bitmaps
-        if((leftPushed || rightPushed) && !scrollAnimationTriggered && !bitmapSelected) {
-            if(multiBitmapMode && maxDisplayedBitmaps >= bitmaps.size()) return;
+        // Check for input to determine if animation should be triggered to move the items
+        if((leftPushed || rightPushed) && !scrollAnimationTriggered && !itemSelected && (nextItemIndex != -1)) {
+            if(multiMode && maxDisplayedItems >= imageScrollerItems.size()) return;
 
             scrollAnimationTriggered = true;
 
@@ -473,200 +637,72 @@ public class HorizontalImageScroller extends GameObject {
                 scrollDirection = false;
             }
 
-            calculateNextBitmapVectors();
-
-            // Cancel animation if there is no other bitmap in bitmaps
-            if(nextBitmapIndex == -1) scrollAnimationTriggered = false;
+            // Branch based on multi mode or single mode is enabled
+            if(multiMode) {
+                // Calculates next item's vectors
+                calculateNextMultiVectors();
+            } else {
+                // Calculates next vector and index
+                calculateNextSingleIndex();
+                calculateNextSingleVector();
+            }
 
             // Reset distance moved to base value of 0
             distanceMoved = 0;
         } else if (selectMode && (!scrollAnimationTriggered && !selectAnimationTriggered)){
-            // Check for any other touch events on this button
-            Input input = mGameScreen.getGame().getInput();
-            boolean scrollerTouched = false;
-            if (input.existsTouch(0)) {
-                touchLocation = new Vector2(input.getTouchX(0), input.getTouchY(0));
-                // Touch detected within the allowed bounds of the scroller
-                if (selectBound.contains(touchLocation.x, touchLocation.y)) {
-                    scrollerTouched = true;
-                }
-            }
-
-            // Scroller was touched
-            if(scrollerTouched) {
-                Rect bitmapBound = new Rect();
-                if(multiBitmapMode) {
-                    // Check if a bitmap was touched by looping through each of the currentDisplayedBitmaps
-                    int breaker = currentBitmapIndex + maxDisplayedBitmaps >= bitmaps.size() ? bitmaps.size() - currentBitmapIndex : maxDisplayedBitmaps;
-                    for (int i = 0; i < breaker; i++) {
-                        // Get bounds of currentBitmaps[i]
-                        bitmapBound.set((int) (currentBitmapVectors[i].x - maxBitmapDimensions.x),
-                                (int) (currentBitmapVectors[i].y - maxBitmapDimensions.y),
-                                (int) (currentBitmapVectors[i].x + maxBitmapDimensions.x),
-                                (int) (currentBitmapVectors[i].y + maxBitmapDimensions.y));
-
-                        // Bitmap touched
-                        if(bitmapBound.contains((int) touchLocation.x, (int) touchLocation.y)) {
-                            /* If a bitmap has not been selected yet, set the selectedBitmapIndex to i
-                               and start animation
-                               else if a bitmap has been selected, the bitmap clicked here is the same as
-                               the one selected, start animation */
-                            if(!bitmapSelected) {
-                                selectedBitmapIndex = i;
-                                selectAnimationTriggered = true;
-                                distanceMoved = 0;
-                            }
-                            else if (selectedBitmapIndex == i){
-                                selectAnimationTriggered = true;
-                                distanceMoved = 0;
-                            }
-                        }
-                    }
-                } else {
-                    // Get bounds of current bitmap
-                    Vector2 currentBitmapDimensions = getNewBitmapDimensions(bitmaps.get(currentBitmapIndex), (int) mBound.getHeight(), true);
-                    bitmapBound.set((int) (currentBitmapVector.x - currentBitmapDimensions.x),
-                            (int) (position.y - currentBitmapDimensions.y),
-                            (int) (currentBitmapVector.x + currentBitmapDimensions.x),
-                            (int) (position.y + currentBitmapDimensions.y));
-
-                    // Start animation if click is within the bitmap's bounds
-                    if(bitmapBound.contains((int) touchLocation.x, (int) touchLocation.y)) {
-                        selectAnimationTriggered = true;
-                        distanceMoved = 0;
-                    }
-                }
-            }
-        }
-
-        // Perform animation if a scroll animation has been triggered
-        if(scrollAnimationTriggered) {
-            // TODO: Animation
-            boolean isAnimationComplete = false;
-
-            // Move current bitmap and next bitmap
-            float moveBy = 0;
-            if(!scrollDirection) moveBy = -1 * imageDistance * 0.05f;
-            else moveBy = imageDistance * 0.05f;
-
-            if(multiBitmapMode) {
-                for (int i = 0; i < maxDisplayedBitmaps; i++) {
-                    currentBitmapVectors[i].add(moveBy, 0);
-                    nextBitmapVectors[i].add(moveBy, 0);
-                }
-            } else {
-                currentBitmapVector.add(moveBy, 0);
-                nextBitmapVector.add(moveBy, 0);
-            }
-
-            distanceMoved += Math.abs(moveBy);
-
-            // If intended distance has been moved, end animation
-            if(distanceMoved >= imageDistance) isAnimationComplete = true;
-
-            if(isAnimationComplete) {
-                scrollAnimationTriggered = false;
-                if(multiBitmapMode) {
-                    currentBitmapIndexes = nextBitmapIndexes;
-                    currentBitmapIndex = nextBitmapIndex;
-                    calculateCurrentBitmapVectors();
-                } else {
-                    currentBitmapIndex = nextBitmapIndex;
-                    currentBitmapVector = new Vector2(position.x, position.y);
-                }
-                distanceMoved = 0;
-            }
-        }
-
-        // Perform animation if select animation has been triggered
-        if(selectAnimationTriggered) {
-            boolean isAnimationComplete = false;
-
-            // Move current bitmap and next bitmap
-            float moveBy = 0;
-            if(!selectDirection) moveBy = -1 * selectDistance * 0.4f;
-            else moveBy = selectDistance * 0.4f;
-
-            // Move currently selected bitmap
-            if(multiBitmapMode) {
-                currentBitmapVectors[selectedBitmapIndex].add(0, moveBy);
-
-            } else {
-                currentBitmapVector.add(0, moveBy);
-            }
-
-
-            distanceMoved += Math.abs(moveBy);
-
-            // If intended distance has been moved, end animation
-            if(distanceMoved >= selectDistance) isAnimationComplete = true;
-
-            if(isAnimationComplete) {
-                selectAnimationTriggered = false;
-                bitmapSelected = !bitmapSelected;
-                selectDirection = !selectDirection;
-                distanceMoved = 0;
-            }
+            checkForItemTouch();
         }
     }
 
     @Override
+    public void update(ElapsedTime elapsedTime) {
+        super.update(elapsedTime);
+        pushButtonLeft.update(elapsedTime);
+        pushButtonRight.update(elapsedTime);
+
+        if(imageScrollerItems.isEmpty()) return;
+
+        // Checks if scroller has been touched and will carried out any
+        // necessary actions depending on where is touched
+        checkForTouchEvent();
+
+        // Checks if scroll animation has been triggered and performs animation if so
+        checkAndPerformScrollAnimation();
+
+        // Checks if select animation has been triggered and performs animation if so
+        checkAndPerformSelectAnimation();
+    }
+
+    @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D, LayerViewport layerViewport, ScreenViewport screenViewport) {
-        // TODO: Get the damn thing to actually draw something
-        // TODO: Draw bitmaps
         super.draw(elapsedTime, graphics2D);
 
-        if(multiBitmapMode) {
-            if(currentBitmapIndex == -1) return;
+        if(multiMode) {
+            // If a current item exists, draw any current items else return
+            if(currentItemIndex == -1) return;
 
-            // Draw current bitmaps
-            int breaker = currentBitmapIndex + maxDisplayedBitmaps >= bitmaps.size() ? bitmaps.size() - currentBitmapIndex : maxDisplayedBitmaps;
-            for(int i = 0; i < breaker; i++) {
-                Rect bitmapRect = new Rect();
-                bitmapRect.set((int) (currentBitmapVectors[i].x - maxBitmapDimensions.x),
-                        (int) (currentBitmapVectors[i].y - maxBitmapDimensions.y),
-                        (int) (currentBitmapVectors[i].x + maxBitmapDimensions.x),
-                        (int) (currentBitmapVectors[i].y + maxBitmapDimensions.y));
-                graphics2D.drawBitmap(bitmaps.get(currentBitmapIndex + i), null, bitmapRect, null);
+            // Determine how many current items to draw, then draw
+            int breaker = currentItemIndex + maxDisplayedItems >= imageScrollerItems.size() ? imageScrollerItems.size() - currentItemIndex : maxDisplayedItems;
+            for (int i = 0; i < breaker; i++) {
+                imageScrollerItems.get(currentItemIndex + i).draw(elapsedTime, graphics2D);
             }
 
-            // Draw next bitmaps if animation has been triggered
+            // Continue if scroll animation has been triggered else return
             if(!scrollAnimationTriggered) return;
 
-            breaker = nextBitmapIndex + maxDisplayedBitmaps >= bitmaps.size() ? bitmaps.size() - nextBitmapIndex : maxDisplayedBitmaps;
-            for(int i = 0; i < breaker; i++) {
-                Rect bitmapRect = new Rect();
-                bitmapRect.set((int) (nextBitmapVectors[i].x - maxBitmapDimensions.x),
-                        (int) (position.y - maxBitmapDimensions.y),
-                        (int) (nextBitmapVectors[i].x + maxBitmapDimensions.x),
-                        (int) (position.y + maxBitmapDimensions.y));
-                graphics2D.drawBitmap(bitmaps.get(nextBitmapIndex + i), null, bitmapRect, null);
+            // Determine how many next items to draw, then draw
+            breaker = nextItemIndex + maxDisplayedItems >= imageScrollerItems.size() ? imageScrollerItems.size() - nextItemIndex : maxDisplayedItems;
+            for (int i = 0; i < breaker; i++) {
+                imageScrollerItems.get(nextItemIndex + i).draw(elapsedTime, graphics2D);
             }
-
-            // doot doot
         } else {
-            // Get dimensions then draw current bitmap if it exists
-            if(currentBitmapIndex == -1) return;
-            Vector2 currentBitmapDimensions = getNewBitmapDimensions(bitmaps.get(currentBitmapIndex), (int) mBound.getHeight(), true);
+            // If current bitmap exists draw else return
+            if(currentItemIndex == -1) return;
+            imageScrollerItems.get(currentItemIndex).draw(elapsedTime, graphics2D);
 
-            Rect currentBitmapRect = new Rect();
-            currentBitmapRect.set((int) (currentBitmapVector.x - currentBitmapDimensions.x),
-                    (int) (currentBitmapVector.y - currentBitmapDimensions.y),
-                    (int) (currentBitmapVector.x + currentBitmapDimensions.x),
-                    (int) (currentBitmapVector.y + currentBitmapDimensions.y));
-            graphics2D.drawBitmap(bitmaps.get(currentBitmapIndex), null, currentBitmapRect, null);
-
-            // Get dimensions then draw next bitmap if it exists and an animation has been triggered
-            if(!scrollAnimationTriggered || nextBitmapIndex == -1) return;
-
-            Vector2 nextBitmapDimensions = getNewBitmapDimensions(bitmaps.get(nextBitmapIndex), (int) mBound.getHeight(), true);
-
-            Rect nextBitmapRect = new Rect();
-            nextBitmapRect.set((int) (nextBitmapVector.x - nextBitmapDimensions.x),
-                    (int) (position.y - nextBitmapDimensions.y),
-                    (int) (nextBitmapVector.x + nextBitmapDimensions.x),
-                    (int) (position.y + nextBitmapDimensions.y));
-            graphics2D.drawBitmap(bitmaps.get(nextBitmapIndex), null, nextBitmapRect, null);
+            // If a scroll animation has been triggered, draw next item
+            if(!scrollAnimationTriggered) return;
+            imageScrollerItems.get(nextItemIndex).draw(elapsedTime, graphics2D);
         }
     }
 }
