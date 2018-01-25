@@ -6,10 +6,15 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -26,258 +31,265 @@ import uk.ac.qub.eeecs.gage.world.Sprite;
 
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
 
-/**
- * Created by Inaki on 04/11/2017.
- * Refactored by Stephen on 13/11/2017.
- */
-
 
 public class Card extends Sprite {
-
     // ////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////
-    private Bitmap frontBmp, backBmp;
+    private Bitmap cardBackground;
+    private String displayName, firstName, lastName;
+    private String club, nation;
+    private String playerPosition;
+    private int pace = 0;
+    private int shooting = 0;
+    private int passing = 0;
+    private int dribbling = 0;
+    private int defending = 0;
+    private int heading = 0;
+    private int diving = 0;
+    private int handling = 0;
+    private int kicking = 0;
+    private int reflexes = 0;
+    private int speed = 0;
+    private int positioning = 0;
+    private int rating = 75;
+    private boolean rare = false;
+    private int fitness = 100;
+    private Bitmap headshot, nationFlag, clubBadge;
+    private int lastGamePlayNumber = -1;
 
-    /**
-     * Dimensions of the screen
-     */
-    private Vector2 screenDimensions = new Vector2();
-
-    /**
-     * Centre of this game object
-     */
-    private Vector2 cardCentre = new Vector2();
-
-    /**
-     * Variables for touch handling
-     */
-    private boolean touchDown;
-
-    /**
-     * Variable for the player name on the card
-     */
-    private String playerName;
-
-    /**
-     * Properties for the card flip animation
-     */
-    private float flatCardBoundHalfWidth;
-    private boolean isFlipping;
-    private int flipFrameCounter = 1;
-    private final int animationLength = 20;
-
-    private final int defaultPlayerNameSize = 45;
-    private final int defaultAttributeSize = 35;
-
-    /**
-     * Variables used to determine whether card is clicked
-     * or dragged
-     */
-    private boolean pushDown = false;
-    private float pushTime = 0;
-    private final float MAX_PUSH_TIME = 0.33f;
+    private AssetStore assetManager = mGameScreen.getGame().getAssetManager();
 
     // /////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////
-    public Card(float startX, float startY, GameScreen gameScreen) {
-        super(startX, startY, 300f, 422f, null, gameScreen);
-
-        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        if (assetManager.getBitmap("CardFront") == null) {assetManager.loadAndAddBitmap("CardFront", "img/CardFront.png");}
-        if (assetManager.getBitmap("CardBack") == null) {assetManager.loadAndAddBitmap("CardBack", "img/CardBack.png");}
-        frontBmp = assetManager.getBitmap("CardFront");
-        backBmp = assetManager.getBitmap("CardBack");
-
-        //Show the front of the card by default
-        mBitmap = frontBmp;
-
-        //Randomly select a player name
+    public Card(float startX, float startY, float height, GameScreen gameScreen, String playerID, int fitness) {
+        //The aspect ratio of the card is 225/355
+        super(startX, startY, height * 225/355, height, null, gameScreen);
+        this.fitness = fitness;
         try {
-            playerName = getRandomPlayerName();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            playerName = "Player Name";
+            populatePlayerProperties(playerID, getPlayersArray());
+        } catch (JSONException e) {
+            Log.e("Error", "The JSON file could not be read", e);
         }
 
-        //TODO: Remove from constructor and avoid hardcoded numbers.
-        screenDimensions.x = mGameScreen.getGame().getScreenWidth();
-        screenDimensions.y = mGameScreen.getGame().getScreenHeight();
-        cardCentre.x = 150f;
-        cardCentre.y = 211f;
-
-        //Set the default card half width to this initial value
-        flatCardBoundHalfWidth = mBound.halfWidth;
     }
+
+    public Card(float startX, float startY, float height, GameScreen gameScreen, boolean rare, int minRating, int maxRating) {
+        //The aspect ratio of the card is 225/355
+        super(startX, startY, height * 225/355, height, null, gameScreen);
+        try {
+            JSONArray playersArray = getPlayersArray();
+            ArrayList<String> releventPlayerIDs = getReleventPlayerIDs(rare, minRating, maxRating, playersArray);
+            Random rnd = new Random();
+            String randPlayerID = releventPlayerIDs.get(rnd.nextInt(releventPlayerIDs.size()));
+            populatePlayerProperties(randPlayerID, playersArray);
+        } catch (JSONException e) {
+            Log.e("Error", "The JSON file could not be read", e);
+        }
+    }
+    // ///////////////////////////////////////////////////////////
+    // Getters
+    // ///////////////////////////////////////////////////////////
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getClub() {
+        return club;
+    }
+
+    public String getNation() {
+        return nation;
+    }
+
+    public String getPlayerPosition() {
+        return playerPosition;
+    }
+
+    public int getPace() {
+        return pace;
+    }
+
+    public int getShooting() {
+        return shooting;
+    }
+
+    public int getPassing() {
+        return passing;
+    }
+
+    public int getDribbling() {
+        return dribbling;
+    }
+
+    public int getDefending() {
+        return defending;
+    }
+
+    public int getHeading() {
+        return heading;
+    }
+
+    public int getDiving() {
+        return diving;
+    }
+
+    public int getHandling() {
+        return handling;
+    }
+
+    public int getKicking() {
+        return kicking;
+    }
+
+    public int getReflexes() {
+        return reflexes;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public int getPositioning() {
+        return positioning;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public boolean isRare() {
+        return rare;
+    }
+
+    public int getFitness() {
+        return fitness;
+    }
+
+    public int getLastGamePlayNumber() {
+        return lastGamePlayNumber;
+    }
+
+    // ///////////////////////////////////////////////////////////
+    // Setters
+    // ///////////////////////////////////////////////////////////
+    public void setFitness(int fitness) {
+        this.fitness = fitness;
+    }
+
+    public void setLastGamePlayNumber(int lastGamePlayNumber) {
+        this.lastGamePlayNumber = lastGamePlayNumber;
+    }
+
 
     // ///////////////////////////////////////////////////////////
     // Methods
     // ///////////////////////////////////////////////////////////
 
+    private ArrayList<String> getReleventPlayerIDs(boolean rare, int minRating, int maxRating, JSONArray playersArray) throws JSONException{
+        //Get an array of playerIDs where the player is rare/non-rare (depending on the parameter)
+        ArrayList<String> playerIDs = new ArrayList<>();
+        for (int i = 0; i < playersArray.length(); i++) {
+            if ((boolean) playersArray.getJSONObject(i).get("rare") == rare &&
+                    (int) playersArray.getJSONObject(i).get("rating") >= minRating &&
+                    (int) playersArray.getJSONObject(i).get("rating") <= maxRating) {
+                playerIDs.add((String) playersArray.getJSONObject(i).get("id"));
+            }
+        }
+        return playerIDs;
+    }
+
+    private JSONArray getPlayersArray() throws JSONException {
+        JSONObject playerJson = new JSONObject(assetManager.readAsset("player_json/all_cards.json"));
+        return (JSONArray) playerJson.get("players");
+    }
+
+    private void populatePlayerProperties(String playerID, JSONArray playersArray) throws JSONException {
+        JSONObject thisPlayerJSON = playersArray.getJSONObject(Integer.parseInt(playerID));
+        displayName = (String) thisPlayerJSON.get("displayName");
+        firstName = (String) thisPlayerJSON.get("firstName");
+        lastName = (String) thisPlayerJSON.get("lastName");
+        JSONObject clubDetails = (JSONObject) thisPlayerJSON.get("club");
+        club = (String) clubDetails.get("name");
+        JSONObject nationDetails = (JSONObject) thisPlayerJSON.get("nation");
+        nation = (String) nationDetails.get("name");
+        playerPosition = (String) thisPlayerJSON.get("position");
+        JSONArray attributes = (JSONArray) thisPlayerJSON.get("attributes");
+        for (int i = 0; i < attributes.length(); i++) {
+            JSONObject attribute = (JSONObject) attributes.get(i);
+            switch ((String) attribute.get("name")) {
+                case "PAC":
+                    pace = (int) attribute.get("value");
+                    break;
+                case "SHO":
+                    shooting = (int) attribute.get("value");
+                    break;
+                case "PAS":
+                    passing = (int) attribute.get("value");
+                    break;
+                case "DRI":
+                    dribbling = (int) attribute.get("value");
+                    break;
+                case "DEF":
+                    defending = (int) attribute.get("value");
+                    break;
+                case "HEA":
+                    heading = (int) attribute.get("value");
+                    break;
+                case "DIV":
+                    diving = (int) attribute.get("value");
+                    break;
+                case "HAN":
+                    handling = (int) attribute.get("value");
+                    break;
+                case "KIC":
+                    kicking = (int) attribute.get("value");
+                    break;
+                case "REF":
+                    reflexes = (int) attribute.get("value");
+                    break;
+                case "SPD":
+                    speed = (int) attribute.get("value");
+                    break;
+                case "POS":
+                    positioning = (int) attribute.get("value");
+                    break;
+            }
+        }
+        rating = (int) thisPlayerJSON.get("rating");
+        rare = (boolean) thisPlayerJSON.get("rare");
+        if (assetManager.getBitmap("player_" + playerID) == null)
+            assetManager.loadAndAddBitmap("player_" + playerID,"img/playerBitmaps/" + (String) thisPlayerJSON.get("headshotBitmap"));
+        if (assetManager.getBitmap("club_" + (String) clubDetails.get("name")) == null)
+            assetManager.loadAndAddBitmap("club_" + (String) clubDetails.get("name"), "img/clubBadgeBitmaps/" + (String) clubDetails.get("logo"));
+        if (assetManager.getBitmap("nation_" + (String) nationDetails.get("name")) == null)
+            assetManager.loadAndAddBitmap("nation_" + (String) nationDetails.get("name"), "img/nationBitmaps/" + (String) nationDetails.get("logo"));
+        headshot = assetManager.getBitmap("player_" + playerID);
+        nationFlag = assetManager.getBitmap("nation_" + (String) nationDetails.get("name"));
+        clubBadge = assetManager.getBitmap("club_" + (String) clubDetails.get("name"));
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
-        super.update(elapsedTime);
 
-        // Ensure the card cannot leave the confines of the screen
-        BoundingBox cardBound = getBound();
-        if (cardBound.getLeft() < 0)
-            this.position.x -= cardBound.getLeft();
-        else if (cardBound.getRight() >  mGameScreen.getGame().getScreenWidth())
-            this.position.x -= (cardBound.getRight() -   mGameScreen.getGame().getScreenWidth());
-
-        if (cardBound.getBottom() < 0)
-            this.position.y -= cardBound.getBottom();
-        else if (cardBound.getTop() >   mGameScreen.getGame().getScreenHeight())
-            this.position.y -= (cardBound.getTop() -   mGameScreen.getGame().getScreenHeight());
-
-        //Get all inputs on the screen since the last update
-        Input input = mGameScreen.getGame().getInput();
-
-        boolean touchOnCard = false;
-
-        if(pushDown) {
-            pushTime += elapsedTime.stepTime;
-        }
-
-        //Consider all buffered touch events
-        for (TouchEvent t : input.getTouchEvents()) {
-
-            //Consider Touch events within the area of the card
-            if ((input.getTouchX(t.pointer) > position.x - cardCentre.x)
-                    && (input.getTouchX(t.pointer) < position.x + cardCentre.x)
-                    && (input.getTouchY(t.pointer) > position.y - cardCentre.y)
-                    && (input.getTouchY(t.pointer) < position.y + cardCentre.y))
-                touchOnCard = true;
-
-            //Consider TOUCH_DOWN events
-            if (t.type == TOUCH_DOWN && touchOnCard) {
-                pushTime = 0;
-                pushDown = true;
-                touchDown = true;
-                Log.d("Card", "Down detected");
-
-                //Card should flip on touching
-                isFlipping = true;
-            }
-
-            //Consider TOUCH_DRAGGED events after TOUCH_DOWN event
-            if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
-                if (!Float.isNaN(input.getTouchX(t.pointer))) {
-                    position.x = input.getTouchX(t.pointer);
-                    position.y = input.getTouchY(t.pointer);
-                    Log.d("Card", "Drag detected");
-                }
-            }
-
-            //touch ends then change touchdown,activecard,doneMovement else check is dragged
-            if (t.type == TouchEvent.TOUCH_UP) {
-                pushDown = false;
-                touchDown = false;
-                touchOnCard = false;
-                Log.d("Card", "Up detected");
-            }
-        }
-
-        //Show an animation if the card is currently being flipped
-        if (isFlipping && !pushDown && pushTime <= MAX_PUSH_TIME) {
-            pushTime = 0;
-            if (flipFrameCounter <= animationLength / 2) {
-                mBound.halfWidth -= (mBound.halfWidth / (animationLength / 2));
-            } else {
-                mBound.halfWidth += (mBound.halfWidth / (animationLength / 2));
-            }
-
-            if (flipFrameCounter == animationLength / 2) {
-                if (mBitmap == frontBmp) {
-                    mBitmap = backBmp;
-                } else {
-                    mBitmap = frontBmp;
-                }
-            }
-
-            if (flipFrameCounter == animationLength) {
-                isFlipping = false;
-                flipFrameCounter = 1;
-            }
-
-            flipFrameCounter++;
-        } else {
-            //Make sure the card is back to its usual size
-            mBound.halfWidth = flatCardBoundHalfWidth;
-        }
     }
 
     @Override
     public void draw(ElapsedTime elapsedTime,IGraphics2D graphics2D) {
-        super.draw(elapsedTime, graphics2D);
+        drawScreenRect.set((int) (position.x - mBound.halfWidth),
+                (int) (position.y - mBound.halfHeight),
+                (int) (position.x + mBound.halfWidth),
+                (int) (position.y + mBound.halfHeight));
+//        graphics2D.drawBitmap(headshot, null, drawScreenRect, null);
 
-        if (mBitmap == frontBmp) {
-            //Draw on the card
-            Paint paint = mGameScreen.getGame().getPaint();
-            paint.setColor(Color.BLACK);
-
-            //sets text size based on player name
-            setPlayerNameTextSize(paint, playerName);
-
-            //int currentPlayerNameSize = defaultPlayerNameSize * ((int) mBound.halfWidth / (int) flatCardBoundHalfWidth);
-            //paint.setTextSize(currentPlayerNameSize);
-
-            paint.setTextAlign(Paint.Align.CENTER);
-            graphics2D.drawText(playerName, position.x, position.y - 80, paint);
-
-            int currentAttributeSize = defaultAttributeSize * ((int) mBound.halfWidth / (int) flatCardBoundHalfWidth);
-            paint.setTextSize(currentAttributeSize);
-
-            graphics2D.drawText("PAC", position.x - 50, position.y + 80, paint);
-            graphics2D.drawText("SHO", position.x - 50, position.y + 130, paint);
-            graphics2D.drawText("PAS", position.x - 50, position.y + 180, paint);
-
-            graphics2D.drawText("DRI", position.x + 95, position.y + 80, paint);
-            graphics2D.drawText("DEF", position.x + 95, position.y + 130, paint);
-            graphics2D.drawText("HEA", position.x + 95, position.y + 180, paint);
-        }
-    }
-
-    //Retruns a random player name from a csv file
-    private String getRandomPlayerName()throws FileNotFoundException{
-        //arraylist to store csv content by line
-            ArrayList<String> playerNames = new ArrayList<>();
-        try{
-        DataInputStream textFileStream = new DataInputStream(mGameScreen.getGame().getActivity().getApplicationContext().getAssets()
-                .open(String.format("footballers_real.csv")));
-        Scanner scan = new Scanner(textFileStream);
-            while (scan.hasNextLine()) {
-                String line = scan.nextLine();
-                playerNames.add(line);
-            }
-            scan.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Player_Name";
-        }
-        //Selects from all values in the arraylist except the first which is the csv header
-        return playerNames.get(new Random().nextInt(playerNames.size()-2)+1);
-    }
-
-    //So that player name is never larger than the card
-    private void setPlayerNameTextSize(Paint paint, String text) {
-        //Larger float => greater accuracy
-        final float testTextSize = 50f;
-
-        // Get the bounds of the text using testTestSize
-        paint.setTextSize(testTextSize);
-        Rect bounds = new Rect();
-        paint.getTextBounds(text, 0, text.length(), bounds);
-
-        // Calculate the desired size as a proportion of our testTextSize.
-        float desiredTextSize = (testTextSize * getBound().getWidth() / bounds.width())-.2f;
-
-        //Ensures short named cards like "Pepe" don't take up the whole card
-        if (desiredTextSize > defaultPlayerNameSize)
-            desiredTextSize = defaultPlayerNameSize;
-
-        // Set the paint for that size.
-        paint.setTextSize(desiredTextSize);
     }
 }
