@@ -14,7 +14,8 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
+import uk.ac.qub.eeecs.game.cardDemo.screens.*;
+import uk.ac.qub.eeecs.game.cardDemo.screens.PackScreen;
 
 /**
  * Created by Eoghan on 17/11/2017.
@@ -28,7 +29,7 @@ public class SplashScreen1 extends GameScreen {
      *
      * @param game Game instance to which the game screen belongs
      */
-    public SplashScreen1(Game game) {
+    public SplashScreen1(Game game, String message) {
         super("SplashScreen1", game);
 
         // Load in the bitmaps used on the Splash Screen
@@ -45,13 +46,12 @@ public class SplashScreen1 extends GameScreen {
 
         List<TouchEvent> touchEvents = input.getTouchEvents();
 
-        if (elapsedTime.totalTime >= 3.00) {
+        if (elapsedTime.totalTime >= 5.00) {
             //transition to main screen
-            changeToScreen(new MenuScreen(mGame));
-        }
-       else if (touchEvents.size() > 0) {
+            changeToScreen(new PackScreen(mGame));
+        } else if (touchEvents.size() > 0) {
             //transition to main screen
-            changeToScreen(new MenuScreen(mGame));
+            changeToScreen(new PackScreen(mGame));
         }
     }
 
@@ -69,7 +69,7 @@ public class SplashScreen1 extends GameScreen {
         Paint myPaint = new Paint();
         graphics2D.clear(Color.BLACK);
         myMatrix.reset();
-        myMatrix.setRotate((float)elapsedTime.totalTime * 122, (screenWidth / 2) - 100, (screenHeight / 2) - 100);
+        myMatrix.setRotate((float) elapsedTime.totalTime * 122, (screenWidth / 2) - 100, (screenHeight / 2) - 100);
         //graphics2D.drawBitmap(splashBmp,myMatrix,myPaint);
     }
 }

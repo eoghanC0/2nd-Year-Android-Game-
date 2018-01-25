@@ -15,10 +15,10 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
  * An exceedingly basic menu screen with a couple of touch buttons
@@ -33,6 +33,11 @@ public class MenuScreen extends GameScreen {
 
     private ScreenViewport mScreenViewport;
     private LayerViewport mLayerViewport;
+
+    /**
+     * Define InfoBar
+     */
+    private InfoBar infoBar;
 
     /**
      * Define the buttons for playing the 'games'
@@ -63,14 +68,15 @@ public class MenuScreen extends GameScreen {
         // Instantiate variables
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
-        GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
+
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "H E L P  S C R E E N", "");
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
 
         assetManager.loadAndAddBitmap("menuScreenBackground", "img/CampNou.png");
         background = assetManager.getBitmap("menuScreenBackground");
-        assetManager.loadAndAddBitmap("Help", "img/Ball.png");
+        assetManager.loadAndAddBitmap("Help", "img/Help.jpg");
         assetManager.loadAndAddBitmap("OptionsIcon", "img/options.png");
         assetManager.loadAndAddBitmap("musicIcon", "img/music.png");
         assetManager.loadAndAddBitmap("packsIcon", "img/ball2.jpg");
@@ -93,10 +99,15 @@ public class MenuScreen extends GameScreen {
                 spacingX * 3.6f, spacingY * 1.0f, spacingX, spacingY, "menuButtons", this);
 
         //Get the music file from the resources.
-        /*AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
+        //AssetFileDescriptor afd = game.getResources().openRawResourceFd(R.raw.platform_bgmusic);
         //Plays the background song
-        myMusic = new Music(afd);
-        myMusic.play();*/
+        //myMusic = new Music(afd);
+        //myMusic.play();
+
+
+        infoBar.addNotification("Test notification 1", 1, 5);
+        infoBar.addNotification("Test notification 2", 2, 2);
+        infoBar.addNotification("Test notification 3", -1, 5);
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -111,6 +122,7 @@ public class MenuScreen extends GameScreen {
     @Override
     public void update(ElapsedTime elapsedTime) {
 
+        infoBar.update(elapsedTime);
         // Process any touch events occurring since the update
         Input input = mGame.getInput();
 
@@ -135,11 +147,13 @@ public class MenuScreen extends GameScreen {
                 changeToScreen(new SquadScreen(mGame));
             else if (mHelpButton.isPushTriggered())
                 changeToScreen(new HelpScreen(mGame));
+            else if (mPacksButton.isPushTriggered())
+                changeToScreen(new PackScreen(mGame));
             else if (musicButton.isPushTriggered());
-            /*if (myMusic.isPlaying())
-                myMusic.pause();
-            else
-                myMusic.play();*/
+            //{if (myMusic.isPlaying())
+                    //    myMusic.pause();
+                    //else
+                      //  myMusic.play();}
         }
     }
 
@@ -148,7 +162,7 @@ public class MenuScreen extends GameScreen {
      *
      * @param screen game screen to become active
      */
-    private void changeToScreen(GameScreen screen) {
+    public void changeToScreen(GameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }
@@ -168,6 +182,8 @@ public class MenuScreen extends GameScreen {
         myPaint.setTextSize(36);
         graphics2D.drawBitmap(background,null, backGroundRectangle, myPaint);
         myPaint.setTextSize(72);
+
+        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
 
         mHelpButton.draw(elapsedTime, graphics2D, null, null);
         mOptionsButton.draw(elapsedTime, graphics2D, null, null);
