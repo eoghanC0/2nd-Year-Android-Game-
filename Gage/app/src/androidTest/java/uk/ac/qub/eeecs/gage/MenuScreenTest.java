@@ -101,4 +101,7 @@ public class MenuScreenTest {
             // Check return
             assertEquals(game.getScreenManager().getCurrentScreen().getName(), optionsScreen.getName());
         }
+
+
+
     }
