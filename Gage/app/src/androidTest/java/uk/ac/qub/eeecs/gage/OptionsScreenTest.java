@@ -82,7 +82,7 @@ public class OptionsScreenTest {
         game.setPreference(tag1, value1);
         game.setPreference(tag2, value2);
         game.setPreference(tag3, value3);
-        
+
         //check if preferences have been set
 
         assertEquals(value1, game.getStringPreference(tag1));
