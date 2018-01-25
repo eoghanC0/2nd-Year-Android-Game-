@@ -1,13 +1,14 @@
 package uk.ac.qub.eeecs.game.cardDemo.objects;
 
 import uk.ac.qub.eeecs.gage.Game;
+import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 /**
  * Created by Aedan on 24/01/2018.
  */
 //This class stores the details of each match
-public class Match {
+public class Match extends GameObject {
 
     private int playerAScore;
     private int playerBScore;
@@ -17,7 +18,8 @@ public class Match {
 
     public enum GameState{MIDFIELD, PLAYERADANGEROUSATTACK, PLAYERAATTACK, PLAYERBATTACK, PLAYERBDANGEROUSATTACK };
 
-    public Match(){
+    public Match(GameScreen gameScreen){
+        super(gameScreen);
         this.playerAScore = 0;
         this.playerBScore = 0;
         this.gameState = gameState.MIDFIELD;
@@ -29,7 +31,7 @@ public class Match {
     }
 
     public void setPlayerBScore(int score){
-        this.playerAScore = score;
+        this.playerBScore = score;
     }
 
     public void setGameState(GameState gameState) {this.gameState = gameState;}
@@ -45,8 +47,8 @@ public class Match {
     public GameState getGameState() {return gameState;}
 
     public void scenario(){
-        MatchEvent newEvent = new MatchEvent(gameState);
-        String winner = newEvent.runScenario();
+        MatchEvent newEvent = new MatchEvent(mGameScreen);
+        String winner = newEvent.runScenario(gameState);
         if (winner.equals("PlayerA")){
             if (gameState.equals(GameState.PLAYERADANGEROUSATTACK)){
                 setPlayerAScore(getPlayerAScore() + 1);
@@ -67,9 +69,9 @@ public class Match {
                         break;
                 }
             }
-        } else {
+        } else if (winner.equals("PlayerB")){
             if (gameState.equals(GameState.PLAYERBDANGEROUSATTACK)){
-                setPlayerAScore(getPlayerBScore() + 1);
+                setPlayerBScore(getPlayerBScore() + 1);
                 setGameState(gameState.MIDFIELD);
             } else{
                 switch (getGameState()){

@@ -1,9 +1,13 @@
 package uk.ac.qub.eeecs.game.cardDemo.objects;
 
+import android.util.Log;
+
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Random;
 
+import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
+import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
@@ -12,17 +16,17 @@ import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
  * Created by Aedan on 24/01/2018.
  */
 
-public class MatchEvent {
+public class MatchEvent extends GameObject{
 
-    private Match.GameState gameState;
-    GameScreen mGameScreen;
-
-    public MatchEvent(Match.GameState gameState){
-        gameState = gameState;
+    public MatchEvent(GameScreen gameScreen){
+        super(gameScreen);
     }
 
-    public String runScenario(){
-        String chosenScenario = generateSccenario();
+
+
+
+    public String runScenario(Match.GameState gameState){
+        String chosenScenario = generateSccenario(gameState);
         Card[] selectedPlayers = selectPlayers(chosenScenario);
         int[] stats = getStats(chosenScenario, selectedPlayers[0], selectedPlayers[1]);
         String winner = (scenarioWinner(stats[0], stats[1]));
@@ -32,36 +36,36 @@ public class MatchEvent {
     }
 
     //method to generate a random scenario
-    private String generateSccenario(){
+    private String generateSccenario(Match.GameState gameState){
 
         ArrayList<String> possibleScenarios = new ArrayList<String>();
-        switch (gameState){
-            case MIDFIELD:
+        switch (gameState.name()){
+            case "MIDFIELD":
                 possibleScenarios.add("PAS PAS");
                 possibleScenarios.add("PAC PAC");
                 possibleScenarios.add("HEA HEA");
                 possibleScenarios.add("DRI DRI");
                 break;
 
-            case PLAYERAATTACK:
+            case "PLAYERAATTACK":
                   possibleScenarios.add("PAC PAC");
                   possibleScenarios.add("HEA HEA");
                   possibleScenarios.add("DRI DEF");
                   possibleScenarios.add("PAS DEF");
                 break;
-            case PLAYERBATTACK:
+            case "PLAYERBATTACK":
                 possibleScenarios.add("PAC PAC");
                 possibleScenarios.add("HEA HEA");
                 possibleScenarios.add("DEF DRI");
                 possibleScenarios.add("DEF PAS");
                 break;
-            case PLAYERADANGEROUSATTACK:
+            case "PLAYERADANGEROUSATTACK":
                 possibleScenarios.add("SHO GK");
                 possibleScenarios.add("DRI DEF");
                 possibleScenarios.add("HEA GK");
                 possibleScenarios.add("HEA HEA");
                 break;
-            case PLAYERBDANGEROUSATTACK:
+            case "PLAYERBDANGEROUSATTACK":
                 possibleScenarios.add("GK SHO");
                 possibleScenarios.add("DEF DRI");
                 possibleScenarios.add("GK HEA");
@@ -71,14 +75,10 @@ public class MatchEvent {
 
         //choose the scenario
         Random rand = new Random();
-        String chosenScenario = possibleScenarios.get(rand.nextInt(4)+1);
+        String chosenScenario = possibleScenarios.get(rand.nextInt(4));
 
 
         return chosenScenario;
-
-        //int[] stats = getStats(chosenScenario, playerA, playerB);
-
-
 
 
     }

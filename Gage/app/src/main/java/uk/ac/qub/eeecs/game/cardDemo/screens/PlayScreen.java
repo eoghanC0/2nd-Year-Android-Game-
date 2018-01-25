@@ -29,7 +29,7 @@ public class PlayScreen extends GameScreen {
     private final int totalGameTimeLength;
     private double currentGameTime;
     private int playerScore, CPUScore;
-    private Button mScenarioButton;
+    private PushButton mScenarioButton;
     public Match currentMatch;
 
     // /////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     public PlayScreen(Game game) {
         super("PlayScreen", game);
-        currentMatch = new Match();
+        currentMatch = new Match(this);
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("PlayScreenBackground", "img/pitch.png");
         background = assetManager.getBitmap("PlayScreenBackground");
@@ -58,15 +58,21 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     @Override
     public void update(ElapsedTime elapsedTime) {
+        mScenarioButton.update(elapsedTime);
+
 
         currentGameTime += elapsedTime.stepTime;
+        if (mScenarioButton.isPushTriggered()){
+            currentMatch.scenario();
+        }
 
 
     }
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-
+        playerScore = currentMatch.getPlayerAScore();
+        CPUScore = currentMatch.getPlayerBScore();
         Paint paint = mGame.getPaint();
         paint.setAlpha(100);
         graphics2D.drawBitmap(background,null, backgroundRectangle, paint);
@@ -75,7 +81,7 @@ public class PlayScreen extends GameScreen {
         paint.setColor(Color.BLUE);
         graphics2D.drawText("Player: " + playerScore + " - " + CPUScore + " :CPU", 50, 50, paint);
         graphics2D.drawText("Timer : " + String.format("%2.2f", currentGameTime/totalGameTimeLength*90), this.getGame().getScreenWidth() - 500, 50, paint);
-        graphics2D.drawText("State : " + ( currentMatch.getGameState().name() ), this.getGame().getScreenWidth() - 900, 50, paint);
+        graphics2D.drawText("State : " + ( currentMatch.getGameState().name() ), this.getGame().getScreenWidth() - 1500, 50, paint);
 
         mScenarioButton.draw(elapsedTime, graphics2D);
 
