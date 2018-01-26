@@ -393,6 +393,19 @@ public class HorizontalImageScroller extends GameObject {
     }
 
     /**
+     * Calculates the next multi based index
+     */
+    private void calculateNextMultiIndex() {
+        if(scrollDirection) {
+            nextItemIndex = currentItemIndex - maxDisplayedItems < 0 ? imageScrollerItems.size() - (imageScrollerItems.size() % maxDisplayedItems) : currentItemIndex - maxDisplayedItems;
+            nextItemIndex = nextItemIndex == imageScrollerItems.size() ? imageScrollerItems.size() - maxDisplayedItems : nextItemIndex;
+        } else {
+            nextItemIndex = currentItemIndex + maxDisplayedItems > imageScrollerItems.size() ? 0 : currentItemIndex + maxDisplayedItems;
+            nextItemIndex = nextItemIndex == imageScrollerItems.size() ?  0 : nextItemIndex;
+        }
+    }
+
+    /**
      * Calculates thenumber of bitmaps that can be displayed
      * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
      */
@@ -454,14 +467,14 @@ public class HorizontalImageScroller extends GameObject {
      * Calculates the positions of the next bitmaps based on the direction the scroller
      * is being moved in
      */
-    private void calculateNextMultiVectors() {
+    public void calculateNextMultiVectors() {
+        if(!multiMode || imageScrollerItems.size() <= 1) return;
         // Get starting position of next items based on the direction the scroller is going to move
         float startPosition = 0;
         startPosition = scrollDirection ? mBound.getLeft() - mBound.getWidth() : mBound.getRight();
 
         // Set the new item index
-        nextItemIndex = currentItemIndex + maxDisplayedItems > imageScrollerItems.size() ? 0 : currentItemIndex + maxDisplayedItems;
-        nextItemIndex = nextItemIndex == imageScrollerItems.size() ?  0 : nextItemIndex;
+        calculateNextMultiIndex();
 
         // Set  position of first next item
         imageScrollerItems.get(nextItemIndex).position = new Vector2(startPosition + maxItemSpacing + maxItemDimensions.x, position.y);
@@ -825,5 +838,9 @@ public class HorizontalImageScroller extends GameObject {
 
     public ArrayList<ImageScrollerItem> getImageScrollerItems() {
         return imageScrollerItems;
+    }
+
+    public void setScrollDirection(boolean scrollDirection) {
+        this.scrollDirection = scrollDirection;
     }
 }
