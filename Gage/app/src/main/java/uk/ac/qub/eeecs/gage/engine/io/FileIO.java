@@ -173,50 +173,26 @@ public class FileIO {
     // /////////////////////////////////////////////////////////////////////////
     // Device Storage IO //
     // /////////////////////////////////////////////////////////////////////////
-
-
-    /* Checks if external storage is available for read and write */
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    /* Checks if external storage is available to at least read */
-    public boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * @return a string (i.e. the data stored in the file)
      */
     public String readFile(String fileName) throws IOException {
-        if (isExternalStorageReadable()) {
-            File file = new File(mExternalStoragePath, fileName);
-            if (file != null) {
-                FileReader fileReader = new FileReader(file);
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
+        File file = new File(mContext.getFilesDir().getPath() + File.separator + fileName);
+        if (file != null) {
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
 
-                while ((receiveString = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(receiveString);
-                }
-                bufferedReader.close();
-                fileReader.close();
-                return stringBuilder.toString();
+            while ((receiveString = bufferedReader.readLine()) != null) {
+                stringBuilder.append(receiveString);
             }
-            Log.e("Error", "File not found");
-            return "";
+            bufferedReader.close();
+            fileReader.close();
+            Log.i("READ:", "Read Successful");
+            return stringBuilder.toString();
         }
-        Log.e("Error","External Storage is not readable");
+        Log.e("Error", "File not found");
         return "";
     }
 
@@ -225,35 +201,28 @@ public class FileIO {
      * @param data the data to be written to the file
      */
     public void writeFile(String fileName, String data) throws IOException {
-        if (isExternalStorageWritable()) {
-            File file = new File(mExternalStoragePath, fileName);
-            FileOutputStream out = new FileOutputStream(file);
-            OutputStreamWriter outWriter = new OutputStreamWriter(out);
-            outWriter.append(data);
-            outWriter.close();
-            out.close();
-        } else {
-            Log.i("Error","External Storage is not writable");
-        }
+        File file = new File(mContext.getFilesDir().getPath() + File.separator + fileName);
+        FileOutputStream out = new FileOutputStream(file);
+        OutputStreamWriter outWriter = new OutputStreamWriter(out);
+        outWriter.append(data);
+        outWriter.close();
+        out.close();
+        Log.i("SAVE:", "Save Successful");
     }
 
     /*
     Get all of the files stored in external storage
      */
     public ArrayList<File> getFiles() {
-        if (isExternalStorageReadable()) {
-            ArrayList<File> files = new ArrayList<>();
-            File dir = new File(mExternalStoragePath);
-            File[] items = dir.listFiles();
-            if (items != null) {
-                for (File f : items) {
-                    if (f.isFile()) files.add(f);
-                }
+        ArrayList<File> files = new ArrayList<>();
+        File dir = new File(mContext.getFilesDir().getPath() + File.separator);
+        File[] items = dir.listFiles();
+        if (items != null) {
+            for (File f : items) {
+                if (f.isFile()) files.add(f);
             }
-            return files;
         }
-        Log.i("Error","External Storage is not readable");
-        return null;
+        return files;
     }
 
     /*
