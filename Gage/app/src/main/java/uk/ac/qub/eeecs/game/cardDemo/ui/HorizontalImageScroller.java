@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -49,7 +50,7 @@ import uk.ac.qub.eeecs.gage.world.ScreenViewport;
  * TODO: Noticed fan got pretty loud after having scroller open a while. Possible memory leak. Requires investigating.
  * TODO: Animations not configured properly using frames, elapsedTime etc. Fix this.
  * TODO: Only draw bitmaps within the bounds of the scroller
- * TODO: Refactor.
+ * TODO: Change addScrollerItem() to use an ImageScrollerItem as argument.
  */
 public class HorizontalImageScroller extends GameObject {
 
@@ -242,8 +243,18 @@ public class HorizontalImageScroller extends GameObject {
         selectBound.y = position.y;
         selectBound.halfWidth = mBound.getWidth() * 0.4f;
         selectBound.halfHeight = mBound.getHeight();
+    }
 
-        // Test images to determine scroller functions as intended
+    // /////////////////////////////////////////////////////////////////////////
+    // Methods
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Test items
+     */
+    public void addTestData() {
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+
         assetManager.loadAndAddBitmap("Card 0", "img/card-0.png");
         assetManager.loadAndAddBitmap("Card 1", "img/card-1.png");
         assetManager.loadAndAddBitmap("Card 2", "img/card-2.png");
@@ -262,22 +273,13 @@ public class HorizontalImageScroller extends GameObject {
         addScrollerItem(assetManager.getBitmap("Card 5"));
         addScrollerItem(assetManager.getBitmap("Card 6"));
         addScrollerItem(assetManager.getBitmap("Card 7"));
-
-        /*for (ImageScrollerItem i : imageScrollerItems) {
-            getNewBitmapDimensions(i.getBitmap(), (int) mBound.getHeight(), true);
-        }*/
-
     }
-
-    // /////////////////////////////////////////////////////////////////////////
-    // Methods
-    // /////////////////////////////////////////////////////////////////////////
 
     /**
      * Sets the background bitmap of the scroller
      * @param bitmap
      */
-    private void setBackground(Bitmap bitmap) {
+    public void setBackground(Bitmap bitmap) {
         if(!(mBitmap == null)) return;
         mBitmap = bitmap;
     }
@@ -310,19 +312,13 @@ public class HorizontalImageScroller extends GameObject {
      * Adds item to scroller
      * @param bitmap
      */
-    private void addScrollerItem(Bitmap bitmap) {
+    public void addScrollerItem(Bitmap bitmap) {
         if(bitmap != null) {
             if(imageScrollerItems.size() == 0) currentItemIndex = 0;
             else if(imageScrollerItems.size() == 1) nextItemIndex = 1;
 
-            Vector2 dimensions;
-            // Get postion and dimensions based on scroller mode
-            if(multiMode) {
-
-            } else {
-                dimensions = getNewBitmapDimensions(bitmap, (int) mBound.getHeight(), true);
-                imageScrollerItems.add(new ImageScrollerItem(position.x, position.y, dimensions.x * 2, dimensions.y * 2, bitmap, mGameScreen));
-            }
+            Vector2 dimensions = getNewBitmapDimensions(bitmap, (int) mBound.getHeight(), true);
+            imageScrollerItems.add(new ImageScrollerItem(position.x, position.y, dimensions.x * 2, dimensions.y * 2, bitmap, mGameScreen));
         }
     }
 
@@ -378,21 +374,30 @@ public class HorizontalImageScroller extends GameObject {
      * @param heightOccupyPercentage
      */
     public void setMultiMode(boolean value, int heightOccupyPercentage) {
-        if(!(imageScrollerItems.size() > 0) || !value) {
+        if(!(imageScrollerItems.size() > 0)) {
             Log.e("ERROR", "You cannot set multi-image mode unless there is at least 1 bitmap in bitmaps");
-            return;
-        }
+        } else if(!value) {
+            multiMode = false;
+            currentItemIndex = 0;
 
-        multiMode = true;
-        calculateMultiItemsDisplayed(imageScrollerItems.get(0).getBitmap(), heightOccupyPercentage);
+            imageScrollerItems.get(currentItemIndex).position = new Vector2(position);
+            for (ImageScrollerItem i : imageScrollerItems) {
+                Vector2 dimensions = getNewBitmapDimensions(i.getBitmap(), (int) mBound.getHeight(), true);
+                i.setWidthAndHeight(dimensions.x * 2, dimensions.y * 2);
+            }
+            calculateNextSingleVector();
+        } else {
+            multiMode = true;
+            calculateMultiItemsDisplayed(heightOccupyPercentage);
+        }
     }
 
     /**
      * Calculates thenumber of bitmaps that can be displayed
-     * @param templateBitmap Bitmap from which is used as the basis to perform all calculations
      * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
      */
-    private void calculateMultiItemsDisplayed(Bitmap templateBitmap, float heightOccupyPercentage) {
+    public void calculateMultiItemsDisplayed(float heightOccupyPercentage) {
+        if(!multiMode || !(imageScrollerItems.size() > 0)) return;
         // Ensure heightOccupyPercentage is within bounds then divide by 100, else set to 1 (100%)
         if(heightOccupyPercentage <= 0 || heightOccupyPercentage > 100)
             heightOccupyPercentage = 1;
@@ -402,7 +407,7 @@ public class HorizontalImageScroller extends GameObject {
         // Find the maximum height allowed for the bitmap
         int maxHeight = (int) (mBound.getHeight() * heightOccupyPercentage);
         // Rescale bitmap dimensions using the maxHeight
-        Vector2 scaledBitmapDimensions = getNewBitmapDimensions(templateBitmap, maxHeight, true);
+        Vector2 scaledBitmapDimensions = getNewBitmapDimensions(imageScrollerItems.get(0).getBitmap(), maxHeight, true);
 
         // Set maxItemDimensions
         maxItemDimensions.x = scaledBitmapDimensions.x;
@@ -433,7 +438,7 @@ public class HorizontalImageScroller extends GameObject {
      */
     private void calculateCurrentMultiVectors() {
         // If a current item exists, draw any current items else return
-        if(currentItemIndex == -1) return;
+        if(!multiMode || currentItemIndex == -1) return;
 
         // Set position of current item
         imageScrollerItems.get(currentItemIndex).position = new Vector2(mBound.getLeft() + maxItemSpacing + imageScrollerItems.get(0).getBound().halfWidth, position.y);
@@ -704,5 +709,121 @@ public class HorizontalImageScroller extends GameObject {
             if(!scrollAnimationTriggered) return;
             imageScrollerItems.get(nextItemIndex).draw(elapsedTime, graphics2D);
         }
+    }
+
+    /**
+     * GETTERS AND SETTERS
+     */
+
+    public int getItemCount() {
+        return imageScrollerItems.size();
+    }
+
+    public int getCurrentItemIndex() {
+        return currentItemIndex;
+    }
+
+    public int getNextItemIndex() {
+        return nextItemIndex;
+    }
+
+    public boolean getSelectMode() {
+        return selectMode;
+    }
+
+    public boolean getMultiMode() {
+        return multiMode;
+    }
+
+    public Vector2 getCurrentItemPosition() {
+        return currentItemPosition;
+    }
+
+    public Vector2 getNextItemPosition() {
+        return nextItemPosition;
+    }
+
+    public float getItemDistance() {
+        return itemDistance;
+    }
+
+    public float getDistanceMoved() {
+        return distanceMoved;
+    }
+
+    public boolean isScrollAnimationTriggered() {
+        return scrollAnimationTriggered;
+    }
+
+    public boolean isScrollDirection() {
+        return scrollDirection;
+    }
+
+    public PushButton getPushButtonLeft() {
+        return pushButtonLeft;
+    }
+
+    public PushButton getPushButtonRight() {
+        return pushButtonRight;
+    }
+
+    public boolean isMultiMode() {
+        return multiMode;
+    }
+
+    public int getMaxDisplayedItems() {
+        return maxDisplayedItems;
+    }
+
+    public int getMaxItemSpacing() {
+        return maxItemSpacing;
+    }
+
+    public int getMAX_DISPLAYED_ITEMS_ALLOWED() {
+        return MAX_DISPLAYED_ITEMS_ALLOWED;
+    }
+
+    public Vector2 getMaxItemDimensions() {
+        return maxItemDimensions;
+    }
+
+    public Vector2[] getCurrentItemPositions() {
+        return currentItemPositions;
+    }
+
+    public boolean isSelectMode() {
+        return selectMode;
+    }
+
+    public boolean isItemSelected() {
+        return itemSelected;
+    }
+
+    public int getSelectedItemIndex() {
+        return selectedItemIndex;
+    }
+
+    public boolean isSelectAnimationTriggered() {
+        return selectAnimationTriggered;
+    }
+
+    public boolean isSelectDirection() {
+        return selectDirection;
+    }
+
+    public float getSelectDistance() {
+        return selectDistance;
+    }
+
+    public Vector2 getTouchLocation() {
+        return touchLocation;
+    }
+
+    public BoundingBox getSelectBound() {
+        return selectBound;
+    }
+
+    public ArrayList<ImageScrollerItem> getImageScrollerItems() {
+        return imageScrollerItems;
     }
 }
