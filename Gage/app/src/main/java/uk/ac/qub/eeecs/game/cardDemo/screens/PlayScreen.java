@@ -69,7 +69,7 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     private void updateInfoBar() {
         infoBar.setAreaOneText(String.format("Player %1$d | %2$d CPU", playerScore, CPUScore));
-        infoBar.setAreaTwoText("Currently at MIDFIELD");
+        infoBar.setAreaTwoText(currentMatch.getGameState().name().replace("_", " ").replace("PLAYER A", "PLAYER").replace("PLAYER B", "CPU"));
         infoBar.setAreaThreeText(String.format("%2.2f", currentGameTime / totalGameTimeLength * 90));
     }
 

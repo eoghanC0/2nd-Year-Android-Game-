@@ -16,7 +16,7 @@ public class Match extends GameObject {
     private int totalTime;
     private GameState gameState;
 
-    public enum GameState{MIDFIELD, PLAYERADANGEROUSATTACK, PLAYERAATTACK, PLAYERBATTACK, PLAYERBDANGEROUSATTACK };
+    public enum GameState{MIDFIELD, PLAYER_A_DANGEROUS_ATTACK, PLAYER_A_ATTACK, PLAYER_B_ATTACK, PLAYER_B_DANGEROUS_ATTACK };
 
     public Match(GameScreen gameScreen){
         super(gameScreen);
@@ -50,42 +50,42 @@ public class Match extends GameObject {
         MatchEvent newEvent = new MatchEvent(mGameScreen);
         String winner = newEvent.runScenario(gameState);
         if (winner.equals("PlayerA")){
-            if (gameState.equals(GameState.PLAYERADANGEROUSATTACK)){
+            if (gameState.equals(GameState.PLAYER_A_DANGEROUS_ATTACK)){
                 setPlayerAScore(getPlayerAScore() + 1);
                 setGameState(gameState.MIDFIELD);
             } else{
                 switch (getGameState()){
                     case MIDFIELD:
-                        setGameState(gameState.PLAYERAATTACK);
+                        setGameState(gameState.PLAYER_A_ATTACK);
                         break;
-                    case PLAYERAATTACK:
-                        setGameState(gameState.PLAYERADANGEROUSATTACK);
+                    case PLAYER_A_ATTACK:
+                        setGameState(gameState.PLAYER_A_DANGEROUS_ATTACK);
                         break;
-                    case PLAYERBATTACK:
+                    case PLAYER_B_ATTACK:
                         setGameState(gameState.MIDFIELD);
                         break;
-                    case PLAYERBDANGEROUSATTACK:
-                        setGameState(gameState.PLAYERBATTACK);
+                    case PLAYER_B_DANGEROUS_ATTACK:
+                        setGameState(gameState.PLAYER_B_ATTACK);
                         break;
                 }
             }
         } else if (winner.equals("PlayerB")){
-            if (gameState.equals(GameState.PLAYERBDANGEROUSATTACK)){
+            if (gameState.equals(GameState.PLAYER_B_DANGEROUS_ATTACK)){
                 setPlayerBScore(getPlayerBScore() + 1);
                 setGameState(gameState.MIDFIELD);
             } else{
                 switch (getGameState()){
                     case MIDFIELD:
-                        setGameState(gameState.PLAYERBATTACK);
+                        setGameState(gameState.PLAYER_B_ATTACK);
                         break;
-                    case PLAYERBATTACK:
-                        setGameState(gameState.PLAYERBDANGEROUSATTACK);
+                    case PLAYER_B_ATTACK:
+                        setGameState(gameState.PLAYER_B_DANGEROUS_ATTACK);
                         break;
-                    case PLAYERAATTACK:
+                    case PLAYER_A_ATTACK:
                         setGameState(gameState.MIDFIELD);
                         break;
-                    case PLAYERADANGEROUSATTACK:
-                        setGameState(gameState.PLAYERAATTACK);
+                    case PLAYER_A_DANGEROUS_ATTACK:
+                        setGameState(gameState.PLAYER_A_ATTACK);
                         break;
                 }
             }
