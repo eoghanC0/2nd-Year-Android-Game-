@@ -34,6 +34,19 @@ import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
 
 public class Card extends Sprite {
     // ////////////////////////////////////////////////
+    // Constants
+    // /////////////////////////////////////////////////
+    private final Float FLAG_TO_CARD_WIDTH_RATIO = 80f/495f;
+    private final Float FLAG_TO_CARD_HEIGHT_RATIO = 50f/789f;
+    private final Float HEADSHOT_TO_CARD_WIDTH_RATIO = 134f/495f * 2.5f;
+    private final Float HEADSHOT_TO_CARD_HEIGHT_RATIO = 134f/789f * 2.5f;
+    private final Float BADGE_TO_CARD_WIDTH_RATIO = 68f/495f;
+    private final Float BADGE_TO_CARD_HEIGHT_RATIO = 68f/789f;
+
+    private final Float HEADSHOT_RELATIVE_POSITION_LEFT = 160 * HEADSHOT_TO_CARD_WIDTH_RATIO;
+    private final Float HEADSHOT_RELATIVE_POSITION_TOP_RARE = 32 * HEADSHOT_TO_CARD_HEIGHT_RATIO;
+    private final Float HEADSHOT_RELATIVE_POSITION_TOP_COMMON = 25 * HEADSHOT_TO_CARD_HEIGHT_RATIO;
+    // ////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////
     private Bitmap cardBackground;
@@ -56,9 +69,12 @@ public class Card extends Sprite {
     private boolean rare = false;
     private int fitness = 100;
     private Bitmap headshot, nationFlag, clubBadge;
-    private int lastGamePlayNumber = -1;
 
     private AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+
+    private int lastGamePlayNumber = -1;
+
+    private boolean showingFitness = false;
 
     // /////////////////////////////////////////////////////
     // Constructor
@@ -68,7 +84,7 @@ public class Card extends Sprite {
         super(startX, startY, height * 225/355, height, null, gameScreen);
         this.fitness = fitness;
         try {
-            populatePlayerProperties(playerID, getPlayersArray());
+            populateCardProperties(playerID, getPlayersArray());
         } catch (JSONException e) {
             Log.e("Error", "The JSON file could not be read", e);
         }
@@ -83,7 +99,7 @@ public class Card extends Sprite {
             ArrayList<String> releventPlayerIDs = getReleventPlayerIDs(rare, minRating, maxRating, playersArray);
             Random rnd = new Random();
             String randPlayerID = releventPlayerIDs.get(rnd.nextInt(releventPlayerIDs.size()));
-            populatePlayerProperties(randPlayerID, playersArray);
+            populateCardProperties(randPlayerID, playersArray);
         } catch (JSONException e) {
             Log.e("Error", "The JSON file could not be read", e);
         }
@@ -213,7 +229,7 @@ public class Card extends Sprite {
         return (JSONArray) playerJson.get("players");
     }
 
-    private void populatePlayerProperties(String playerID, JSONArray playersArray) throws JSONException {
+    private void populateCardProperties(String playerID, JSONArray playersArray) throws JSONException {
         JSONObject thisPlayerJSON = playersArray.getJSONObject(Integer.parseInt(playerID));
         displayName = (String) thisPlayerJSON.get("displayName");
         firstName = (String) thisPlayerJSON.get("firstName");
@@ -276,6 +292,38 @@ public class Card extends Sprite {
         headshot = assetManager.getBitmap("player_" + playerID);
         nationFlag = assetManager.getBitmap("nation_" + (String) nationDetails.get("name"));
         clubBadge = assetManager.getBitmap("club_" + (String) clubDetails.get("name"));
+        if (rating >= 75) {
+            if (rare) {
+                if (assetManager.getBitmap("gold_rare_card") == null)
+                    assetManager.loadAndAddBitmap("gold_rare_card", "img/RareGoldCard.png");
+                cardBackground = assetManager.getBitmap("gold_rare_card");
+            } else {
+                if (assetManager.getBitmap("gold_common_card") == null)
+                    assetManager.loadAndAddBitmap("gold_common_card", "img/CommonGoldCard.png");
+                cardBackground = assetManager.getBitmap("gold_common_card");
+            }
+        } else if (rating >= 65) {
+            if (rare) {
+                if (assetManager.getBitmap("silver_rare_card") == null)
+                    assetManager.loadAndAddBitmap("silver_rare_card", "img/RareSilverCard.png");
+                cardBackground = assetManager.getBitmap("silver_rare_card");
+            } else {
+                if (assetManager.getBitmap("silver_common_card") == null)
+                    assetManager.loadAndAddBitmap("silver_common_card", "img/CommonSilverCard.png");
+                cardBackground = assetManager.getBitmap("silver_common_card");
+            }
+        } else {
+            if (rare) {
+                if (assetManager.getBitmap("bronze_rare_card") == null)
+                    assetManager.loadAndAddBitmap("bronze_rare_card", "img/RareBronzeCard.png");
+                cardBackground = assetManager.getBitmap("bronze_rare_card");
+            } else {
+                if (assetManager.getBitmap("bronze_common_card") == null)
+                    assetManager.loadAndAddBitmap("bronze_common_card", "img/CommonBronzeCard.png");
+                cardBackground = assetManager.getBitmap("bronze_common_card");
+            }
+        }
+
     }
 
     @Override
@@ -285,11 +333,35 @@ public class Card extends Sprite {
 
     @Override
     public void draw(ElapsedTime elapsedTime,IGraphics2D graphics2D) {
-        drawScreenRect.set((int) (position.x - mBound.halfWidth),
-                (int) (position.y - mBound.halfHeight),
-                (int) (position.x + mBound.halfWidth),
-                (int) (position.y + mBound.halfHeight));
-//        graphics2D.drawBitmap(headshot, null, drawScreenRect, null);
+        //Draw the card background
+        drawScreenRect.set((int) mBound.getLeft(), (int) mBound.getBottom(), (int) mBound.getRight(), (int) mBound.getTop());
+        graphics2D.drawBitmap(cardBackground, null, drawScreenRect, null);
+
+        //Overlay the player headshot
+        int rectTop;
+        int rectLeft = (int) (mBound.getLeft() + HEADSHOT_RELATIVE_POSITION_LEFT);
+        if (rare) {
+            rectTop = (int) (mBound.getBottom() + HEADSHOT_RELATIVE_POSITION_TOP_RARE);
+        } else {
+            rectTop = (int) (mBound.getBottom() + HEADSHOT_RELATIVE_POSITION_TOP_COMMON);
+        }
+        int rectWidth = (int) (mBound.getWidth() * HEADSHOT_TO_CARD_WIDTH_RATIO);
+        int rectHeight = (int) (mBound.getTop() * HEADSHOT_TO_CARD_HEIGHT_RATIO);
+        drawScreenRect.set(rectLeft, rectTop, rectLeft + rectWidth, rectTop + rectHeight);
+        graphics2D.drawBitmap(headshot, null, drawScreenRect, null);
+
+        //Overlay the club badge
+        rectLeft = (int) (mBound.getLeft() + HEADSHOT_RELATIVE_POSITION_LEFT);
+        if (rare) {
+            rectTop = (int) (mBound.getBottom() + HEADSHOT_RELATIVE_POSITION_TOP_RARE);
+        } else {
+            rectTop = (int) (mBound.getBottom() + HEADSHOT_RELATIVE_POSITION_TOP_COMMON);
+        }
+        rectWidth = (int) (mBound.getWidth() * HEADSHOT_TO_CARD_WIDTH_RATIO);
+        rectHeight = (int) (mBound.getTop() * HEADSHOT_TO_CARD_HEIGHT_RATIO);
+        drawScreenRect.set(rectLeft, rectTop, rectLeft + rectWidth, rectTop + rectHeight);
+        graphics2D.drawBitmap(clubBadge, null, drawScreenRect, null);
+
 
     }
 }
