@@ -475,4 +475,18 @@ public class InfoBar extends GameObject {
         this.areaThreeText = areaThreeText;
     }
 
+    public String getAreaOneText() {
+        return areaOneText;
+    }
+
+    public String getAreaTwoText() {
+        return areaTwoText;
+    }
+
+    public String getAreaThreeText() {
+        return areaThreeText;
+    }
+
+
+
 }

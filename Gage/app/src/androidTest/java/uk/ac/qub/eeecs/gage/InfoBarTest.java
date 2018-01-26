@@ -73,9 +73,9 @@ public class InfoBarTest {
         float width = rand.nextInt(1920);
         float height = rand.nextInt(1080);
         float x = width / 2, y = 0 + height;
-        infoBar = new InfoBar(x,y,width, height, helpScreen, " img/Ball.png", "Player Name", "0-0-0", 100);
+        infoBar = new InfoBar(x,y,width, height, helpScreen, " img/Ball.png", "Player Name", "0-0-0", "100");
         assert(infoBar.position.x == x && infoBar.position.y == y && infoBar.getBound().getWidth() == width && infoBar.getBound().getHeight() == height
-                && infoBar.getBitmap() != null && infoBar.getPlayerName() == "Player Name" && infoBar.getWinLossDraw() == "0-0-0" && infoBar.getExperience() == 100);
+                && infoBar.getBitmap() != null && infoBar.getAreaOneText().equals("Player Name") && infoBar.getAreaTwoText().equals("0-0-0") && infoBar.getAreaThreeText().equals("100"));
     }
 
     @Test
@@ -83,9 +83,9 @@ public class InfoBarTest {
         float width = rand.nextInt(1920) * -1;
         float height = rand.nextInt(1) * -1;
         float x = width / 2, y = 0 + height;
-        infoBar = new InfoBar(x,y,width, height, helpScreen, " img/Ball.png", "Player Name", "0-0-0", 100);
+        infoBar = new InfoBar(x,y,width, height, helpScreen, " img/Ball.png", "Player Name", "0-0-0", "100");
         assert(infoBar.position.x == x && infoBar.position.y == y && infoBar.getBound().getWidth() == width && infoBar.getBound().getHeight() == height
-                && infoBar.getBitmap() != null && infoBar.getPlayerName() == "Player Name" && infoBar.getWinLossDraw() == "0-0-0" && infoBar.getExperience() == 100);
+                && infoBar.getBitmap() != null && infoBar.getAreaOneText().equals("Player Name") && infoBar.getAreaTwoText().equals("0-0-0") && infoBar.getAreaThreeText().equals("100"));
     }
 
     public void setupInfoBar() {
