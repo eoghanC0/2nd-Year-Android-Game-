@@ -22,9 +22,6 @@ public class MatchEvent extends GameObject{
         super(gameScreen);
     }
 
-
-
-
     public String runScenario(Match.GameState gameState){
         String chosenScenario = generateSccenario(gameState);
         Card[] selectedPlayers = selectPlayers(chosenScenario);
@@ -39,33 +36,33 @@ public class MatchEvent extends GameObject{
     private String generateSccenario(Match.GameState gameState){
 
         ArrayList<String> possibleScenarios = new ArrayList<String>();
-        switch (gameState.name()){
-            case "MIDFIELD":
+        switch (gameState){
+            case MIDFIELD:
                 possibleScenarios.add("PAS PAS");
                 possibleScenarios.add("PAC PAC");
                 possibleScenarios.add("HEA HEA");
                 possibleScenarios.add("DRI DRI");
                 break;
 
-            case "PLAYERAATTACK":
+            case PLAYER_A_ATTACK:
                   possibleScenarios.add("PAC PAC");
                   possibleScenarios.add("HEA HEA");
                   possibleScenarios.add("DRI DEF");
                   possibleScenarios.add("PAS DEF");
                 break;
-            case "PLAYERBATTACK":
+            case PLAYER_B_ATTACK:
                 possibleScenarios.add("PAC PAC");
                 possibleScenarios.add("HEA HEA");
                 possibleScenarios.add("DEF DRI");
                 possibleScenarios.add("DEF PAS");
                 break;
-            case "PLAYERADANGEROUSATTACK":
+            case PLAYER_A_DANGEROUS_ATTACK:
                 possibleScenarios.add("SHO GK");
                 possibleScenarios.add("DRI DEF");
                 possibleScenarios.add("HEA GK");
                 possibleScenarios.add("HEA HEA");
                 break;
-            case "PLAYERBDANGEROUSATTACK":
+            case PLAYER_B_DANGEROUS_ATTACK:
                 possibleScenarios.add("GK SHO");
                 possibleScenarios.add("DEF DRI");
                 possibleScenarios.add("GK HEA");
@@ -76,7 +73,6 @@ public class MatchEvent extends GameObject{
         //choose the scenario
         Random rand = new Random();
         String chosenScenario = possibleScenarios.get(rand.nextInt(4));
-
 
         return chosenScenario;
 

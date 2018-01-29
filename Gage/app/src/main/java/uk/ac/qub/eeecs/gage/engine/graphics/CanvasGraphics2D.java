@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 /**
  * Graphics2D class that provides basic draw functionality for a canvas
@@ -81,6 +82,10 @@ public class CanvasGraphics2D implements IGraphics2D {
     @Override
     public void drawBitmap(Bitmap bitmap, Matrix matrix, Paint paint) {
         mCanvas.drawBitmap(bitmap, matrix, paint);
+    }
+
+    public void drawArc(RectF rect, float startAngle, float sweepAngle, boolean useCentre, Paint paint) {
+        mCanvas.drawArc(rect, startAngle, sweepAngle, useCentre, paint);
     }
 
     /*

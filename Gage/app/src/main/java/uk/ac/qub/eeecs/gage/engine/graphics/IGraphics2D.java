@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 /**
  * The graphics 2D interface defines the set of graphical operations that can be
@@ -55,6 +56,8 @@ public interface IGraphics2D {
     public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint);
 
     public void drawRect(float left, float top, float right, float bottom, Paint paint);
+
+    public void drawArc(RectF rect, float startAngle, float sweepAngle, boolean useCentre, Paint paint);
 
     /**
      * Draw the specified bitmap

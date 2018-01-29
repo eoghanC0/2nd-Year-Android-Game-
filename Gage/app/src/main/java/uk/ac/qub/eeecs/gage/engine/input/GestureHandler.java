@@ -18,7 +18,7 @@ import uk.ac.qub.eeecs.gage.util.Pool;
  * @version 1.0
  */
 public class GestureHandler extends TouchHandler
-        implements GestureDetector.OnGestureListener {
+        implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
     // /////////////////////////////////////////////////////////////////////////
     // Properties
@@ -171,6 +171,43 @@ public class GestureHandler extends TouchHandler
         touchEvent.dy = velocityY;
         addTouchEvent(touchEvent);
 
+        // Returning false as the basic underlying event handling needs to run
+        return false;
+    }
+
+    /**
+     * Triggered if a double tap event is detected.
+     *
+     * @param motionEvent Event which triggered the scroll
+     * @return true if the event is consumed, otherwise false
+     */
+    public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+        // Returning false as the basic underlying event handling needs to run
+        return false;
+    }
+
+    /**
+     * Triggered if a double event is detected.
+     *
+     * @param motionEvent Event which triggered the scroll
+     * @return true if the event is consumed, otherwise false
+     */
+    public boolean onDoubleTap(MotionEvent motionEvent) {
+        // Instantiate and add a fling event
+        TouchEvent touchEvent = instantiateTouchEvent(motionEvent);
+        touchEvent.type = TouchEvent.DOUBLE_TAP;
+        addTouchEvent(touchEvent);
+        // Returning false as the basic underlying event handling needs to run
+        return false;
+    }
+
+    /**
+     * Triggered if a double event is detected.
+     *
+     * @param motionEvent Movement event which triggered this onDoubleTapEvent
+     * @return true if the event is consumed, otherwise false
+     */
+    public boolean onDoubleTapEvent(MotionEvent motionEvent) {
         // Returning false as the basic underlying event handling needs to run
         return false;
     }
