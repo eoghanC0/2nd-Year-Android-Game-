@@ -3,7 +3,6 @@ package uk.ac.qub.eeecs.game.cardDemo.objects;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
@@ -11,12 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.DataInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Scanner;
 import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
@@ -24,14 +18,11 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
-import uk.ac.qub.eeecs.gage.util.BoundingBox;
-import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 import uk.ac.qub.eeecs.gage.world.Sprite;
 
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.DOUBLE_TAP;
-import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DRAGGED;
 
 
@@ -122,6 +113,8 @@ public class Card extends Sprite {
 
     private boolean showingStats = true;
 
+    private boolean draggingEnabled = false;
+
     // /////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////
@@ -142,9 +135,9 @@ public class Card extends Sprite {
         super(startX, startY, height * 225/355, height, null, gameScreen);
         try {
             JSONArray playersArray = getPlayersArray();
-            ArrayList<String> releventPlayerIDs = getReleventPlayerIDs(rare, minRating, maxRating,null, playersArray);
+            ArrayList<String> relevantPlayerIDs = getRelevantPlayerIDs(rare, minRating, maxRating,null, playersArray);
             Random rnd = new Random();
-            String randPlayerID = releventPlayerIDs.get(rnd.nextInt(releventPlayerIDs.size()));
+            String randPlayerID = relevantPlayerIDs.get(rnd.nextInt(relevantPlayerIDs.size()));
             populateCardProperties(randPlayerID, playersArray);
         } catch (JSONException e) {
             Log.e("Error", "The JSON file could not be read", e);
@@ -257,12 +250,16 @@ public class Card extends Sprite {
         mBound.halfWidth = height * 225/355/2f;
     }
 
+    public void setDraggingEnabled(boolean value) {
+        this.draggingEnabled = value;
+    }
+
 
     // ///////////////////////////////////////////////////////////
     // Methods
     // ///////////////////////////////////////////////////////////
 
-    private ArrayList<String> getReleventPlayerIDs(boolean rare, int minRating, int maxRating,String playerPosition, JSONArray playersArray) throws JSONException{
+    private ArrayList<String> getRelevantPlayerIDs(boolean rare, int minRating, int maxRating, String playerPosition, JSONArray playersArray) throws JSONException{
         //Get an array of playerIDs where the player is rare/non-rare (depending on the parameter)
         ArrayList<String> playerIDs = new ArrayList<>();
         for (int i = 0; i < playersArray.length(); i++) {
@@ -299,14 +296,18 @@ public class Card extends Sprite {
         abbrNation = (String) nationDetails.get("abbrName");
         playerPosition = (String) thisPlayerJSON.get("position");
         switch (playerPosition) {
-            case "Forward" :
-                abbrPlayerPosition = "FWD"; break;
-            case "Midfield" :
-                abbrPlayerPosition = "MID"; break;
-            case "Defence" :
-                abbrPlayerPosition = "DEF"; break;
-            case "GoalKeeper" :
-                abbrPlayerPosition = "GK"; break;
+            case "Forward":
+                abbrPlayerPosition = "FWD";
+                break;
+            case "Midfield":
+                abbrPlayerPosition = "MID";
+                break;
+            case "Defence":
+                abbrPlayerPosition = "DEF";
+                break;
+            case "GoalKeeper":
+                abbrPlayerPosition = "GK";
+                break;
         }
         JSONArray attributes = (JSONArray) thisPlayerJSON.get("attributes");
         for (int i = 0; i < attributes.length(); i++) {
@@ -353,7 +354,7 @@ public class Card extends Sprite {
         rating = (int) thisPlayerJSON.get("rating");
         rare = (boolean) thisPlayerJSON.get("rare");
         if (assetManager.getBitmap("player_" + playerID) == null)
-            assetManager.loadAndAddBitmap("player_" + playerID,"img/playerBitmaps/" + (String) thisPlayerJSON.get("headshotBitmap"));
+            assetManager.loadAndAddBitmap("player_" + playerID, "img/playerBitmaps/" + (String) thisPlayerJSON.get("headshotBitmap"));
         if (assetManager.getBitmap("club_" + (String) clubDetails.get("name")) == null)
             assetManager.loadAndAddBitmap("club_" + (String) clubDetails.get("name"), "img/clubBadgeBitmaps/" + (String) clubDetails.get("logo"));
         if (assetManager.getBitmap("nation_" + (String) nationDetails.get("name")) == null)
@@ -405,9 +406,10 @@ public class Card extends Sprite {
             if (getBound().contains(touchEvent.x, touchEvent.y)) {
                 if (touchEvent.type == DOUBLE_TAP)
                     showingStats = !showingStats;
-                if (touchEvent.type == TOUCH_DRAGGED)
+                if (draggingEnabled && (touchEvent.type == TOUCH_DRAGGED)) {
                     position.x = touchEvent.x;
                     position.y = touchEvent.y;
+                }
             }
         }
     }
@@ -420,28 +422,31 @@ public class Card extends Sprite {
         paint.setTextAlign(Paint.Align.CENTER);
 
         //Draw the card background
-        drawScreenRect.set((int) mBound.getLeft(), (int) mBound.getBottom(), (int) mBound.getRight(), (int) mBound.getTop());
+        drawScreenRect.set((int) (position.x - mBound.halfWidth),
+                (int) (position.y - mBound.halfHeight),
+                (int) (position.x + mBound.halfWidth),
+                (int) (position.y + mBound.halfHeight));
         graphics2D.drawBitmap(cardBackground, null, drawScreenRect, null);
 
         //Overlay the Player Rating
         paint.setTextSize((int) (RATING_SIZE_TO_CARD_HEIGHT_RATIO * mBound.getHeight()));
         paint.setFakeBoldText(true);
-        graphics2D.drawText(String.valueOf(rating), mBound.getLeft() + RATING_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + RATING_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
+        graphics2D.drawText(String.valueOf(rating), position.x - mBound.halfWidth + RATING_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + RATING_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
 
         //Overlay the player's position
         paint.setTextSize((int) (POSITION_SIZE_TO_CARD_HEIGHT_RATIO * mBound.getHeight()));
-        graphics2D.drawText(abbrPlayerPosition, mBound.getLeft() + POSITION_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + POSITION_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
+        graphics2D.drawText(abbrPlayerPosition, position.x - mBound.halfWidth + POSITION_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + POSITION_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
 
         //Overlay the player's name
         paint.setTextSize((int) (NAME_SIZE_TO_CARD_HEIGHT_RATIO * mBound.getHeight()));
-        graphics2D.drawText(displayName, mBound.getLeft() + NAME_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + NAME_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
+        graphics2D.drawText(displayName, position.x - mBound.halfWidth + NAME_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + NAME_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
 
         paint.setTextSize((int) (ATTRIBUTE_SIZE_TO_CARD_HEIGHT_RATIO * mBound.getHeight()));
         if (showingStats) {
             //Overlay the Attributes
-            float attributeLeftX = mBound.getLeft() + ATTRIBUTES_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight();
+            float attributeLeftX = position.x - mBound.halfWidth + ATTRIBUTES_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight();
             float attributeRightX = attributeLeftX + ATTRIBUTE_HORIZONTAL_SPACING_RATIO * mBound.getHeight();
-            float attributeTopY = mBound.getBottom() + ATTRIBUTES_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight();
+            float attributeTopY = position.y - mBound.halfHeight + ATTRIBUTES_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight();
             int attributeSpacingY = (int) (ATTRIBUTE_VERTICAL_SPACING_RATIO * mBound.getHeight());
 
             if (playerPosition.equals("GoalKeeper")) {
@@ -480,19 +485,19 @@ public class Card extends Sprite {
         } else {
             //Overlay the player's details
             paint.setFakeBoldText(false);
-            graphics2D.drawText(firstName, mBound.getLeft() + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
-            graphics2D.drawText(lastName, mBound.getLeft() + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight(), paint);
-            graphics2D.drawText(abbrClub, mBound.getLeft() + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight() * 2, paint);
-            graphics2D.drawText(abbrNation, mBound.getLeft() + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight() * 3, paint);
+            graphics2D.drawText(firstName, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
+            graphics2D.drawText(lastName, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight(), paint);
+            graphics2D.drawText(abbrClub, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight() * 2, paint);
+            graphics2D.drawText(abbrNation, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight() * 3, paint);
         }
 
         //Overlay the player headshot
         int rectTop;
-        int rectLeft = (int) (mBound.getLeft() + HEADSHOT_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight());
+        int rectLeft = (int) (position.x - mBound.halfWidth  + HEADSHOT_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight());
         if (rare) {
-            rectTop = (int) (mBound.getBottom() + HEADSHOT_RELATIVE_POSITION_TOP_RARE_RATIO * mBound.getHeight());
+            rectTop = (int) (position.y - mBound.halfHeight + HEADSHOT_RELATIVE_POSITION_TOP_RARE_RATIO * mBound.getHeight());
         } else {
-            rectTop = (int) (mBound.getBottom() + HEADSHOT_RELATIVE_POSITION_TOP_COMMON_RATIO * mBound.getHeight());
+            rectTop = (int) (position.y - mBound.halfHeight + HEADSHOT_RELATIVE_POSITION_TOP_COMMON_RATIO * mBound.getHeight());
         }
         int rectWidth = (int) (HEADSHOT_TO_CARD_RATIO * mBound.getHeight());
         int rectHeight = (int) (HEADSHOT_TO_CARD_RATIO * mBound.getHeight());
@@ -500,23 +505,23 @@ public class Card extends Sprite {
         graphics2D.drawBitmap(headshot, null, drawScreenRect, null);
 
         //Overlay the club badge
-        rectLeft = (int) (mBound.getLeft());
-        rectTop = (int) (mBound.getBottom() + BADGE_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight());
+        rectLeft = (int) (position.x - mBound.halfWidth );
+        rectTop = (int) (position.y - mBound.halfHeight + BADGE_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight());
         rectWidth = (int) (BADGE_TO_CARD_RATIO * mBound.getHeight());
         rectHeight = (int) (BADGE_TO_CARD_RATIO * mBound.getHeight());
         drawScreenRect.set(rectLeft, rectTop, rectLeft + rectWidth, rectTop + rectHeight);
         graphics2D.drawBitmap(clubBadge, null, drawScreenRect, null);
 
         //Overlay the nation flag
-        rectLeft = (int) (mBound.getLeft() + FLAG_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight());
-        rectTop = (int) (mBound.getBottom() + FLAG_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight());
+        rectLeft = (int) (position.x - mBound.halfWidth + FLAG_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight());
+        rectTop = (int) (position.y - mBound.halfHeight + FLAG_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight());
         rectWidth = (int) (FLAG_TO_CARD_WIDTH_RATIO * mBound.getHeight());
         rectHeight = (int) (FLAG_TO_CARD_HEIGHT_RATIO * mBound.getHeight());
         drawScreenRect.set(rectLeft, rectTop, rectLeft + rectWidth, rectTop + rectHeight);
         graphics2D.drawBitmap(nationFlag, null, drawScreenRect, null);
 
         //Overlay the fitness stat as an arc
-        RectF ovel = new RectF(mBound.getLeft() + FITNESS_ARC_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + FITNESS_ARC_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), mBound.getLeft() + FITNESS_ARC_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight() + FITNESS_ARC_DIAMETER_TO_CARD_HEIGHT_RATIO * mBound.getHeight(), mBound.getBottom() + FITNESS_ARC_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + FITNESS_ARC_DIAMETER_TO_CARD_HEIGHT_RATIO * mBound.getHeight());
+        RectF ovel = new RectF(position.x - mBound.halfWidth  + FITNESS_ARC_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + FITNESS_ARC_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), position.x - mBound.halfWidth  + FITNESS_ARC_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight() + FITNESS_ARC_DIAMETER_TO_CARD_HEIGHT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + FITNESS_ARC_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + FITNESS_ARC_DIAMETER_TO_CARD_HEIGHT_RATIO * mBound.getHeight());
         if (fitness >= 80) {
             paint.setColor(Color.GREEN);
         } else if (fitness >= 60) {
@@ -530,6 +535,6 @@ public class Card extends Sprite {
         paint.setColor(Color.BLACK);
         paint.setFakeBoldText(true);
         paint.setTextSize((int) (FITNESS_SIZE_TO_CARD_HEIGHT_RATIO * mBound.getHeight()));
-        graphics2D.drawText("FIT", mBound.getLeft() + FITNESS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + FITNESS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
+        graphics2D.drawText("FIT", position.x - mBound.halfWidth + FITNESS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + FITNESS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
     }
 }
