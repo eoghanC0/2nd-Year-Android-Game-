@@ -252,6 +252,11 @@ public class Card extends Sprite {
         this.lastGamePlayNumber = lastGamePlayNumber;
     }
 
+    public void setHeight(int height) {
+        mBound.halfHeight = height / 2f;
+        mBound.halfWidth = height * 225/355/2f;
+    }
+
 
     // ///////////////////////////////////////////////////////////
     // Methods
@@ -512,6 +517,7 @@ public class Card extends Sprite {
 
         //Overlay the fitness stat as an arc
         RectF ovel = new RectF(mBound.getLeft() + FITNESS_ARC_RELATIVE_POSITION_LEFT_RATIO, mBound.getBottom() + FITNESS_ARC_RELATIVE_POSITION_TOP_RATIO, mBound.getLeft() + FITNESS_ARC_RELATIVE_POSITION_LEFT_RATIO + FITNESS_ARC_DIAMETER_TO_CARD_HEIGHT_RATIO, mBound.getBottom() + FITNESS_ARC_RELATIVE_POSITION_TOP_RATIO + FITNESS_ARC_DIAMETER_TO_CARD_HEIGHT_RATIO);
+        fitness = 70;
         if (fitness >= 80) {
             paint.setColor(Color.GREEN);
         } else if (fitness >= 60) {
