@@ -93,8 +93,8 @@ public class GameObject {
      */
     public GameObject(float x, float y, float width, float height,
                       Bitmap bitmap, GameScreen gameScreen) {
-        if (width < 0) width = -width;
-        if (height < 0) height = -height;
+        width = width > 0 ? width : -width;
+        height = height > 0 ? height : -height;
         mGameScreen = gameScreen;
 
         position.x = x;

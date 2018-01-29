@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ScreenManager;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
+import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.DemoGame;
 import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
@@ -28,7 +29,6 @@ import static junit.framework.Assert.assertEquals;
  * TODO: Click event tests
  * TODO: Redesign tests involving addScrollerItem() after it has been changed
  */
-
 
 @RunWith(AndroidJUnit4.class)
 public class HorizontalImageScrollerTest {
@@ -205,6 +205,39 @@ public class HorizontalImageScrollerTest {
         scroller.setMultiMode(false, 100);
         assertEquals(scroller.getImageScrollerItems().get(0).position.x, scroller.position.x);
         assertEquals(scroller.getImageScrollerItems().get(0).position.y, scroller.position.y);
+    }
+
+    @Test
+    public void test_calculateNextMultiVectors_1Item() {
+        game.getAssetManager().loadAndAddBitmap("TestBitmap1", "img/card-0.png");
+        Bitmap testBitmap = game.getAssetManager().getBitmap("TestBitmap1");
+        scroller.addScrollerItem(testBitmap);
+        scroller.setMultiMode(true, 100);
+        scroller.calculateNextMultiVectors();
+        assertEquals(scroller.getNextItemIndex(), -1);
+    }
+
+    @Test
+    public void test_calculateNextMultiVectors_MultipleItems_ScrollDirection_True() {
+        scroller.addTestData();
+        scroller.setScrollDirection(true);
+        scroller.setMultiMode(true, 100);
+        scroller.calculateNextMultiVectors();
+        assertEquals(scroller.getNextItemIndex(), 6);
+        assertEquals((scroller.getImageScrollerItems().get(6).position.x == -661.0f) && (scroller.getImageScrollerItems().get(6).position.y == 0.0), true);
+        assertEquals((scroller.getImageScrollerItems().get(7).position.x == -501.0f) && (scroller.getImageScrollerItems().get(7).position.y == 0.0), true);
+    }
+
+    @Test
+    public void test_calculateNextMultiVectors_MultipleItems_ScrollDirection_False() {
+        scroller.addTestData();
+        scroller.setScrollDirection(false);
+        scroller.setMultiMode(true, 100);
+        scroller.calculateNextMultiVectors();
+        assertEquals(scroller.getNextItemIndex(), 3);
+        assertEquals((scroller.getImageScrollerItems().get(3).position.x == 339f) && (scroller.getImageScrollerItems().get(3).position.y == 0.0), true);
+        assertEquals((scroller.getImageScrollerItems().get(4).position.x == 499f) && (scroller.getImageScrollerItems().get(4).position.y == 0.0), true);
+        assertEquals((scroller.getImageScrollerItems().get(5).position.x == 659f) && (scroller.getImageScrollerItems().get(5).position.y == 0.0), true);
     }
 }
 
