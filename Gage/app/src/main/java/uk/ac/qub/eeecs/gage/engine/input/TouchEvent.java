@@ -18,6 +18,7 @@ public class TouchEvent {
     public static final int TOUCH_SINGLE_TAP = 5;
     public static final int TOUCH_SCROLL = 6;
     public static final int TOUCH_FLING = 7;
+    public static final int DOUBLE_TAP = 8;
 
     /**
      * Type of touch event that has occurred (TOUCH_DOWN, TOUCH_UP,

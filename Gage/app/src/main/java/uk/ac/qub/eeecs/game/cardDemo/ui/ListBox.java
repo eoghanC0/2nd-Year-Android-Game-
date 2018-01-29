@@ -107,7 +107,6 @@ public class ListBox extends GameObject {
     //  Methods
     //////////////////////////////////////////////////////
     private void handleTouchEvents(Float touchY) {
-        if (touchY > mBound.getTop() || touchY < mBound.getBottom()) return;
         int drawnIndex = (int)((touchY - mBound.getBottom()) / 100);
         selectedIndex = (int)(showingPageNum * mBound.getHeight()/ 100 + drawnIndex);
         if (selectedIndex > items.size() - 1) selectedIndex = -1;
