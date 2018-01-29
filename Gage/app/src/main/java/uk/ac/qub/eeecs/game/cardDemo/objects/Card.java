@@ -517,7 +517,6 @@ public class Card extends Sprite {
 
         //Overlay the fitness stat as an arc
         RectF ovel = new RectF(mBound.getLeft() + FITNESS_ARC_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), mBound.getBottom() + FITNESS_ARC_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), mBound.getLeft() + FITNESS_ARC_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight() + FITNESS_ARC_DIAMETER_TO_CARD_HEIGHT_RATIO * mBound.getHeight(), mBound.getBottom() + FITNESS_ARC_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + FITNESS_ARC_DIAMETER_TO_CARD_HEIGHT_RATIO * mBound.getHeight());
-        fitness = 70;
         if (fitness >= 80) {
             paint.setColor(Color.GREEN);
         } else if (fitness >= 60) {
