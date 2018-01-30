@@ -23,22 +23,22 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
  */
 
 /**
- * This class allows you to create a horizontally moving image scroller
+ * This class allows you to create a horizontally moving card scroller
  *
- * Clicking the left side of the scroller moves the image(s) right, displaying the previous image
- * Clicking the right side of the scroller moves the image(s) left, displaying the next image
+ * Clicking the left side of the scroller moves the card(s) right, displaying the previous card
+ * Clicking the right side of the scroller moves the card(s) left, displaying the next card
  *
  * Images are automatically scaled to fit within the scroller
  *
- * User can toggle between single bitmap and multi-bitmap mode
+ * User can toggle between single card and multi card mode
  *
- * - Single bitmap
- *      Bitmaps displayed one at a time
- *      Bitmaps are scaled to fit the total height of the scroller
+ * - Single card
+ *      Cards displayed one at a time
+ *      Cards are scaled to fit the total height of the scroller
  *      Scroller cycles in a loop
- * - Multi-bitmap
- *      Displays multiple bitmaps at a time by using the full width of the scroller
- *      User chooses the maximum bitmap height, allowing for more/less bitmaps to be displayed
+ * - Multi card
+ *      Displays multiple card at a time by using the full width of the scroller
+ *      User chooses the maximum card height, allowing for more/less cards to be displayed
  *      Scroller cycles in a loop
  *
  * Default Settings:
@@ -46,16 +46,25 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
  * - selectMode = false
  *
  * TODO: Create tests.
- * TODO: Noticed fan got pretty loud after having scroller open a while. Possible memory leak. Requires investigating.
  * TODO: Animations not configured properly using frames, elapsedTime etc. Fix this.
- * TODO: Only draw bitmaps within the bounds of the scroller
- * TODO: Change addScrollerItem() to use an ImageScrollerItem as argument.
+ * TODO: Only draw cards within the bounds of the scroller
  */
 public class HorizontalCardScroller extends GameObject {
 
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * ArrayList containing all the scroller's items
+     */
+    private ArrayList<Card> cardScrollerItems = new ArrayList<Card>();
+
+    /**
+     * Base bitmap used to determine dimensions of cards
+     * Uses img/CardFront.png
+     */
+    private Bitmap baseBitmap;
 
     /**
      * Index of currently displayed item
@@ -106,6 +115,12 @@ public class HorizontalCardScroller extends GameObject {
     private PushButton pushButtonRight;
 
     /**
+     * Booleans used for artificial trigger of push buttons
+     */
+    private boolean pushButtonLeftPush = false;
+    private boolean pushButtonRightPush = false;
+
+    /**
      * MULTI MODE VARIABLES
      */
 
@@ -154,7 +169,7 @@ public class HorizontalCardScroller extends GameObject {
     private boolean selectMode = false;
 
     /**
-     * Tells whether a bitmap has been selected
+     * Tells whether a card has been selected
      */
     private boolean itemSelected = false;
 
@@ -164,12 +179,12 @@ public class HorizontalCardScroller extends GameObject {
     private int selectedItemIndex;
 
     /**
-     * Determines whether a bitmap select animation is occuring
+     * Determines whether a card select animation is occuring
      */
     private boolean selectAnimationTriggered = false;
 
     /**
-     * Direction in which bitmap moves for select animation
+     * Direction in which card moves for select animation
      */
     private boolean selectDirection = false;
 
@@ -184,7 +199,8 @@ public class HorizontalCardScroller extends GameObject {
     private Vector2 touchLocation = new Vector2();
 
     /**
-     * Use to determine where the user must click on screen to move a card
+     * Use to determine where the user is allowed to click on screen to move a card
+     * that has been selected
      */
     private Vector2 selectDestination;
 
@@ -200,15 +216,38 @@ public class HorizontalCardScroller extends GameObject {
      */
     private BoundingBox selectBound = new BoundingBox();
 
-    /* * * * * *
-        NEW VARIABLES
-     */
     /**
-     * ArrayList containing all the scroller's items
+     * Original position of moved card
      */
-    private ArrayList<Card> cardScrollerItems = new ArrayList<Card>();
+    private Vector2 movedCardOriginalPosition = new Vector2();
 
-    private Bitmap baseBitmap;
+    /**
+     * Determines whether a new item move animation is occuring
+     */
+    private boolean newCardMoveAnimationTriggered = false;
+
+    /**
+     * Distance to move new card
+     */
+    private float newMoveDistance = 0;
+
+    /**
+     * Determines whether to skip the new card move animation
+     * for the particular chosen card
+     */
+    private boolean skipMoveNewCardAnimation = false;
+
+    /**
+     * Determines whether to reduce the current index
+     * Used by new card move
+     */
+    private boolean reduceCurrentIndexAfterMoveNewCard = false;
+
+    /**
+     * Determines whether to automatically move scroller
+     * Used by new card move
+     */
+    private boolean autoScroll = false;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -279,6 +318,10 @@ public class HorizontalCardScroller extends GameObject {
         addScrollerItem("5", 100);
         addScrollerItem("6", 100);
         addScrollerItem("7", 100);
+        addScrollerItem("8", 100);
+        addScrollerItem("9", 100);
+        addScrollerItem("10", 100);
+        addScrollerItem("11", 100);
     }
 
     /**
@@ -376,13 +419,13 @@ public class HorizontalCardScroller extends GameObject {
      */
 
     /**
-     * Toggles scroller from single bitmap to multi bitmap mode
+     * Toggles scroller from single card to multi card mode
      * @param value
      * @param heightOccupyPercentage
      */
     public void setMultiMode(boolean value, int heightOccupyPercentage) {
         if(!(cardScrollerItems.size() > 0)) {
-            Log.e("ERROR", "You cannot set multi-image mode unless there is at least 1 bitmap in bitmaps");
+            Log.e("ERROR", "You cannot set multi card mode unless there is at least 1 card in scroller");
         } else if(!value) {
             multiMode = false;
             currentItemIndex = 0;
@@ -414,7 +457,7 @@ public class HorizontalCardScroller extends GameObject {
     }
 
     /**
-     * Calculates thenumber of bitmaps that can be displayed
+     * Calculates the number of cards that can be displayed
      * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
      */
     public void calculateMultiItemsDisplayed(float heightOccupyPercentage) {
@@ -425,9 +468,9 @@ public class HorizontalCardScroller extends GameObject {
         else
             heightOccupyPercentage /= 100;
 
-        // Find the maximum height allowed for the bitmap
+        // Find the maximum height allowed for the card
         int maxHeight = (int) (mBound.getHeight() * heightOccupyPercentage);
-        // Rescale bitmap dimensions using the maxHeight
+        // Rescale card dimensions using the maxHeight
         Vector2 scaledBitmapDimensions = getNewBitmapDimensions(baseBitmap, maxHeight, true);
 
         // Set maxItemDimensions
@@ -448,7 +491,6 @@ public class HorizontalCardScroller extends GameObject {
 
         // Set dimensions of all items to be the same
         for (Card i : cardScrollerItems) {
-            //i.setWidthAndHeight(scaledBitmapDimensions.x * 2, scaledBitmapDimensions.y * 2);
             i.setHeight((int) scaledBitmapDimensions.y * 2);
         }
 
@@ -468,12 +510,12 @@ public class HorizontalCardScroller extends GameObject {
         // Set positions of any other current items
         int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
         for(int i = 0; i < breaker; i++) {
-            cardScrollerItems.get(currentItemIndex + i).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (i * (maxItemSpacing + cardScrollerItems.get(currentItemIndex + i).getBound().getWidth())), position.y);
+            cardScrollerItems.get(currentItemIndex + i).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (i * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
         }
     }
 
     /**
-     * Calculates the positions of the next bitmaps based on the direction the scroller
+     * Calculates the positions of the next cards based on the direction the scroller
      * is being moved in
      */
     public void calculateNextMultiVectors() {
@@ -520,7 +562,7 @@ public class HorizontalCardScroller extends GameObject {
     private void checkAndPerformScrollAnimation() {
         if(!scrollAnimationTriggered) return;
 
-        // Move current bitmap and next bitmap
+        // Move current card and next card
         float moveBy = 0;
         if(!scrollDirection) moveBy = -1 * itemDistance * 0.05f;
         else moveBy = itemDistance * 0.05f;
@@ -539,13 +581,11 @@ public class HorizontalCardScroller extends GameObject {
                 cardScrollerItems.get(nextItemIndex + i).position.add(moveBy, 0);
             }
         } else {
-            Log.d("DEBUG", "checkAndPerformScrollAnimation: " + String.format("Current item %1$d pos = %2$f, %3$f", currentItemIndex, cardScrollerItems.get(currentItemIndex).position.x,cardScrollerItems.get(currentItemIndex).position.y));
             // Draw current item
             cardScrollerItems.get(currentItemIndex).position.add(moveBy, 0);
             if(checkDoesNextExist())
                 cardScrollerItems.get(nextItemIndex).position.add(moveBy, 0);
         }
-
         // Carry out completing steps if the move distance has been reached
         if(addAndCheckDistanceMoved(moveBy, false)) {
             // Stop animation
@@ -553,6 +593,12 @@ public class HorizontalCardScroller extends GameObject {
 
             // Branch based on whether multi mode or single mode is enabled
             if(multiMode) {
+                // Negate currentIndex
+                if(reduceCurrentIndexAfterMoveNewCard) {
+                    currentItemIndex -= maxDisplayedItems;
+                    reduceCurrentIndexAfterMoveNewCard = false;
+                }
+
                 // Calculate the vectors for the new current items
                 calculateCurrentMultiVectors();
             } else {
@@ -607,12 +653,65 @@ public class HorizontalCardScroller extends GameObject {
 
         // Carry out completing steps if the move distance has been reached
         if(checkIfSelectedCardMovedToDest()) {
-            Log.d("DEBUG", "checkAndPerformMoveCardAnimation: ANIMATION OVER");
             // Stop animation
             cardMoveAnimationTriggered = false;
             // Toggle item selected and selectDirection
             itemSelected = !itemSelected;
             selectDirection = !selectDirection;
+
+            calculateForMovingNewCard();
+            newCardMoveAnimationTriggered = true;
+        }
+    }
+
+    private void checkAndPerformMoveNewCardAnimation() {
+        if(!(newCardMoveAnimationTriggered)) return;
+
+        if(selectedItemIndex == -1) return;
+
+        if(skipMoveNewCardAnimation) {
+            skipMoveNewCardAnimation = false;
+            newCardMoveAnimationTriggered = false;
+
+            // Calculate new positions of displayed cards
+            if(currentItemIndex == cardScrollerItems.size()){
+                reduceCurrentIndexAfterMoveNewCard = true;
+                pushButtonLeftPush = true;
+                itemDistance = mBound.getWidth();
+                autoScroll = true;
+            }
+            else
+                calculateCurrentMultiVectors();
+
+            newCardMoveAnimationTriggered = false;
+            itemSelected = false;
+            return;
+        }
+
+        // Move current item and next item
+        float moveBy = -1 * newMoveDistance * 0.1f;
+
+        cardScrollerItems.get(selectedItemIndex).position.add(moveBy, 0);
+
+        distanceMoved += Math.abs(moveBy);
+
+        // Carry out completing steps if the move distance has been reached
+        if(distanceMoved >= newMoveDistance) {
+            // Stop animation
+            newCardMoveAnimationTriggered = false;
+
+            // Set position of new card to old position
+            cardScrollerItems.get(selectedItemIndex).position = movedCardOriginalPosition;
+
+            // Remove the old now moved off scroller card
+            //cardScrollerItems.remove(cardScrollerItems.size() - 1);
+
+            // Reset distance moved
+            distanceMoved = 0;
+
+            if(cardScrollerItems.size() == 0) setMultiMode(false, 100);
+
+            calculateCurrentMultiVectors();
         }
     }
 
@@ -638,11 +737,11 @@ public class HorizontalCardScroller extends GameObject {
                 // Check if an item was touched by looping through each of the currently displayed item
                 int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
                 for (int i = 0; i < breaker; i++) {
-                    // Bitmap touched
+                    // Card touched
                     if(cardScrollerItems.get(currentItemIndex + i).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
-                            /* If a bitmap has not been selected yet, set the selectedItemIndex to i
+                            /* If a card has not been selected yet, set the selectedItemIndex to i
                                and start animation
-                               else if a bitmap has been selected, the bitmap clicked here is the same as
+                               else if a card has been selected, the card clicked here is the same as
                                the one selected, start animation */
                         if(!itemSelected) {
                             selectedItemIndex = currentItemIndex + i;
@@ -656,7 +755,7 @@ public class HorizontalCardScroller extends GameObject {
                     }
                 }
             } else {
-                // Start animation if click is within the bitmap's bounds
+                // Start animation if click is within the card's bounds
                 if(cardScrollerItems.get(currentItemIndex).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
                     selectedItemIndex = currentItemIndex;
                     selectAnimationTriggered = true;
@@ -665,10 +764,9 @@ public class HorizontalCardScroller extends GameObject {
             }
         } else {
             if (itemSelected) {
-                Log.d("DEBUG", "checkForItemTouch: item selected " + cardMoveAnimationTriggered);
                 if(checkIfTouchInArea(touchLocation, selectDestination, 50) && !cardMoveAnimationTriggered) {
-                    Log.d("DEBUG", "checkForItemTouch: touch in area");
                     cardMoveAnimationTriggered = true;
+                    movedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position);
                 }
             }
         }
@@ -679,16 +777,21 @@ public class HorizontalCardScroller extends GameObject {
      * necessary actions depending on what is touched
      */
     private void checkForTouchEvent() {
-        boolean leftPushed = pushButtonLeft.isPushTriggered();
-        boolean rightPushed = pushButtonRight.isPushTriggered();
+        boolean leftPushed = pushButtonLeft.isPushTriggered() || pushButtonLeftPush;
+        boolean rightPushed = pushButtonRight.isPushTriggered() || pushButtonRightPush;
 
         // Check for input to determine if animation should be triggered to move the items
         if((leftPushed || rightPushed) && !scrollAnimationTriggered && !itemSelected && (nextItemIndex != -1)) {
-            if(multiMode && maxDisplayedItems >= cardScrollerItems.size()) return;
+            // Reset pushButton artificial booleans
+            pushButtonLeftPush = false;
+            pushButtonRightPush = false;
 
+            if(multiMode && maxDisplayedItems >= cardScrollerItems.size() && !autoScroll) return;
+            autoScroll = false;
+            // Trigger scroll animation
             scrollAnimationTriggered = true;
 
-            // Set direction to scroll images and vector of next bitmap
+            // Set direction to scroll images and vector of next card
             if(leftPushed) {
                 scrollDirection = true;
             }
@@ -748,6 +851,44 @@ public class HorizontalCardScroller extends GameObject {
         return false;
     }
 
+    /**
+     * Performs necessary calculations after a card has been moved
+     */
+    private void calculateForMovingNewCard() {
+        if(currentItemIndex == cardScrollerItems.size() - 1) {
+            cardScrollerItems.remove(cardScrollerItems.size() - 1);
+            skipMoveNewCardAnimation = true;
+            return;
+        }
+
+        if(selectedItemIndex == cardScrollerItems.size() - 1) {
+            cardScrollerItems.remove(cardScrollerItems.size() - 1);
+            skipMoveNewCardAnimation = true;
+            return;
+        }
+
+        cardScrollerItems.set(selectedItemIndex, new Card(position.x, position.y,maxItemDimensions.y * 2f, mGameScreen, cardScrollerItems.get(cardScrollerItems.size() - 1).getPlayerID(), 100));
+        cardScrollerItems.get(selectedItemIndex).position = new Vector2(movedCardOriginalPosition);
+
+        // Set position of new card to that of the original position
+        // else if card is off screen set to position of original moved card + mBound.getWidth()
+        if(cardScrollerItems.size() - 1 < currentItemIndex + maxDisplayedItems) {
+            Vector2 positionOne =  cardScrollerItems.get(selectedItemIndex).position;
+            Vector2 positionTwo =  cardScrollerItems.get(cardScrollerItems.size() - 1).position;
+            cardScrollerItems.get(selectedItemIndex).position = new Vector2(positionTwo);
+
+            // Use pythagorean theorem to calculate length between position of original moved card
+            // and the card that is going to be moved
+            double innerCalc = Math.pow((positionTwo.x - positionOne.x), 2) + Math.pow((positionTwo.y - positionOne.y), 2);
+            newMoveDistance = (float) Math.sqrt(innerCalc);
+        } else {
+            cardScrollerItems.get(selectedItemIndex).position.add(mBound.getWidth(), 0);
+            newMoveDistance = mBound.getWidth();
+        }
+
+        cardScrollerItems.remove(cardScrollerItems.size() - 1);
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
@@ -768,6 +909,9 @@ public class HorizontalCardScroller extends GameObject {
 
         // Checks if move animation has been triggered and performs animation if so
         checkAndPerformMoveCardAnimation();
+
+        // Checks if move new card animation has been triggered and performs animation if so
+        checkAndPerformMoveNewCardAnimation();
     }
 
     @Override
@@ -793,7 +937,7 @@ public class HorizontalCardScroller extends GameObject {
                 cardScrollerItems.get(nextItemIndex + i).draw(elapsedTime, graphics2D);
             }
         } else {
-            // If current bitmap exists draw else return
+            // If current card exists draw else return
             if(currentItemIndex == -1) return;
             cardScrollerItems.get(currentItemIndex).draw(elapsedTime, graphics2D);
 
