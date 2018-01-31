@@ -338,7 +338,10 @@ public class HorizontalCardScroller extends GameObject {
      * @param value
      */
     public void setSelectMode(boolean value) {
-        selectMode = value;
+        if(multiMode)
+            selectMode = value;
+        else
+            Log.d("ERROR", "* * * Multi mode must be enabled to enable select mode * * *");
     }
 
     /**
@@ -425,7 +428,7 @@ public class HorizontalCardScroller extends GameObject {
      */
     public void setMultiMode(boolean value, int heightOccupyPercentage) {
         if(!(cardScrollerItems.size() > 0)) {
-            Log.e("ERROR", "You cannot set multi card mode unless there is at least 1 card in scroller");
+            Log.e("ERROR", "* * * You cannot set multi card mode unless there is at least 1 card in scroller * * *");
         } else if(!value) {
             multiMode = false;
             currentItemIndex = 0;
