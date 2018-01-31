@@ -26,20 +26,20 @@ import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 /**
  * This class allows you to create a horizontally moving image scroller
  *
- * Clicking the left side of the scroller moves the image(s) right, displaying the previous image
- * Clicking the right side of the scroller moves the image(s) left, displaying the next image
+ * Clicking the left side of the scroller moves the item(s) right, displaying the previous item
+ * Clicking the right side of the scroller moves the item(s) left, displaying the next item
  *
  * Images are automatically scaled to fit within the scroller
  *
- * User can toggle between single bitmap and multi-bitmap mode
+ * User can toggle between single item and multi item mode
  *
- * - Single bitmap
- *      Bitmaps displayed one at a time
- *      Bitmaps are scaled to fit the total height of the scroller
+ * - Single item
+ *      Items displayed one at a time
+ *      Items are scaled to fit the total height of the scroller
  *      Scroller cycles in a loop
- * - Multi-bitmap
- *      Displays multiple bitmaps at a time by using the full width of the scroller
- *      User chooses the maximum bitmap height, allowing for more/less bitmaps to be displayed
+ * - Multi item
+ *      Displays multiple items at a time by using the full width of the scroller
+ *      User chooses the maximum item height, allowing for more/less item to be displayed
  *      Scroller cycles in a loop
  *
  * Default Settings:
@@ -47,9 +47,8 @@ import uk.ac.qub.eeecs.gage.world.ScreenViewport;
  * - selectMode = false
  *
  * TODO: Create tests.
- * TODO: Noticed fan got pretty loud after having scroller open a while. Possible memory leak. Requires investigating.
  * TODO: Animations not configured properly using frames, elapsedTime etc. Fix this.
- * TODO: Only draw bitmaps within the bounds of the scroller
+ * TODO: Only draw items within the bounds of the scroller
  * TODO: Change addScrollerItem() to use an ImageScrollerItem as argument.
  */
 public class HorizontalImageScroller extends GameObject {
@@ -57,6 +56,12 @@ public class HorizontalImageScroller extends GameObject {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
+
+
+    /**
+     * ArrayList containing all the scroller's items
+     */
+    private ArrayList<ImageScrollerItem> imageScrollerItems = new ArrayList<ImageScrollerItem>();
 
     /**
      * Index of currently displayed item
@@ -111,37 +116,37 @@ public class HorizontalImageScroller extends GameObject {
      */
 
     /**
-     * Toggle to set multi bitmap mode
+     * Toggle to set multi item mode
      * at a time
      * = = = = = = = = = = = = =
      *  * *  W A R N I N G  * *
      * = = = = = = = = = = = = =
-     * This should only be used if the bitmaps all have the same dimensions
+     * This should only be used if the items all have the same dimensions
      */
     private boolean multiMode = false;
 
     /**
-     * Maximum bitmaps that can be displayed
+     * Maximum items that can be displayed
      */
     private int maxDisplayedItems = 0;
 
     /**
-     * Spacing between bitmaps
+     * Spacing between items
      */
     private int maxItemSpacing = 0;
 
     /**
-     * Absolute maximum number of bitmaps that can be displayed at a time
+     * Absolute maximum number of items that can be displayed at a time
      */
     private final int MAX_DISPLAYED_ITEMS_ALLOWED = 15;
 
     /**
-     * Dimensions of bitmaps
+     * Dimensions of items
      */
     private Vector2 maxItemDimensions = new Vector2();
 
     /**
-     * Positions of currently displayed bitmaps
+     * Positions of currently displayed items
      */
     private Vector2[] currentItemPositions = new Vector2[MAX_DISPLAYED_ITEMS_ALLOWED];
 
@@ -155,7 +160,7 @@ public class HorizontalImageScroller extends GameObject {
     private boolean selectMode = false;
 
     /**
-     * Tells whether a bitmap has been selected
+     * Tells whether a item has been selected
      */
     private boolean itemSelected = false;
 
@@ -165,12 +170,12 @@ public class HorizontalImageScroller extends GameObject {
     private int selectedItemIndex;
 
     /**
-     * Determines whether a bitmap select animation is occuring
+     * Determines whether a item select animation is occuring
      */
     private boolean selectAnimationTriggered = false;
 
     /**
-     * Direction in which bitmap moves for select animation
+     * Direction in which item moves for select animation
      */
     private boolean selectDirection = false;
 
@@ -187,17 +192,9 @@ public class HorizontalImageScroller extends GameObject {
     /**
      * Scroll click bound
      * Until swiping to scroll functions, a temporary bound has to be created which is contained
-     * between the buttons else, selecting a button on top of a bitmap will scroll and select
+     * between the buttons else, selecting a button on top of a item will scroll and select
      */
     private BoundingBox selectBound = new BoundingBox();
-
-    /* * * * * *
-        NEW VARIABLES
-     */
-    /**
-     * ArrayList containing all the scroller's items
-     */
-    private ArrayList<ImageScrollerItem> imageScrollerItems = new ArrayList<ImageScrollerItem>();
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -369,13 +366,13 @@ public class HorizontalImageScroller extends GameObject {
      */
 
     /**
-     * Toggles scroller from single bitmap to multi bitmap mode
+     * Toggles scroller to or from single item to multi item mode
      * @param value
      * @param heightOccupyPercentage
      */
     public void setMultiMode(boolean value, int heightOccupyPercentage) {
         if(!(imageScrollerItems.size() > 0)) {
-            Log.e("ERROR", "You cannot set multi-image mode unless there is at least 1 bitmap in bitmaps");
+            Log.e("ERROR", "You cannot set multi item mode unless there is at least 1 item in scroller");
         } else if(!value) {
             multiMode = false;
             currentItemIndex = 0;
@@ -406,8 +403,8 @@ public class HorizontalImageScroller extends GameObject {
     }
 
     /**
-     * Calculates thenumber of bitmaps that can be displayed
-     * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
+     * Calculates thenumber of items that can be displayed
+     * @param heightOccupyPercentage The percentage of the scroller's height the item should occupy
      */
     public void calculateMultiItemsDisplayed(float heightOccupyPercentage) {
         if(!multiMode || !(imageScrollerItems.size() > 0)) return;
@@ -417,9 +414,9 @@ public class HorizontalImageScroller extends GameObject {
         else
             heightOccupyPercentage /= 100;
 
-        // Find the maximum height allowed for the bitmap
+        // Find the maximum height allowed for the item
         int maxHeight = (int) (mBound.getHeight() * heightOccupyPercentage);
-        // Rescale bitmap dimensions using the maxHeight
+        // Rescale item dimensions using the maxHeight
         Vector2 scaledBitmapDimensions = getNewBitmapDimensions(imageScrollerItems.get(0).getBitmap(), maxHeight, true);
 
         // Set maxItemDimensions
@@ -464,7 +461,7 @@ public class HorizontalImageScroller extends GameObject {
     }
 
     /**
-     * Calculates the positions of the next bitmaps based on the direction the scroller
+     * Calculates the positions of the next items based on the direction the scroller
      * is being moved in
      */
     public void calculateNextMultiVectors() {
@@ -511,7 +508,7 @@ public class HorizontalImageScroller extends GameObject {
     private void checkAndPerformScrollAnimation() {
         if(!scrollAnimationTriggered) return;
 
-        // Move current bitmap and next bitmap
+        // Move current item and next item
         float moveBy = 0;
         if(!scrollDirection) moveBy = -1 * itemDistance * 0.05f;
         else moveBy = itemDistance * 0.05f;
@@ -605,11 +602,11 @@ public class HorizontalImageScroller extends GameObject {
                 // Check if an item was touched by looping through each of the currently displayed item
                 int breaker = currentItemIndex + maxDisplayedItems >= imageScrollerItems.size() ? imageScrollerItems.size() - currentItemIndex : maxDisplayedItems;
                 for (int i = 0; i < breaker; i++) {
-                    // Bitmap touched
+                    // Item touched
                     if(imageScrollerItems.get(currentItemIndex + i).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
-                            /* If a bitmap has not been selected yet, set the selectedItemIndex to i
+                        /* If a item has not been selected yet, set the selectedItemIndex to i
                                and start animation
-                               else if a bitmap has been selected, the bitmap clicked here is the same as
+                               else if a item has been selected, the item clicked here is the same as
                                the one selected, start animation */
                         if(!itemSelected) {
                             selectedItemIndex = currentItemIndex + i;
@@ -623,7 +620,7 @@ public class HorizontalImageScroller extends GameObject {
                     }
                 }
             } else {
-                // Start animation if click is within the bitmap's bounds
+                // Start animation if click is within the item's bounds
                 if(imageScrollerItems.get(currentItemIndex).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
                     selectedItemIndex = currentItemIndex;
                     selectAnimationTriggered = true;
@@ -647,7 +644,7 @@ public class HorizontalImageScroller extends GameObject {
 
             scrollAnimationTriggered = true;
 
-            // Set direction to scroll images and vector of next bitmap
+            // Set direction to scroll images and find position of next item(s)
             if(leftPushed) {
                 scrollDirection = true;
             }
@@ -714,7 +711,7 @@ public class HorizontalImageScroller extends GameObject {
                 imageScrollerItems.get(nextItemIndex + i).draw(elapsedTime, graphics2D);
             }
         } else {
-            // If current bitmap exists draw else return
+            // If current item exists draw else return
             if(currentItemIndex == -1) return;
             imageScrollerItems.get(currentItemIndex).draw(elapsedTime, graphics2D);
 
