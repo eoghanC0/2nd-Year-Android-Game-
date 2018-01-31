@@ -714,7 +714,7 @@ public class HorizontalCardScroller extends GameObject {
 
             if(cardScrollerItems.size() == 0) setMultiMode(false, 100);
 
-            calculateCurrentMultiVectors();
+            //calculateCurrentMultiVectors();
         }
     }
 
@@ -769,7 +769,7 @@ public class HorizontalCardScroller extends GameObject {
             if (itemSelected) {
                 if(checkIfTouchInArea(touchLocation, selectDestination, 50) && !cardMoveAnimationTriggered) {
                     cardMoveAnimationTriggered = true;
-                    movedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position);
+                    movedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, position.y);
                 }
             }
         }
@@ -782,6 +782,8 @@ public class HorizontalCardScroller extends GameObject {
     private void checkForTouchEvent() {
         boolean leftPushed = pushButtonLeft.isPushTriggered() || pushButtonLeftPush;
         boolean rightPushed = pushButtonRight.isPushTriggered() || pushButtonRightPush;
+
+        if(scrollAnimationTriggered || selectAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered) return;
 
         // Check for input to determine if animation should be triggered to move the items
         if((leftPushed || rightPushed) && !scrollAnimationTriggered && !itemSelected && (nextItemIndex != -1)) {
