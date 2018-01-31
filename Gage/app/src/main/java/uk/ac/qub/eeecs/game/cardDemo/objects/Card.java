@@ -84,6 +84,7 @@ public class Card extends Sprite {
     // ////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////
+    private String playerID;
     private Bitmap cardBackground;
     private String displayName, firstName, lastName;
     private String club, nation;
@@ -122,12 +123,12 @@ public class Card extends Sprite {
         //The aspect ratio of the card is 225/355
         super(startX, startY, height * 225/355, height, null, gameScreen);
         this.fitness = fitness;
+        this.playerID = playerID;
         try {
             populateCardProperties(playerID, getPlayersArray());
         } catch (JSONException e) {
             Log.e("Error", "The JSON file could not be read", e);
         }
-
     }
 
     public Card(float startX, float startY, float height, GameScreen gameScreen, boolean rare, int minRating, int maxRating) {
@@ -139,6 +140,7 @@ public class Card extends Sprite {
             Random rnd = new Random();
             String randPlayerID = relevantPlayerIDs.get(rnd.nextInt(relevantPlayerIDs.size()));
             populateCardProperties(randPlayerID, playersArray);
+            this.playerID = playerID;
         } catch (JSONException e) {
             Log.e("Error", "The JSON file could not be read", e);
         }
@@ -146,6 +148,10 @@ public class Card extends Sprite {
     // ///////////////////////////////////////////////////////////
     // Getters
     // ///////////////////////////////////////////////////////////
+    public String getPlayerID() {
+        return playerID;
+    }
+
     public String getDisplayName() {
         return displayName;
     }
