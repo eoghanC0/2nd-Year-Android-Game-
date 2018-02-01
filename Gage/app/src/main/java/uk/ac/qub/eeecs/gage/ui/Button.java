@@ -68,7 +68,7 @@ public abstract class Button extends GameObject {
             this.text = text;
             this.colour = colour;
             paint = new Paint();
-            paint.setTextSize(textSize); paint.setColor(Color.BLACK);
+            paint.setTextSize(textSize); paint.setColor(colour);
 
             Rect textBounds = getTextBounds();
 
