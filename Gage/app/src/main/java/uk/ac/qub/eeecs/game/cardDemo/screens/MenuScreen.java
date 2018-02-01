@@ -78,7 +78,7 @@ public class MenuScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("menuScreenBackground", "img/CampNou.png");
         background = assetManager.getBitmap("menuScreenBackground");
         assetManager.loadAndAddBitmap("Help", "img/Help.jpg");
-        assetManager.loadAndAddBitmap("OptionsIcon", "img/options.png");
+        assetManager.loadAndAddBitmap("OptionsIcon", "img/Button.png");
         assetManager.loadAndAddBitmap("musicIcon", "img/music.png");
         assetManager.loadAndAddBitmap("packsIcon", "img/ball2.jpg");
         assetManager.loadAndAddBitmap("menuButtons", "img/Button.png");
@@ -92,12 +92,15 @@ public class MenuScreen extends FootballGameScreen {
                 spacingX * 4.6f, spacingY * 2.7f, spacingX/2, spacingY/2, "Help", this);
         mOptionsButton = new PushButton(
                 spacingX * 3.6f, spacingY * 2.0f, spacingX, spacingY, "menuButtons", this);
+        mOptionsButton.setButtonText("OPTIONS", 100, 0);
         mSquadsButton = new PushButton(
                 spacingX * 1.9f, spacingY * 1.5f, spacingX*2, spacingY*2, "menuButtons", this);
+        mSquadsButton.setButtonText("SQUADS", 100, 0);
         musicButton = new PushButton(
                 spacingX/2, spacingY * 2.7f, spacingX/2, spacingY/2, "musicIcon", this);
         mPacksButton = new PushButton(
                 spacingX * 3.6f, spacingY * 1.0f, spacingX, spacingY, "menuButtons", this);
+        mPacksButton.setButtonText("PACKS", 800, 0);
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -181,12 +184,8 @@ public class MenuScreen extends FootballGameScreen {
         musicButton.draw(elapsedTime, graphics2D, null, null);
         mPacksButton.draw(elapsedTime, graphics2D, null, null);
 
-        graphics2D.drawText("SQUADS", 570,550,myPaint);
-        graphics2D.drawText("PACKS", 1270,380,myPaint);
-        graphics2D.drawText("OPTIONS", 1225,750,myPaint);
-
         myPaint.reset();
         myPaint.setTextSize(100);
-        graphics2D.drawText("FOOTBALL TRUMPS", 575,1000,myPaint);
+        graphics2D.drawText("FOOTBALL TRUMPS", mGame.getScreenWidth() * 0.5f,mGame.getScreenWidth() * 0.9f,myPaint);
     }
 }

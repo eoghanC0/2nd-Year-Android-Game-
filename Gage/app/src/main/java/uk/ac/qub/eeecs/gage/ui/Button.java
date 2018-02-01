@@ -2,6 +2,7 @@ package uk.ac.qub.eeecs.gage.ui;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -18,7 +19,6 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 
-import static android.R.attr.textSize;
 import static android.content.ContentValues.TAG;
 
 /**
@@ -44,7 +44,7 @@ public abstract class Button extends GameObject {
     private boolean mIsPushed;
 
     /**
-     * Private variable to track the touch location
+     * Private variable to track the touch position
      */
     private Vector2 touchLocation = new Vector2();
 
@@ -56,7 +56,7 @@ public abstract class Button extends GameObject {
         private Button button;
         private String text;
         private float textSize;
-        private Vector2 location;
+        private Vector2 textLocation;
         private int colour;
         private Paint paint;
 
@@ -68,27 +68,44 @@ public abstract class Button extends GameObject {
             this.text = text;
             this.colour = colour;
             paint = new Paint();
-            paint.setTextSize(textSize); paint.setColor(colour);
+            paint.setTextSize(textSize); paint.setColor(Color.BLACK);
 
-            float textWidth = text.length() * textSize;
-            float textHeight = textSize;
-            location = new Vector2();
+            Rect textBounds = getTextBounds();
 
-            // TODO: Algorithms inaccurate, only placeholder for now. Also only supports drawing on one line.
-            if(textWidth <= button.getBound().getWidth()) {
-                Log.d(TAG, String.format("textwidth (%1$s) <= bound width %2$s", textWidth, button.getBound().getWidth()));
-                location.x = position.x - (textWidth / 4);
-            } else {
-                Log.d(TAG, String.format("textwidth (%1$s) > bound width %2$s", textWidth, button.getBound().getWidth()));
-                location.x = position.x - ((textWidth - button.getBound().getWidth()) / 2);
+            float textWidth = textBounds.width();
+            float textHeight = textBounds.height();
+
+            while(textWidth > button.getBound().getWidth()) {
+                paint.setTextSize(paint.getTextSize() - (paint.getTextSize() * 0.05f));
+                textBounds = getTextBounds();
+                textWidth = textBounds.width();
+                textHeight = textBounds.height();
             }
 
-            if(textHeight <= button.getBound().getHeight()) {
-                Log.d(TAG, String.format("textheight (%1$s) <= bound width %2$s", textHeight, button.getBound().getHeight()));
-                location.y = position.y + ( textHeight / 4);
-            } else {
-                location.y = position.y;
+            while(textHeight > button.getBound().getHeight()) {
+                paint.setTextSize(paint.getTextSize() - (paint.getTextSize() * 0.05f));
+                textBounds = getTextBounds();
+                textWidth = textBounds.width();
+                textHeight = textBounds.height();
             }
+
+            textLocation = new Vector2();
+
+            textLocation.x = position.x - (textWidth / 2);
+
+            textLocation.y = position.y + (textHeight / 2);
+        }
+
+        /**
+         * Gets area occupied by block of text
+         * @param paint
+         * @param text
+         * @return area occupied
+         */
+        private Rect getTextBounds() {
+            Rect bounds = new Rect();
+            paint.getTextBounds(text, 0, text.length(), bounds);
+            return bounds;
         }
     }
 
@@ -101,8 +118,8 @@ public abstract class Button extends GameObject {
     /**
      * Setup base Button properties
      *
-     * @param x                   Centre y location of the button
-     * @param y                   Centre x location of the button
+     * @param x                   Centre y position of the button
+     * @param y                   Centre x position of the button
      * @param width               Width of the button
      * @param height              Height of the button
      * @param baseButtonImage     Base bitmap used to represent this button
@@ -198,13 +215,13 @@ public abstract class Button extends GameObject {
     }
 
     /**
-     * Get the button touch location, converting from screen space to layer
-     * space if needed. The touch location is stored within the specified
+     * Get the button touch position, converting from screen space to layer
+     * space if needed. The touch position is stored within the specified
      * touchLocation vector.
      *
-     * @param touchLocation  Touch location instance to be updated by this method.
-     * @param x              Touch x screen location
-     * @param y              Touch y screen location
+     * @param touchLocation  Touch position instance to be updated by this method.
+     * @param x              Touch x screen position
+     * @param y              Touch y screen position
      * @param layerViewport  Layer viewport
      * @param screenViewport Screen viewport
      */
@@ -212,11 +229,11 @@ public abstract class Button extends GameObject {
                                   LayerViewport layerViewport,
                                   ScreenViewport screenViewport) {
         if (!mProcessInLayerSpace) {
-            // If in screen space just store the touch location
+            // If in screen space just store the touch position
             touchLocation.x = x;
             touchLocation.y = y;
         } else {
-            // If in layer screen convert and store the touch location
+            // If in layer screen convert and store the touch position
             InputHelper.convertScreenPosIntoLayer(screenViewport,
                     x, y, layerViewport, touchLocation);
         }
@@ -230,7 +247,7 @@ public abstract class Button extends GameObject {
      * appropriate trigger actions.
      *
      * @param touchEvent    Touch event that gave rise to the trigger
-     * @param touchLocation Touch location at which the trigger occurred
+     * @param touchLocation Touch position at which the trigger occurred
      */
     protected abstract void updateTriggerActions(
             TouchEvent touchEvent, Vector2 touchLocation);
@@ -241,7 +258,7 @@ public abstract class Button extends GameObject {
      * These actions will be triggered each frame there is at least one
      * touch point on the button.
      *
-     * @param touchLocation Touch location at which the trigger occurred
+     * @param touchLocation Touch position at which the trigger occurred
      */
     protected abstract void updateTouchActions(Vector2 touchLocation);
 
@@ -278,14 +295,15 @@ public abstract class Button extends GameObject {
             // If in screen space just draw the whole thing
             draw(elapsedTime, graphics2D);
         }
+
+        if(buttonText.text != null) {
+            graphics2D.drawText(buttonText.text, buttonText.textLocation.x, buttonText.textLocation.y, buttonText.paint);
+        }
     }
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         super.draw(elapsedTime, graphics2D);
-        if(buttonText.text != null) {
-            graphics2D.drawText(buttonText.text, buttonText.location.x, buttonText.location.y, buttonText.paint);
-        }
     }
 
     public void setButtonText(String text, float textSize, int colour) {
