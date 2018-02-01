@@ -12,8 +12,10 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
+import uk.ac.qub.eeecs.game.cardDemo.ui.iHorizontalCardScroller;
 
 /**
  * Created by eimhin on 27/11/2017.
@@ -50,8 +52,8 @@ public class HelpScreen extends FootballGameScreen {
     /**
      * Allows user to scroll between help images
      */
-    //private HorizontalImageScroller horizontalImageScroller;
     private HorizontalImageScroller horizontalImageScroller;
+    private HorizontalCardScroller horizontalCardScroller;
 
     /**
      * Create a new game screen associated with the specified game instance
@@ -78,9 +80,14 @@ public class HelpScreen extends FootballGameScreen {
 
         menuScreenButton = new PushButton(mGame.getScreenHeight() * 0.06f,mGame.getScreenHeight() * 0.94f, mGame.getScreenHeight() * 0.1f,mGame.getScreenHeight() * 0.1f, "LeftArrow", "LeftArrowActive", this);
 
-        horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
+        /*horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
         horizontalImageScroller.addTestData();
         horizontalImageScroller.setMultiMode(true, 40);
+        horizontalImageScroller.setSelectMode(true);*/
+        horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
+        horizontalCardScroller.addTestData();
+        horizontalCardScroller.setMultiMode(true, 40);
+        horizontalCardScroller.setSelectMode(true);
     }
 
     @Override
@@ -90,7 +97,8 @@ public class HelpScreen extends FootballGameScreen {
 
         if(menuScreenButton.isPushTriggered()) changeToScreen(new MenuScreen(mGame));
 
-        horizontalImageScroller.update(elapsedTime);
+        //horizontalImageScroller.update(elapsedTime);
+        horizontalCardScroller.update(elapsedTime);
     }
 
     @Override
@@ -99,7 +107,8 @@ public class HelpScreen extends FootballGameScreen {
         graphics2D.drawBitmap(background,null, backgroundRect, null);
         infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
-        horizontalImageScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        //horizontalImageScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        horizontalCardScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
     }
 
     /**
@@ -107,7 +116,7 @@ public class HelpScreen extends FootballGameScreen {
      *
      * @param screen game screen to become active
      */
-    private void changeToScreen(FootballGameScreen screen) {
+    private void changeToScreen(GameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }
