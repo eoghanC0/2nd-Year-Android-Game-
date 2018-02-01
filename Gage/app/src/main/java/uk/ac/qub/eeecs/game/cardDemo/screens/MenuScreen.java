@@ -7,7 +7,6 @@ import android.graphics.Rect;
 
 import java.util.List;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.audio.Music;
@@ -15,7 +14,6 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
@@ -75,32 +73,33 @@ public class MenuScreen extends FootballGameScreen {
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
 
-        assetManager.loadAndAddBitmap("menuScreenBackground", "img/CampNou.png");
+        assetManager.loadAndAddBitmap("menuScreenBackground", "img/help-background.jpg");
         background = assetManager.getBitmap("menuScreenBackground");
-        assetManager.loadAndAddBitmap("Help", "img/Help.jpg");
+        assetManager.loadAndAddBitmap("HelpIcon", "img/HelpIcon.png");
         assetManager.loadAndAddBitmap("OptionsIcon", "img/Button.png");
-        assetManager.loadAndAddBitmap("musicIcon", "img/music.png");
+        assetManager.loadAndAddBitmap("MusicIcon", "img/MusicIcon.png");
         assetManager.loadAndAddBitmap("packsIcon", "img/ball2.jpg");
-        assetManager.loadAndAddBitmap("menuButtons", "img/Button.png");
+        assetManager.loadAndAddBitmap("menuButtons", "img/MenuButton.png");
 
         // Define the spacing that will be used to position the buttons
-        int spacingX = game.getScreenWidth() / 5;
-        int spacingY = game.getScreenHeight() / 3;
+        int screenWidth = game.getScreenWidth();
+        int screenHeight = game.getScreenHeight();
 
+        int textColor = Color.rgb(242, 242, 242);
         // Create the trigger buttons
         mHelpButton = new PushButton(
-                spacingX * 4.6f, spacingY * 2.7f, spacingX/2, spacingY/2, "Help", this);
+                screenWidth * 0.925f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "HelpIcon", this);
         mOptionsButton = new PushButton(
-                spacingX * 3.6f, spacingY * 2.0f, spacingX, spacingY, "menuButtons", this);
-        mOptionsButton.setButtonText("OPTIONS", 100, 0);
+                screenWidth * 0.725f, screenHeight * 0.375f, screenWidth * 0.2f, screenHeight * 0.2f, "menuButtons", this);
+        mOptionsButton.setButtonText("OPTIONS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
         mSquadsButton = new PushButton(
-                spacingX * 1.9f, spacingY * 1.5f, spacingX*2, spacingY*2, "menuButtons", this);
-        mSquadsButton.setButtonText("SQUADS", 100, 0);
+                screenWidth * 0.375f, screenHeight * 0.5f, screenWidth * 0.4f, screenHeight* 0.45f, "menuButtons", this);
+        mSquadsButton.setButtonText("SQUADS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
         musicButton = new PushButton(
-                spacingX/2, spacingY * 2.7f, spacingX/2, spacingY/2, "musicIcon", this);
+                screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "MusicIcon", this);
         mPacksButton = new PushButton(
-                spacingX * 3.6f, spacingY * 1.0f, spacingX, spacingY, "menuButtons", this);
-        mPacksButton.setButtonText("PACKS", 800, 0);
+                screenWidth * 0.725f, screenHeight * 0.625f, screenWidth * 0.2f, screenHeight * 0.2f, "menuButtons", this);
+        mPacksButton.setButtonText("PACKS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -171,7 +170,6 @@ public class MenuScreen extends FootballGameScreen {
         // Clear the screen and draw the buttons
         graphics2D.clear(Color.WHITE);
         Paint myPaint = mGame.getPaint();
-        myPaint.setAlpha(100);
         myPaint.setTextSize(36);
         graphics2D.drawBitmap(background,null, backGroundRectangle, myPaint);
         myPaint.setTextSize(72);
