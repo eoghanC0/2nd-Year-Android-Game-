@@ -11,6 +11,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
@@ -18,7 +19,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  * Created by eimhin on 27/11/2017.
  */
 
-public class HelpScreen extends GameScreen {
+public class HelpScreen extends FootballGameScreen {
 
     /**
      * Define viewports for this layer and the associated screen projection
@@ -57,7 +58,7 @@ public class HelpScreen extends GameScreen {
      *
      * @param game Game instance to which the game screen belongs
      */
-    public HelpScreen(Game game) {
+    public HelpScreen(FootballGame game) {
         super("HelpScreen", game);
 
         // Instantiate variables
@@ -106,7 +107,7 @@ public class HelpScreen extends GameScreen {
      *
      * @param screen game screen to become active
      */
-    private void changeToScreen(GameScreen screen) {
+    private void changeToScreen(FootballGameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

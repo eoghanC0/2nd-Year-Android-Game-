@@ -19,6 +19,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.SplashScreen1;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
@@ -27,7 +28,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  * Created by stephenmcveigh on 07/12/2017.
  */
 
-public class PackScreen extends GameScreen {
+public class PackScreen extends FootballGameScreen {
 
     private ScreenViewport mScreenViewport;
     private LayerViewport mLayerViewport;
@@ -66,7 +67,7 @@ public class PackScreen extends GameScreen {
      *
      * @param game Game to which this screen belongs
      */
-    public PackScreen(Game game) {
+    public PackScreen(FootballGame game) {
         super("PackScreen", game);
 
         // Instantiate variables
@@ -168,7 +169,7 @@ public class PackScreen extends GameScreen {
      *
      * @param screen game screen to become active
      */
-    public void changeToScreen(GameScreen screen) {
+    public void changeToScreen(FootballGameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

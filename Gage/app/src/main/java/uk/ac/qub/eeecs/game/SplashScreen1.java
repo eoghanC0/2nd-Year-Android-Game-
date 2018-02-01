@@ -21,7 +21,7 @@ import uk.ac.qub.eeecs.game.cardDemo.screens.PackScreen;
  * Created by Eoghan on 17/11/2017.
  */
 
-public class SplashScreen1 extends GameScreen {
+public class SplashScreen1 extends FootballGameScreen {
     private Bitmap splashBmp;
 
     /*
@@ -29,7 +29,7 @@ public class SplashScreen1 extends GameScreen {
      *
      * @param game Game instance to which the game screen belongs
      */
-    public SplashScreen1(Game game, String message) {
+    public SplashScreen1(FootballGame game, String message) {
         super("SplashScreen1", game);
 
         // Load in the bitmaps used on the Splash Screen
@@ -55,7 +55,7 @@ public class SplashScreen1 extends GameScreen {
         }
     }
 
-    private void changeToScreen(GameScreen screen) {
+    private void changeToScreen(FootballGameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

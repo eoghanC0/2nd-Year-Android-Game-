@@ -16,6 +16,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
@@ -23,7 +24,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  * Created by stephenmcveigh on 04/12/2017.
  */
 
-public class PlayScreen extends GameScreen {
+public class PlayScreen extends FootballGameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
@@ -42,7 +43,7 @@ public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
-    public PlayScreen(Game game) {
+    public PlayScreen(FootballGame game) {
         super("PlayScreen", game);
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();

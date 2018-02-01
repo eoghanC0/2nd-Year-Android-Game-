@@ -18,6 +18,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
@@ -25,7 +26,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  *
  * @version 1.0
  */
-public class MenuScreen extends GameScreen {
+public class MenuScreen extends FootballGameScreen {
 
     // /////////////////////////////////////////////////////////////////////////
     // Properties
@@ -62,14 +63,14 @@ public class MenuScreen extends GameScreen {
      *
      * @param game Game to which this screen belongs
      */
-    public MenuScreen(Game game) {
+    public MenuScreen(FootballGame game) {
         super("MenuScreen", game);
 
         // Instantiate variables
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
 
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "M A I N  M E N U", "0 | 0 | 0");
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "M A I N  M E N U", mGame.getMatchStats());
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
@@ -151,7 +152,7 @@ public class MenuScreen extends GameScreen {
      *
      * @param screen game screen to become active
      */
-    public void changeToScreen(GameScreen screen) {
+    public void changeToScreen(FootballGameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

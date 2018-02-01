@@ -17,7 +17,7 @@ public class MainActivity extends Activity {
     /**
      * Game fragment instance
      */
-    private Game mGame;
+    private FootballGame mGame;
 
     /*
      * (non-Javadoc)
@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
 
         // Add in the main game fragment
         FragmentManager fm = getFragmentManager();
-        mGame = (Game) fm.findFragmentById(R.id.activity_fragment_id);
+        mGame = (FootballGame) fm.findFragmentById(R.id.activity_fragment_id);
 
         if (mGame == null) {
             mGame = new FootballGame();
