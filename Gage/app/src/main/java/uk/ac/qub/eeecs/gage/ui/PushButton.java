@@ -206,4 +206,20 @@ public class PushButton extends Button {
     public boolean isPushed() {
         return mButtonState == ButtonState.PUSHED;
     }
+
+    /**
+     * Sets the default bitmap
+     * @param bitmap
+     */
+    public void setmDefaultBitmap(Bitmap bitmap) {
+        this.mDefaultBitmap = bitmap;
+    }
+
+    /**
+     * Sets the default bitmap
+     * @param bitmap
+     */
+    public void setmPushBitmap(Bitmap bitmap) {
+        this.mPushBitmap = bitmap;
+    }
 }

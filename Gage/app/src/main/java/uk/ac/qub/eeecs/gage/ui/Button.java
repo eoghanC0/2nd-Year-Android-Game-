@@ -98,9 +98,7 @@ public abstract class Button extends GameObject {
 
         /**
          * Gets area occupied by block of text
-         * @param paint
-         * @param text
-         * @return area occupied
+         * @return dimensions of text in the form of a Rect
          */
         private Rect getTextBounds() {
             Rect bounds = new Rect();
