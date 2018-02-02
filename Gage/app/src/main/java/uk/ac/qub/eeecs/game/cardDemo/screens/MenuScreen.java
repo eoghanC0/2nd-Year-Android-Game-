@@ -52,6 +52,8 @@ public class MenuScreen extends FootballGameScreen {
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
+    private boolean musicButtonState = false;
+
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
@@ -76,10 +78,15 @@ public class MenuScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("menuScreenBackground", "img/help-background.jpg");
         background = assetManager.getBitmap("menuScreenBackground");
         assetManager.loadAndAddBitmap("HelpIcon", "img/HelpIcon.png");
+        assetManager.loadAndAddBitmap("HelpIconPushed", "img/HelpIconPushed.png");
         assetManager.loadAndAddBitmap("OptionsIcon", "img/Button.png");
         assetManager.loadAndAddBitmap("MusicIcon", "img/MusicIcon.png");
+        assetManager.loadAndAddBitmap("MusicIconPushed", "img/MusicIconPushed.png");
+        assetManager.loadAndAddBitmap("MusicIconMute", "img/MusicIconMute.png");
+        assetManager.loadAndAddBitmap("MusicIconMutePushed", "img/MusicIconMutePushed.png");
         assetManager.loadAndAddBitmap("packsIcon", "img/ball2.jpg");
-        assetManager.loadAndAddBitmap("menuButtons", "img/MenuButton.png");
+        assetManager.loadAndAddBitmap("MenuButton", "img/MenuButton.png");
+        assetManager.loadAndAddBitmap("MenuButtonPushed", "img/MenuButtonPushed.png");
 
         // Define the spacing that will be used to position the buttons
         int screenWidth = game.getScreenWidth();
@@ -88,17 +95,17 @@ public class MenuScreen extends FootballGameScreen {
         int textColor = Color.rgb(242, 242, 242);
         // Create the trigger buttons
         mHelpButton = new PushButton(
-                screenWidth * 0.925f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "HelpIcon", this);
+                screenWidth * 0.925f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "HelpIcon", "HelpIconPushed", this);
         mOptionsButton = new PushButton(
-                screenWidth * 0.725f, screenHeight * 0.375f, screenWidth * 0.2f, screenHeight * 0.2f, "menuButtons", this);
+                screenWidth * 0.725f, screenHeight * 0.375f, screenWidth * 0.2f, screenHeight * 0.2f, "MenuButton", "MenuButtonPushed", this);
         mOptionsButton.setButtonText("OPTIONS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
         mSquadsButton = new PushButton(
-                screenWidth * 0.375f, screenHeight * 0.5f, screenWidth * 0.4f, screenHeight* 0.45f, "menuButtons", this);
+                screenWidth * 0.375f, screenHeight * 0.5f, screenWidth * 0.4f, screenHeight* 0.45f, "MenuButton", "MenuButtonPushed", this);
         mSquadsButton.setButtonText("SQUADS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
         musicButton = new PushButton(
-                screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "MusicIcon", this);
+                screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "MusicIcon", "MusicIconPushed", this);
         mPacksButton = new PushButton(
-                screenWidth * 0.725f, screenHeight * 0.625f, screenWidth * 0.2f, screenHeight * 0.2f, "menuButtons", this);
+                screenWidth * 0.725f, screenHeight * 0.625f, screenWidth * 0.2f, screenHeight * 0.2f, "MenuButton", "MenuButtonPushed", this);
         mPacksButton.setButtonText("PACKS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
     }
 
@@ -141,11 +148,18 @@ public class MenuScreen extends FootballGameScreen {
                 changeToScreen(new HelpScreen(mGame));
             else if (mPacksButton.isPushTriggered())
                 changeToScreen(new PackScreen(mGame));
-            else if (musicButton.isPushTriggered());
-            //{if (myMusic.isPlaying())
-                    //    myMusic.pause();
-                    //else
-                      //  myMusic.play();}
+            else if (musicButton.isPushTriggered()) {
+                if(musicButtonState) {
+                    musicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
+                    musicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMutePushed"));
+                    musicButtonState = !musicButtonState;
+                } else {
+                    musicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIcon"));
+                    musicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
+                    musicButtonState = !musicButtonState;
+                }
+
+            }
         }
     }
 
