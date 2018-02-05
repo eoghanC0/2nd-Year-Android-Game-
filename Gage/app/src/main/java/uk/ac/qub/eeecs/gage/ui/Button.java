@@ -54,14 +54,22 @@ public abstract class Button extends GameObject {
     // TODO: ButtonText is WIP
     protected class ButtonText {
         private Button button;
-        private String text;
-        private float textSize;
+        private String text = "";
+        private float textSize = 1;
         private Vector2 textLocation;
-        private int colour;
+        private int colour = Color.BLACK;
         private Paint paint;
 
         public ButtonText(Button button) {
             this.button = button;
+            paint = new Paint();
+            paint.setTextSize(textSize);
+            paint.setColor(colour);
+            textLocation = new Vector2(position.x, position.y);
+        }
+
+        public void setButtonText(String text) {
+            setButtonText(text, paint.getTextSize(), paint.getColor());
         }
 
         public void setButtonText(String text, float textSize, int colour) {
@@ -75,7 +83,7 @@ public abstract class Button extends GameObject {
             float textWidth = textBounds.width();
             float textHeight = textBounds.height();
 
-            while(textWidth > button.getBound().getWidth()) {
+            while(textWidth > button.getBound().getWidth() * 0.9f) {
                 paint.setTextSize(paint.getTextSize() - (paint.getTextSize() * 0.05f));
                 textBounds = getTextBounds();
                 textWidth = textBounds.width();
@@ -210,6 +218,7 @@ public abstract class Button extends GameObject {
             updateDefaultActions();
             mIsPushed = false;
         }
+        setButtonText(buttonText.text);
     }
 
     /**
@@ -294,18 +303,61 @@ public abstract class Button extends GameObject {
             draw(elapsedTime, graphics2D);
         }
 
-        if(buttonText.text != null) {
-            graphics2D.drawText(buttonText.text, buttonText.textLocation.x, buttonText.textLocation.y, buttonText.paint);
-        }
+        drawButtonText(elapsedTime, graphics2D);
     }
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         super.draw(elapsedTime, graphics2D);
+
+        drawButtonText(elapsedTime, graphics2D);
     }
 
+    /**
+     * Called in the draw methods to draw the ButtonText
+     * @param elapsedTime
+     * @param graphics2D
+     */
+    public void drawButtonText(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
+        if(buttonText.text != null) {
+            graphics2D.drawText(buttonText.text, buttonText.textLocation.x, buttonText.textLocation.y, buttonText.paint);
+        }
+    }
+
+    /**
+     * Sets the text property of the ButtonText
+     * @param text
+     */
+    public void setButtonText(String text) {
+        buttonText.setButtonText(text);
+    }
+
+    /**
+     * Sets the text, text size and colour of the ButtonText
+     * @param text
+     * @param textSize
+     * @param colour
+     */
     public void setButtonText(String text, float textSize, int colour) {
         buttonText.setButtonText(text, textSize, colour);
+    }
+
+    /**
+     * Sets font size of the ButtonText to the max possible within the bounds of the Button
+     */
+    public void setButtonTextSizeMax() {
+        buttonText.setButtonText(buttonText.text, 1000, buttonText.colour);
+    }
+
+    /**
+     * Changes position of both the Button and the ButtonText
+     * Should be used for animations as opposed to directly modifying the position variable
+     * @param x
+     * @param y
+     */
+    public void adjustPosition(float x, float y) {
+        position.add(x, y);
+        buttonText.textLocation.add(x, y);
     }
 
 }
