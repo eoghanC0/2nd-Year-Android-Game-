@@ -329,7 +329,7 @@ public class HorizontalCardScroller extends GameObject {
      * @param bitmap
      */
     public void setBackground(Bitmap bitmap) {
-        if(!(mBitmap == null)) return;
+        if(bitmap == null) return;
         mBitmap = bitmap;
     }
 
@@ -892,6 +892,17 @@ public class HorizontalCardScroller extends GameObject {
         }
 
         cardScrollerItems.remove(cardScrollerItems.size() - 1);
+    }
+
+    public void adjustPosition(float x, float y) {
+        position.add(x, y);
+        for (Card card : cardScrollerItems) {
+            card.position.add(x, y);
+        }
+        pushButtonLeft.position.add(x, y);
+        pushButtonRight.position.add(x, y);
+        selectBound.x += x;
+        selectBound.y += y;
     }
 
     @Override
