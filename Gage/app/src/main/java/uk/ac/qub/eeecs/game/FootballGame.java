@@ -72,7 +72,7 @@ public class FootballGame extends Game {
         // want to do this within the onCreate method as the menu screen
         // will layout the buttons based on the size of the view.
         //TODO: Chnage to loadscreen
-        MenuScreen stubLoadGameScreen = new MenuScreen(this);
+        LoadGameScreen stubLoadGameScreen = new LoadGameScreen(this);
         mScreenManager.addScreen(stubLoadGameScreen);
 
         return view;

@@ -75,7 +75,7 @@ public class PackScreen extends FootballGameScreen {
         mScreenViewport = new ScreenViewport();
 
         Log.d("DEBUG", "SCREEN WIDTH: " + mGame.getScreenWidth() + " SCREEN HEIGHT: " + mGame.getScreenHeight());
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "P A C K  S C R E E N", "");
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", mGame.getPlayerName(), "P A C K  S C R E E N", mGame.getMatchStats());
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();

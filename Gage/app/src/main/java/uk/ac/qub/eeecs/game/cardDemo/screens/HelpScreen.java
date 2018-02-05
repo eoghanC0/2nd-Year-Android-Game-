@@ -3,7 +3,6 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
@@ -15,7 +14,7 @@ import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
-import uk.ac.qub.eeecs.game.cardDemo.ui.iHorizontalCardScroller;
+//import uk.ac.qub.eeecs.game.cardDemo.ui.iHorizontalCardScroller;
 
 /**
  * Created by eimhin on 27/11/2017.
@@ -67,7 +66,7 @@ public class HelpScreen extends FootballGameScreen {
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
         //GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "H E L P  S C R E E N", "");
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", mGame.getPlayerName(), "H E L P  S C R E E N", mGame.getMatchStats());
 
         AssetStore assetManager = mGame.getAssetManager();
 

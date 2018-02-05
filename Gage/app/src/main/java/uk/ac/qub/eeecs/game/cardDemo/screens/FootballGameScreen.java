@@ -1,6 +1,5 @@
 package uk.ac.qub.eeecs.game.cardDemo.screens;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
@@ -17,7 +16,6 @@ public abstract class FootballGameScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
-
     /**
      * Name that is given to this game screen
      */

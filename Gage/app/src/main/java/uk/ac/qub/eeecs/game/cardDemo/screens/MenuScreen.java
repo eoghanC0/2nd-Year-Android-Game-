@@ -70,7 +70,7 @@ public class MenuScreen extends FootballGameScreen {
         mLayerViewport = new LayerViewport();
         mScreenViewport = new ScreenViewport();
 
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "M A I N  M E N U", mGame.getMatchStats());
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", mGame.getPlayerName(), "M A I N  M E N U", mGame.getMatchStats());
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
