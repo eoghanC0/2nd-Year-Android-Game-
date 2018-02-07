@@ -100,6 +100,6 @@ public class ImageScrollerItem extends GameObject {
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
-        calculateMBoundRect();
+        //calculateMBoundRect();
     }
 }

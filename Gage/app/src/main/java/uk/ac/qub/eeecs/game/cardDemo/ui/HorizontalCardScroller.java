@@ -894,6 +894,11 @@ public class HorizontalCardScroller extends GameObject {
         cardScrollerItems.remove(cardScrollerItems.size() - 1);
     }
 
+    /**
+     * Used to move scroller and all contents
+     * @param x amount to move x position by
+     * @param y amount to move y position by
+     */
     public void adjustPosition(float x, float y) {
         position.add(x, y);
         for (Card card : cardScrollerItems) {
@@ -903,6 +908,14 @@ public class HorizontalCardScroller extends GameObject {
         pushButtonRight.position.add(x, y);
         selectBound.x += x;
         selectBound.y += y;
+    }
+
+    /**
+     * Returns whether an animation is occuring
+     * @return
+     */
+    public boolean isAnimating() {
+        return scrollAnimationTriggered || selectAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered;
     }
 
     @Override
