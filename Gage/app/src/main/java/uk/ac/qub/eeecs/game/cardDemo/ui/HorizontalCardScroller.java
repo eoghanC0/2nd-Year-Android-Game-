@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.game.cardDemo.ui;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -207,12 +208,12 @@ public class HorizontalCardScroller extends GameObject {
      * Use to determine where the user is allowed to click on screen to move a card
      * that has been selected
      */
-    private ArrayList<Vector2> selectDestinations = new ArrayList<Vector2>();
+    private ArrayList<BoundingBox> selectDestinations = new ArrayList<BoundingBox>();
 
     /**
      * Current select destination
      */
-    private Vector2 currentSelectDestination = new Vector2();
+    private BoundingBox currentSelectDestination = new BoundingBox();
 
     /**
      * Determines whether an item move animation is occuring
@@ -750,7 +751,7 @@ public class HorizontalCardScroller extends GameObject {
                 for (int i = 0; i < breaker; i++) {
                     // Card touched
                     if(cardScrollerItems.get(currentItemIndex + i).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
-                            /* If a card has not been selected yet, set the selectedItemIndex to i
+                        /* If a card has not been selected yet, set the selectedItemIndex to i
                                and start animation
                                else if a card has been selected, the card clicked here is the same as
                                the one selected, start animation */
@@ -775,8 +776,8 @@ public class HorizontalCardScroller extends GameObject {
             }
         } else {
             if (itemSelected) {
-                for (Vector2 selectDestination : selectDestinations) {
-                    if(checkIfTouchInArea(touchLocation, selectDestination, 50) && !cardMoveAnimationTriggered) {
+                for (BoundingBox selectDestination : selectDestinations) {
+                    if(checkIfTouchInArea(touchLocation, selectDestination) && !cardMoveAnimationTriggered) {
                         currentSelectDestination = selectDestination;
                         cardMoveAnimationTriggered = true;
                         movedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, position.y);
@@ -854,6 +855,20 @@ public class HorizontalCardScroller extends GameObject {
     }
 
     /**
+     * Check if a touch is within the general area of a certain location
+     * @param userTouchLocation
+     */
+    private boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
+        if(userTouchLocation == null || touchDestination == null) return false;
+
+        if(touchDestination.contains(userTouchLocation.x, userTouchLocation.y)) return true;
+
+        return false;
+    }
+
+
+
+    /**
      * Checks whether the moving card has reached it's destination
      * @return
      */
@@ -861,7 +876,7 @@ public class HorizontalCardScroller extends GameObject {
         if(!(selectedItemIndex < 0 || itemSelected)) return false;
 
         if(Math.abs(cardScrollerItems.get(selectedItemIndex).position.x - currentSelectDestination.x) < 15 && Math.abs(cardScrollerItems.get(selectedItemIndex).position.y - currentSelectDestination.y) < 15) {
-            cardScrollerItems.get(selectedItemIndex).position = new Vector2(currentSelectDestination);
+            cardScrollerItems.get(selectedItemIndex).position = new Vector2(currentSelectDestination.x, currentSelectDestination.y);
             return true;
         }
 
@@ -926,7 +941,7 @@ public class HorizontalCardScroller extends GameObject {
      * Adds a destination which the user can select to move an item
      * @param destination
      */
-    public void addSelectDestination(Vector2 destination) {
+    public void addSelectDestination(BoundingBox destination) {
         if(destination != null) selectDestinations.add(destination);
     }
 
@@ -1123,17 +1138,17 @@ public class HorizontalCardScroller extends GameObject {
 
     public void setScrollDirection(boolean scrollDirection) { this.scrollDirection = scrollDirection; }
 
-    public void setCurrentSelectDestination(Vector2 currentSelectDestination) { this.currentSelectDestination = currentSelectDestination; }
+    public void setCurrentSelectDestination(BoundingBox currentSelectDestination) { this.currentSelectDestination = currentSelectDestination; }
 
     public int getMaxScrollerItems() { return maxScrollerItems; }
 
     public void setMaxScrollerItems(int maxScrollerItems) { this.maxScrollerItems = maxScrollerItems > 0 ? maxScrollerItems : 25; }
 
-    public ArrayList<Vector2> getSelectDestinations() {
+    public ArrayList<BoundingBox> getSelectDestinations() {
         return selectDestinations;
     }
 
-    public void setSelectDestinations(ArrayList<Vector2> selectDestinations) {
+    public void setSelectDestinations(ArrayList<BoundingBox> selectDestinations) {
         this.selectDestinations = selectDestinations;
     }
 }

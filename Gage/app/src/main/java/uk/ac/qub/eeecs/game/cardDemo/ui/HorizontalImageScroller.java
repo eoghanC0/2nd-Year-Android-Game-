@@ -18,6 +18,7 @@ import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 
 /**
  * Created by eimhin on 11/01/2018.
@@ -674,6 +675,30 @@ public class HorizontalImageScroller extends GameObject {
         }
     }
 
+    /**
+     * Used to move scroller and all contents
+     * @param x amount to move x position by
+     * @param y amount to move y position by
+     */
+    public void adjustPosition(float x, float y) {
+        position.add(x, y);
+        for (ImageScrollerItem imageScrollerItem : imageScrollerItems) {
+            imageScrollerItem.position.add(x, y);
+        }
+        pushButtonLeft.position.add(x, y);
+        pushButtonRight.position.add(x, y);
+        selectBound.x += x;
+        selectBound.y += y;
+    }
+
+    /**
+     * Returns whether an animation is occuring
+     * @return
+     */
+    public boolean isAnimating() {
+        return scrollAnimationTriggered || selectAnimationTriggered;
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
@@ -694,7 +719,7 @@ public class HorizontalImageScroller extends GameObject {
     }
 
     @Override
-    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D, LayerViewport layerViewport, ScreenViewport screenViewport) {
+    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         super.draw(elapsedTime, graphics2D);
 
         if(multiMode) {
