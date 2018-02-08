@@ -84,6 +84,6 @@ public class CardDemoScreen extends GameScreen {
         // Draw the card
         mCard.draw(elapsedTime, graphics2D);
 
-        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        infoBar.draw(elapsedTime, graphics2D);
     }
 }

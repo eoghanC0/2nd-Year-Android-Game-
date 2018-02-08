@@ -1,4 +1,4 @@
-package uk.ac.qub.eeecs.game.cardDemo.screens;
+package uk.ac.qub.eeecs.gage.world;
 
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;

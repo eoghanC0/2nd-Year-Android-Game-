@@ -4,13 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.util.Vector2;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
@@ -35,8 +34,6 @@ public class PlayScreen extends FootballGameScreen {
     private PushButton scrollerButton;
     public Match currentMatch;
 
-    private LayerViewport mLayerViewport;
-    private ScreenViewport mScreenViewport;
     private InfoBar infoBar;
 
     private boolean scrollerEnabled = true;
@@ -52,8 +49,6 @@ public class PlayScreen extends FootballGameScreen {
     // /////////////////////////////////////////////////////////////////////////
     public PlayScreen(FootballGame game) {
         super("PlayScreen", game);
-        mLayerViewport = new LayerViewport();
-        mScreenViewport = new ScreenViewport();
         currentMatch = new Match(this);
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("PlayScreenBackground", "img/pitch.png");
@@ -165,7 +160,7 @@ public class PlayScreen extends FootballGameScreen {
         mScenarioButton.draw(elapsedTime, graphics2D);
         scrollerButton.draw(elapsedTime, graphics2D);
 
-        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        infoBar.draw(elapsedTime, graphics2D);
 
         horizontalCardScroller.draw(elapsedTime, graphics2D);
     }

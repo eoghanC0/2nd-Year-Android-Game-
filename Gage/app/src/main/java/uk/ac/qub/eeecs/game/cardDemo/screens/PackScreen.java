@@ -8,7 +8,6 @@ import android.util.Log;
 
 import java.util.List;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.audio.Music;
@@ -16,7 +15,7 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
@@ -29,9 +28,6 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  */
 
 public class PackScreen extends FootballGameScreen {
-
-    private ScreenViewport mScreenViewport;
-    private LayerViewport mLayerViewport;
 
     private final Bitmap background;
     //private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
@@ -69,10 +65,6 @@ public class PackScreen extends FootballGameScreen {
      */
     public PackScreen(FootballGame game) {
         super("PackScreen", game);
-
-        // Instantiate variables
-        mLayerViewport = new LayerViewport();
-        mScreenViewport = new ScreenViewport();
 
         Log.d("DEBUG", "SCREEN WIDTH: " + mGame.getScreenWidth() + " SCREEN HEIGHT: " + mGame.getScreenHeight());
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", mGame.getPlayerName(), "P A C K  S C R E E N", mGame.getMatchStats());
@@ -189,8 +181,8 @@ public class PackScreen extends FootballGameScreen {
         myPaint.setTextSize(72);
 
         graphics2D.drawBitmap(background,null, backGroundRectangle, myPaint);
-        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
-        horizontalImageScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        infoBar.draw(elapsedTime, graphics2D);
+        horizontalImageScroller.draw(elapsedTime, graphics2D);
 
         mSquadsButton.draw(elapsedTime, graphics2D, null, null);
         mMenuButton.draw(elapsedTime, graphics2D, null, null);
