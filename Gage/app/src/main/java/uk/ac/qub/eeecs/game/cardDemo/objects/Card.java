@@ -145,6 +145,18 @@ public class Card extends Sprite {
             Log.e("Error", "The JSON file could not be read", e);
         }
     }
+
+    public Card(Card c) {
+        super(c.position.x, c.position.y, c.mBound.getWidth(), c.mBound.getHeight(), null, c.mGameScreen);
+        this.fitness = c.fitness;
+        this.playerID = c.playerID;
+        try {
+            populateCardProperties(playerID, getPlayersArray());
+        } catch (JSONException e) {
+            Log.e("Error", "The JSON file could not be read", e);
+        }
+    }
+
     // ///////////////////////////////////////////////////////////
     // Getters
     // ///////////////////////////////////////////////////////////

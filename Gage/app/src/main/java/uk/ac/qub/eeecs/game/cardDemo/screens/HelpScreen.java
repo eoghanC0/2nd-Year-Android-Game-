@@ -2,19 +2,23 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
+import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
+import uk.ac.qub.eeecs.game.cardDemo.ui.iHorizontalCardScroller;
 
 /**
  * Created by eimhin on 27/11/2017.
@@ -54,6 +58,8 @@ public class HelpScreen extends FootballGameScreen {
     private HorizontalImageScroller horizontalImageScroller;
     private HorizontalCardScroller horizontalCardScroller;
 
+    private Card removedCard;
+
     /**
      * Create a new game screen associated with the specified game instance
      *
@@ -87,6 +93,14 @@ public class HelpScreen extends FootballGameScreen {
         horizontalCardScroller.addTestData();
         horizontalCardScroller.setMultiMode(true, 40);
         horizontalCardScroller.setSelectMode(true);
+        horizontalCardScroller.addSelectDestination(new BoundingBox(mGame.getScreenWidth() * 0.5f, 850, 100, 100));
+        horizontalCardScroller.addSelectDestination(new BoundingBox(mGame.getScreenWidth() * 0.75f, 850, 100, 100));
+    }
+
+    public void scrollerListener() {
+        if(horizontalCardScroller.isRemovedCardReady()) {
+            removedCard = horizontalCardScroller.getRemovedCard();
+        }
     }
 
     @Override
@@ -98,6 +112,8 @@ public class HelpScreen extends FootballGameScreen {
 
         //horizontalImageScroller.update(elapsedTime);
         horizontalCardScroller.update(elapsedTime);
+
+        scrollerListener();
     }
 
     @Override
@@ -108,6 +124,9 @@ public class HelpScreen extends FootballGameScreen {
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
         //horizontalImageScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
         horizontalCardScroller.draw(elapsedTime, graphics2D);
+
+        // Draw removedCard if it isn't null
+        if(removedCard != null) removedCard.draw(elapsedTime, graphics2D);
     }
 
     /**

@@ -1,7 +1,6 @@
 package uk.ac.qub.eeecs.game.cardDemo.ui;
 
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -10,13 +9,12 @@ import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
+import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 
 /**
@@ -185,26 +183,6 @@ public class HorizontalCardScroller extends GameObject {
     private int selectedItemIndex;
 
     /**
-     * Determines whether a card select animation is occuring
-     */
-    private boolean selectAnimationTriggered = false;
-
-    /**
-     * Direction in which card moves for select animation
-     */
-    private boolean selectDirection = false;
-
-    /**
-     * Distance to move by
-     */
-    private float selectDistance  = 30;
-
-    /**
-     * Tracks the touch location
-     */
-    private Vector2 touchLocation = new Vector2();
-
-    /**
      * Use to determine where the user is allowed to click on screen to move a card
      * that has been selected
      */
@@ -259,6 +237,11 @@ public class HorizontalCardScroller extends GameObject {
      * Used by new card move
      */
     private boolean autoScroll = false;
+
+    private boolean removedCardReady = false;
+    private Card removedCard;
+    private boolean touchDown = false;
+    private Vector2 draggedCardOriginalPosition = new Vector2();
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -524,13 +507,12 @@ public class HorizontalCardScroller extends GameObject {
 
         // Set position of current item
         cardScrollerItems.get(currentItemIndex).position = new Vector2(mBound.getLeft() + maxItemSpacing + cardScrollerItems.get(0).getBound().halfWidth, position.y);
-        Log.d("DEBUG", "= = = = = = = = =\nCalculate Multi Vectors\n= = = = = = = = =\n");
+
         // Set positions of any other current items
         int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
-        for(int i = 0; i < breaker; i++) {
+        for(int i = 0; i < breaker; i++)
             cardScrollerItems.get(currentItemIndex + i).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (i * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
-            Log.d("DEBUG", "Item " + (currentItemIndex + i) + " " + cardScrollerItems.get(currentItemIndex + i).position.x + " " + cardScrollerItems.get(currentItemIndex + i).position.y);
-        }
+
     }
 
     /**
@@ -563,11 +545,11 @@ public class HorizontalCardScroller extends GameObject {
      * @param animation false = scroll true = select
      * @return
      */
-    private boolean addAndCheckDistanceMoved(float moveBy, boolean animation) {
+    private boolean addAndCheckScrollerDistanceMoved(float moveBy) {
         // Add to distance moved
         distanceMoved += Math.abs(moveBy);
 
-        float distance = animation == false ? itemDistance : selectDistance;
+        float distance = itemDistance;
 
         // If intended distance has been moved, end animation
         if(distanceMoved >= distance) return true;
@@ -606,7 +588,7 @@ public class HorizontalCardScroller extends GameObject {
                 cardScrollerItems.get(nextItemIndex).position.add(moveBy, 0);
         }
         // Carry out completing steps if the move distance has been reached
-        if(addAndCheckDistanceMoved(moveBy, false)) {
+        if(addAndCheckScrollerDistanceMoved(moveBy)) {
             // Stop animation
             scrollAnimationTriggered = false;
 
@@ -633,32 +615,6 @@ public class HorizontalCardScroller extends GameObject {
     }
 
     /**
-     * Executes the updating of positions of items for select animation if
-     * selectAnimationTriggered is true and select mode is enabled
-     */
-    private void checkAndPerformSelectAnimation() {
-        if(!selectAnimationTriggered || !selectMode) return;
-
-        // Move current item and next item
-        float moveBy = 0;
-        if(!selectDirection) moveBy = -1 * selectDistance * 0.4f;
-        else moveBy = selectDistance * 0.4f;
-
-        cardScrollerItems.get(selectedItemIndex).position.add(0, moveBy);
-
-        // Carry out completing steps if the move distance has been reached
-        if(addAndCheckDistanceMoved(moveBy, true)) {
-            // Stop animation
-            selectAnimationTriggered = false;
-            // Toggle item selected and selectDirection
-            itemSelected = !itemSelected;
-            selectDirection = !selectDirection;
-            // Reset distance moved
-            distanceMoved = 0;
-        }
-    }
-
-    /**
      * Executes the updating of positions of items for card move animation if
      * cardMoveAnimationTriggered is true and an item is selected
      */
@@ -674,9 +630,8 @@ public class HorizontalCardScroller extends GameObject {
         if(checkIfSelectedCardMovedToDest()) {
             // Stop animation
             cardMoveAnimationTriggered = false;
-            // Toggle item selected and selectDirection
+            // Toggle item selected
             itemSelected = !itemSelected;
-            selectDirection = !selectDirection;
 
             calculateForMovingNewCard();
             newCardMoveAnimationTriggered = true;
@@ -722,76 +677,10 @@ public class HorizontalCardScroller extends GameObject {
             // Set position of new card to old position
             cardScrollerItems.get(selectedItemIndex).position = movedCardOriginalPosition;
 
-            // Remove the old now moved off scroller card
-            //cardScrollerItems.remove(cardScrollerItems.size() - 1);
-
             // Reset distance moved
             distanceMoved = 0;
 
             if(cardScrollerItems.size() == 0) setMultiMode(false, 100);
-
-            //calculateCurrentMultiVectors();
-        }
-    }
-
-    /**
-     * Checks if an item is touched by the user
-     * If an item is touched, the select animation will be triggered
-     */
-    private void checkForItemTouch() {
-        // Check for any touch events on scroller
-        Input input = mGameScreen.getGame().getInput();
-        boolean scrollerTouched = false;
-        if (input.existsTouch(0)) {
-            touchLocation = new Vector2(input.getTouchX(0), input.getTouchY(0));
-            // Touch detected within the allowed bounds of the scroller
-            if (selectBound.contains(touchLocation.x, touchLocation.y)) {
-                scrollerTouched = true;
-            }
-        }
-
-        // Scroller was touched
-        if(scrollerTouched) {
-            if(multiMode) {
-                // Check if an item was touched by looping through each of the currently displayed item
-                int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
-                for (int i = 0; i < breaker; i++) {
-                    // Card touched
-                    if(cardScrollerItems.get(currentItemIndex + i).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
-                        /* If a card has not been selected yet, set the selectedItemIndex to i
-                               and start animation
-                               else if a card has been selected, the card clicked here is the same as
-                               the one selected, start animation */
-                        if(!itemSelected) {
-                            selectedItemIndex = currentItemIndex + i;
-                            selectAnimationTriggered = true;
-                            distanceMoved = 0;
-                        }
-                        else if (selectedItemIndex == currentItemIndex + i){
-                            selectAnimationTriggered = true;
-                            distanceMoved = 0;
-                        }
-                    }
-                }
-            } else {
-                // Start animation if click is within the card's bounds
-                if(cardScrollerItems.get(currentItemIndex).getBound().contains((int) touchLocation.x, (int) touchLocation.y)) {
-                    selectedItemIndex = currentItemIndex;
-                    selectAnimationTriggered = true;
-                    distanceMoved = 0;
-                }
-            }
-        } else {
-            if (itemSelected) {
-                for (BoundingBox selectDestination : selectDestinations) {
-                    if(checkIfTouchInArea(touchLocation, selectDestination) && !cardMoveAnimationTriggered) {
-                        currentSelectDestination = selectDestination;
-                        cardMoveAnimationTriggered = true;
-                        movedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, position.y);
-                    }
-                }
-
-            }
         }
     }
 
@@ -803,10 +692,10 @@ public class HorizontalCardScroller extends GameObject {
         boolean leftPushed = pushButtonLeft.isPushTriggered() || pushButtonLeftPush;
         boolean rightPushed = pushButtonRight.isPushTriggered() || pushButtonRightPush;
 
-        if(scrollAnimationTriggered || selectAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered) return;
+        if(isAnimating()) return;
 
         // Check for input to determine if animation should be triggered to move the items
-        if((leftPushed || rightPushed) && !scrollAnimationTriggered && !itemSelected && (nextItemIndex != -1)) {
+        if((leftPushed || rightPushed) && (nextItemIndex != -1)) {
             // Reset pushButton artificial booleans
             pushButtonLeftPush = false;
             pushButtonRightPush = false;
@@ -836,8 +725,6 @@ public class HorizontalCardScroller extends GameObject {
 
             // Reset distance moved to base value of 0
             distanceMoved = 0;
-        } else if (selectMode && (!scrollAnimationTriggered && !selectAnimationTriggered)){
-            checkForItemTouch();
         }
     }
 
@@ -966,7 +853,83 @@ public class HorizontalCardScroller extends GameObject {
      * @return
      */
     public boolean isAnimating() {
-        return scrollAnimationTriggered || selectAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered;
+        return scrollAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered;
+    }
+
+    private void checkAndPerformDragCard() {
+        Input input = mGameScreen.getGame().getInput();
+        //Consider all buffered touch events
+        for (TouchEvent t : input.getTouchEvents()) {
+            // If there is no touch down yet, check for a touch down
+            if(!touchDown) {
+                // Check if touch event is a touch down
+                if (t.type == TouchEvent.TOUCH_DOWN) {
+                    // Breaker to determine the amount of cards to iterate through while checking check location
+                    int breaker = currentItemIndex + 1;
+                    if(multiMode)
+                        breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
+
+                    // Check if the touch location is within the bounds of any displayed cards
+                    for (int i = currentItemIndex; i < currentItemIndex + breaker; i++) {
+                        if(checkIfTouchInArea(new Vector2(t.x, t.y), cardScrollerItems.get(i).getBound())) {
+                            selectedItemIndex = i;
+                            touchDown = true;
+                            draggedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, cardScrollerItems.get(selectedItemIndex).position.y);
+                            itemSelected = true;
+                        }
+                    }
+                } else // No touch down
+                    continue;
+            }
+
+            // If touch event is a drag event, modify position of card
+            if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
+                if (!Float.isNaN(input.getTouchX(t.pointer))) {
+                    cardScrollerItems.get(selectedItemIndex).position.x = input.getTouchX(t.pointer);
+                    cardScrollerItems.get(selectedItemIndex).position.y = input.getTouchY(t.pointer);
+                }
+            }
+            // If touch event is a touch up event, check if location is within a select destination and remove card
+            // else return card to original position
+            if (t.type == TouchEvent.TOUCH_UP) {
+                touchDown = false;
+
+                // For each select destination, check if touch up is within the bounds of the destination BoundingBox
+                for (BoundingBox selectDestination : selectDestinations) {
+                    if(checkIfTouchInArea(cardScrollerItems.get(selectedItemIndex).position, selectDestination) && !cardMoveAnimationTriggered) {
+                        currentSelectDestination = selectDestination;
+                        cardMoveAnimationTriggered = true;
+                        movedCardOriginalPosition = draggedCardOriginalPosition;
+                        cardScrollerItems.get(selectedItemIndex).position = new Vector2(selectDestination.x, selectDestination.y);
+                        removedCard = new Card(cardScrollerItems.get(selectedItemIndex));
+                        removedCardReady = true;
+                        break;
+                    }
+                }
+                if(!removedCardReady)
+                    cardScrollerItems.get(selectedItemIndex).position = new Vector2(draggedCardOriginalPosition);
+            }
+        }
+    }
+
+    /**
+     * Returns whether there is a removed card ready to be retrieved
+     * @return
+     */
+    public boolean isRemovedCardReady() {
+        return removedCardReady;
+    }
+
+    /**
+     * Returns the removed card
+     * @return
+     */
+    public Card getRemovedCard() {
+        if(removedCardReady) {
+            removedCardReady = false;
+            return removedCard;
+        }
+        else return null;
     }
 
     @Override
@@ -977,15 +940,16 @@ public class HorizontalCardScroller extends GameObject {
 
         if(cardScrollerItems.isEmpty()) return;
 
-        // Checks if scroller has been touched and will carried out any
+        // Checks if a card has been dragged/released and will carry out any
+        // necessary actions
+        checkAndPerformDragCard();
+
+        // Checks if scroller has been touched and will carry out any
         // necessary actions depending on where is touched
         checkForTouchEvent();
 
         // Checks if scroll animation has been triggered and performs animation if so
         checkAndPerformScrollAnimation();
-
-        // Checks if select animation has been triggered and performs animation if so
-        checkAndPerformSelectAnimation();
 
         // Checks if move animation has been triggered and performs animation if so
         checkAndPerformMoveCardAnimation();
@@ -1005,8 +969,13 @@ public class HorizontalCardScroller extends GameObject {
             // Determine how many current items to draw, then draw
             int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
             for (int i = 0; i < breaker; i++) {
+                if(touchDown && currentItemIndex + i == selectedItemIndex) continue;
                 cardScrollerItems.get(currentItemIndex + i).draw(elapsedTime, graphics2D);
             }
+
+            // Draw selectedItem so that it renders above all other cards
+            if(touchDown && selectedItemIndex >= 0)
+                cardScrollerItems.get(selectedItemIndex).draw(elapsedTime, graphics2D);
 
             // Continue if scroll animation has been triggered else return
             if(!scrollAnimationTriggered) return;
@@ -1119,21 +1088,6 @@ public class HorizontalCardScroller extends GameObject {
         return selectedItemIndex;
     }
 
-    public boolean isSelectAnimationTriggered() {
-        return selectAnimationTriggered;
-    }
-
-    public boolean isSelectDirection() {
-        return selectDirection;
-    }
-
-    public float getSelectDistance() {
-        return selectDistance;
-    }
-
-    public Vector2 getTouchLocation() {
-        return touchLocation;
-    }
 
     public BoundingBox getSelectBound() {
         return selectBound;
