@@ -150,6 +150,11 @@ public class HorizontalCardScroller extends GameObject {
     private final int MAX_DISPLAYED_ITEMS_ALLOWED = 15;
 
     /**
+     * User defined maximum number of items allowed in scroller
+     */
+    private int maxScrollerItems = 25;
+
+    /**
      * Dimensions of bitmaps
      */
     private Vector2 maxItemDimensions = new Vector2();
@@ -202,7 +207,12 @@ public class HorizontalCardScroller extends GameObject {
      * Use to determine where the user is allowed to click on screen to move a card
      * that has been selected
      */
-    private Vector2 selectDestination;
+    private ArrayList<Vector2> selectDestinations = new ArrayList<Vector2>();
+
+    /**
+     * Current select destination
+     */
+    private Vector2 currentSelectDestination = new Vector2();
 
     /**
      * Determines whether an item move animation is occuring
@@ -298,8 +308,6 @@ public class HorizontalCardScroller extends GameObject {
         baseBitmap = assetManager.getBitmap("BaseBitmap");
         if(baseBitmap == null)
             Log.d("DEBUG", "HorizontalCardScroller: NO BASE BITMAP");
-
-        selectDestination = new Vector2(100,50);
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -366,7 +374,7 @@ public class HorizontalCardScroller extends GameObject {
      * @param fitness
      */
     public void addScrollerItem(String playerID, int fitness) {
-        if(playerID != null) {
+        if(playerID != null || cardScrollerItems.size() <= maxScrollerItems) {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
 
@@ -650,7 +658,7 @@ public class HorizontalCardScroller extends GameObject {
         if(!(cardMoveAnimationTriggered && itemSelected)) return;
 
         // Move current item and next item
-        Vector2 moveVector = new Vector2((selectDestination.x - cardScrollerItems.get(selectedItemIndex).position.x) * 0.4f, (selectDestination.y - cardScrollerItems.get(selectedItemIndex).position.y) * 0.4f) ;
+        Vector2 moveVector = new Vector2((currentSelectDestination.x - cardScrollerItems.get(selectedItemIndex).position.x) * 0.4f, (currentSelectDestination.y - cardScrollerItems.get(selectedItemIndex).position.y) * 0.4f) ;
 
         cardScrollerItems.get(selectedItemIndex).position.add(moveVector);
 
@@ -767,10 +775,14 @@ public class HorizontalCardScroller extends GameObject {
             }
         } else {
             if (itemSelected) {
-                if(checkIfTouchInArea(touchLocation, selectDestination, 50) && !cardMoveAnimationTriggered) {
-                    cardMoveAnimationTriggered = true;
-                    movedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, position.y);
+                for (Vector2 selectDestination : selectDestinations) {
+                    if(checkIfTouchInArea(touchLocation, selectDestination, 50) && !cardMoveAnimationTriggered) {
+                        currentSelectDestination = selectDestination;
+                        cardMoveAnimationTriggered = true;
+                        movedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, position.y);
+                    }
                 }
+
             }
         }
     }
@@ -848,8 +860,8 @@ public class HorizontalCardScroller extends GameObject {
     private boolean checkIfSelectedCardMovedToDest() {
         if(!(selectedItemIndex < 0 || itemSelected)) return false;
 
-        if(Math.abs(cardScrollerItems.get(selectedItemIndex).position.x - selectDestination.x) < 15 && Math.abs(cardScrollerItems.get(selectedItemIndex).position.y - selectDestination.y) < 15) {
-            cardScrollerItems.get(selectedItemIndex).position = new Vector2(selectDestination);
+        if(Math.abs(cardScrollerItems.get(selectedItemIndex).position.x - currentSelectDestination.x) < 15 && Math.abs(cardScrollerItems.get(selectedItemIndex).position.y - currentSelectDestination.y) < 15) {
+            cardScrollerItems.get(selectedItemIndex).position = new Vector2(currentSelectDestination);
             return true;
         }
 
@@ -908,6 +920,23 @@ public class HorizontalCardScroller extends GameObject {
         pushButtonRight.position.add(x, y);
         selectBound.x += x;
         selectBound.y += y;
+    }
+
+    /**
+     * Adds a destination which the user can select to move an item
+     * @param destination
+     */
+    public void addSelectDestination(Vector2 destination) {
+        if(destination != null) selectDestinations.add(destination);
+    }
+
+    /**
+     * Removes a select destination from selectDestinations ArrayList
+     * @param index
+     */
+    public void removeSelectDestination(int index) {
+        if(isAnimating() || index < 0 || index >= selectDestinations.size()) return;
+        selectDestinations.remove(index);
     }
 
     /**
@@ -1092,11 +1121,19 @@ public class HorizontalCardScroller extends GameObject {
         return cardScrollerItems;
     }
 
-    public void setScrollDirection(boolean scrollDirection) {
-        this.scrollDirection = scrollDirection;
+    public void setScrollDirection(boolean scrollDirection) { this.scrollDirection = scrollDirection; }
+
+    public void setCurrentSelectDestination(Vector2 currentSelectDestination) { this.currentSelectDestination = currentSelectDestination; }
+
+    public int getMaxScrollerItems() { return maxScrollerItems; }
+
+    public void setMaxScrollerItems(int maxScrollerItems) { this.maxScrollerItems = maxScrollerItems > 0 ? maxScrollerItems : 25; }
+
+    public ArrayList<Vector2> getSelectDestinations() {
+        return selectDestinations;
     }
 
-    public void setSelectDestination(Vector2 selectDestination) {
-        this.selectDestination = selectDestination;
+    public void setSelectDestinations(ArrayList<Vector2> selectDestinations) {
+        this.selectDestinations = selectDestinations;
     }
 }

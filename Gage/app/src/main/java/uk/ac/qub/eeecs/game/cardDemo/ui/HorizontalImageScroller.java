@@ -141,6 +141,11 @@ public class HorizontalImageScroller extends GameObject {
     private final int MAX_DISPLAYED_ITEMS_ALLOWED = 15;
 
     /**
+     * User defined maximum number of items allowed in scroller
+     */
+    private int maxScrollerItems = 25;
+
+    /**
      * Dimensions of items
      */
     private Vector2 maxItemDimensions = new Vector2();
@@ -310,7 +315,7 @@ public class HorizontalImageScroller extends GameObject {
      * @param bitmap
      */
     public void addScrollerItem(Bitmap bitmap) {
-        if(bitmap != null) {
+        if(bitmap != null || imageScrollerItems.size() <= maxScrollerItems) {
             if(imageScrollerItems.size() == 0) currentItemIndex = 0;
             else if(imageScrollerItems.size() == 1) nextItemIndex = 1;
 
@@ -840,4 +845,8 @@ public class HorizontalImageScroller extends GameObject {
     public void setScrollDirection(boolean scrollDirection) {
         this.scrollDirection = scrollDirection;
     }
+
+    public int getMaxScrollerItems() { return maxScrollerItems; }
+
+    public void setMaxScrollerItems(int maxScrollerItems) { this.maxScrollerItems = maxScrollerItems > 0 ? maxScrollerItems : 25; }
 }
