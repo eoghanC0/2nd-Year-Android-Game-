@@ -895,6 +895,7 @@ public class HorizontalCardScroller extends GameObject {
                 touchDown = false;
 
                 // For each select destination, check if touch up is within the bounds of the destination BoundingBox
+                boolean inDestination = false;
                 for (BoundingBox selectDestination : selectDestinations) {
                     if(checkIfTouchInArea(cardScrollerItems.get(selectedItemIndex).position, selectDestination) && !cardMoveAnimationTriggered) {
                         currentSelectDestination = selectDestination;
@@ -903,10 +904,11 @@ public class HorizontalCardScroller extends GameObject {
                         cardScrollerItems.get(selectedItemIndex).position = new Vector2(selectDestination.x, selectDestination.y);
                         removedCard = new Card(cardScrollerItems.get(selectedItemIndex));
                         removedCardReady = true;
+                        inDestination = true;
                         break;
                     }
                 }
-                if(!removedCardReady)
+                if(!inDestination)
                     cardScrollerItems.get(selectedItemIndex).position = new Vector2(draggedCardOriginalPosition);
             }
         }
