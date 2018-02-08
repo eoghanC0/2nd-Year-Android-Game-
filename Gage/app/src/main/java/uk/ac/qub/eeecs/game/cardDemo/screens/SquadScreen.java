@@ -1,19 +1,16 @@
 package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import android.graphics.Bitmap;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 
@@ -33,8 +30,6 @@ public class SquadScreen extends FootballGameScreen {
      * Define InfoBar
      */
     private InfoBar infoBar;
-    private ScreenViewport mScreenViewport;
-    private LayerViewport mLayerViewport;
 
     /**
      * Define buttons /
@@ -50,10 +45,6 @@ public class SquadScreen extends FootballGameScreen {
     public SquadScreen(FootballGame game) {
         super("SquadScreen", game);
         FootballGame fGame = new FootballGame();
-
-        //Instantiate variables
-        mLayerViewport = new LayerViewport();
-        mScreenViewport = new ScreenViewport();
 
         //Load assets
         AssetStore assetManager = mGame.getAssetManager();
@@ -99,7 +90,7 @@ public class SquadScreen extends FootballGameScreen {
         graphics2D.drawBitmap(background,null, backGroundRectangle, null);
         mBackButton.draw(elapsedTime, graphics2D, null, null);
         mPlayButton.draw(elapsedTime, graphics2D, null, null);
-        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        infoBar.draw(elapsedTime, graphics2D);
 
     }
 }

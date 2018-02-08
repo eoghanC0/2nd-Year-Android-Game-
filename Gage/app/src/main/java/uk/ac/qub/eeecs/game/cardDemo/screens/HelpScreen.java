@@ -2,14 +2,13 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.util.Log;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
@@ -18,19 +17,12 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
-import uk.ac.qub.eeecs.game.cardDemo.ui.iHorizontalCardScroller;
 
 /**
  * Created by eimhin on 27/11/2017.
  */
 
 public class HelpScreen extends FootballGameScreen {
-
-    /**
-     * Define viewports for this layer and the associated screen projection
-     */
-    private ScreenViewport mScreenViewport;
-    private LayerViewport mLayerViewport;
 
     /**
      * Background image
@@ -68,10 +60,6 @@ public class HelpScreen extends FootballGameScreen {
     public HelpScreen(FootballGame game) {
         super("HelpScreen", game);
 
-        // Instantiate variables
-        mLayerViewport = new LayerViewport();
-        mScreenViewport = new ScreenViewport();
-        //GraphicsHelper.create3To2AspectRatioScreenViewport(game, mScreenViewport);
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "H E L P  S C R E E N", "");
 
         AssetStore assetManager = mGame.getAssetManager();
@@ -93,8 +81,8 @@ public class HelpScreen extends FootballGameScreen {
         horizontalCardScroller.addTestData();
         horizontalCardScroller.setMultiMode(true, 40);
         horizontalCardScroller.setSelectMode(true);
-        horizontalCardScroller.addSelectDestination(new BoundingBox(mGame.getScreenWidth() * 0.5f, 850, 100, 100));
-        horizontalCardScroller.addSelectDestination(new BoundingBox(mGame.getScreenWidth() * 0.75f, 850, 100, 100));
+        horizontalCardScroller.addSelectDestination(new BoundingBox(mGame.getScreenWidth() * 0.5f, 650, 100, 100));
+        horizontalCardScroller.addSelectDestination(new BoundingBox(mGame.getScreenWidth() * 0.75f, 650, 100, 100));
     }
 
     public void scrollerListener() {
@@ -120,7 +108,7 @@ public class HelpScreen extends FootballGameScreen {
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         graphics2D.clear(0xe6ffff);
         graphics2D.drawBitmap(background,null, backgroundRect, null);
-        infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        infoBar.draw(elapsedTime, graphics2D);
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
         //horizontalImageScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
         horizontalCardScroller.draw(elapsedTime, graphics2D);

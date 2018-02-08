@@ -371,7 +371,7 @@ public class InfoBar extends GameObject {
     }
 
     @Override
-    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D, LayerViewport layerViewport, ScreenViewport screenViewport) {
+    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
 
         float scaleX = (float) drawScreenRect.width() / (float) drawSourceRect.width();
         float scaleY = (float) drawScreenRect.height() / (float) drawSourceRect.height();
