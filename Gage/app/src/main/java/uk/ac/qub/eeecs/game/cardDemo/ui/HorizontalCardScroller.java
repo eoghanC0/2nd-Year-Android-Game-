@@ -375,12 +375,18 @@ public class HorizontalCardScroller extends GameObject {
      * @param fitness
      */
     public void addScrollerItem(String playerID, int fitness) {
-        if(playerID != null || cardScrollerItems.size() <= maxScrollerItems) {
+        if((playerID != null || cardScrollerItems.size() <= maxScrollerItems) && !isAnimating() && !isItemSelected()) {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
 
             Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
             cardScrollerItems.add(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, playerID, fitness));
+
+            // Check if card should be displayed immediately
+            int relativePosition = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex - 1: -1;
+            if(multiMode && relativePosition != -1) {
+                cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (relativePosition * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
+            }
         }
     }
 
@@ -518,11 +524,12 @@ public class HorizontalCardScroller extends GameObject {
 
         // Set position of current item
         cardScrollerItems.get(currentItemIndex).position = new Vector2(mBound.getLeft() + maxItemSpacing + cardScrollerItems.get(0).getBound().halfWidth, position.y);
-
+        Log.d("DEBUG", "= = = = = = = = =\nCalculate Multi Vectors\n= = = = = = = = =\n");
         // Set positions of any other current items
         int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
         for(int i = 0; i < breaker; i++) {
             cardScrollerItems.get(currentItemIndex + i).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (i * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
+            Log.d("DEBUG", "Item " + (currentItemIndex + i) + " " + cardScrollerItems.get(currentItemIndex + i).position.x + " " + cardScrollerItems.get(currentItemIndex + i).position.y);
         }
     }
 
