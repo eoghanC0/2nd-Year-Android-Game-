@@ -372,33 +372,25 @@ public class InfoBar extends GameObject {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D, LayerViewport layerViewport, ScreenViewport screenViewport) {
-        if (GraphicsHelper.getSourceAndScreenRect(this, layerViewport, screenViewport, drawSourceRect, drawScreenRect)) {
 
-            float scaleX = (float) drawScreenRect.width() / (float) drawSourceRect.width();
-            float scaleY = (float) drawScreenRect.height() / (float) drawSourceRect.height();
+        float scaleX = (float) drawScreenRect.width() / (float) drawSourceRect.width();
+        float scaleY = (float) drawScreenRect.height() / (float) drawSourceRect.height();
 
-            // TODO: Profile icon needs more work. Probably doesn't work on different resolutions.
-            // Build an appropriate transformation matrix
-            drawMatrix.reset();
-            drawMatrix.postScale(scaleX, scaleY);
-            drawMatrix.postRotate(0, scaleX * iconBitmap.getWidth()
-                    / 2.0f, scaleY * iconBitmap.getHeight() / 2.0f);
-            drawMatrix.postTranslate(drawScreenRect.left, drawScreenRect.top);
-            drawMatrix.setScale(0.35f, 0.35f);
+        // TODO: Profile icon needs more work. Probably doesn't work on different resolutions.
+        // Build an appropriate transformation matrix
+        drawMatrix.reset();
+        drawMatrix.postScale(scaleX, scaleY);
+        drawMatrix.postRotate(0, scaleX * iconBitmap.getWidth()
+                / 2.0f, scaleY * iconBitmap.getHeight() / 2.0f);
+        drawMatrix.postTranslate(drawScreenRect.left, drawScreenRect.top);
+        drawMatrix.setScale(0.35f, 0.35f);
 
-            // Draw the image
-            graphics2D.drawBitmap(iconBitmap, drawMatrix,null);
+        // Draw the image
+        graphics2D.drawBitmap(iconBitmap, null, drawScreenRect,null);
 
-            // Build an appropriate transformation matrix
-            drawMatrix.reset();
-            drawMatrix.postScale(scaleX, scaleY);
-            drawMatrix.postRotate(0, scaleX * mBitmap.getWidth()
-                    / 2.0f, scaleY * mBitmap.getHeight() / 2.0f);
-            drawMatrix.postTranslate(drawScreenRect.left, drawScreenRect.top);
-
-            // Draw the image
-            graphics2D.drawBitmap(mBitmap, drawMatrix, null);
-        }
+        // Draw the image
+        drawScreenRect.set(0,0,mGameScreen.getGame().getScreenWidth(),(int) (mGameScreen.getGame().getScreenHeight() * 0.1));
+        graphics2D.drawBitmap(mBitmap, null, drawScreenRect, null);
 
         areaOneVector = getAreaTextVector(textPaint, areaOneText, getBound().getWidth(), getBound().getHeight(), 0.06f, 0.313f, 0);
         areaTwoVector = getAreaTextVector(textPaint, areaTwoText, getBound().getWidth(), getBound().getHeight(), 0.373f, 0.313f, 1);
