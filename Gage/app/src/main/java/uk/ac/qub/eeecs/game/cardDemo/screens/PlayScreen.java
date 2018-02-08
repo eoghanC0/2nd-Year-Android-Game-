@@ -10,6 +10,7 @@ import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
+import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
@@ -97,7 +98,7 @@ public class PlayScreen extends FootballGameScreen {
      * move animation
      */
     private void scrollerButtonClicked() {
-        if(!scrollerEnabled || scrollerAnimationTriggered) return;
+        if(!scrollerEnabled || scrollerAnimationTriggered || horizontalCardScroller.isAnimating()) return;
 
         if(scrollerDisplayed) scrollerMoveDirection = 1;
         else scrollerMoveDirection = -1;
@@ -166,6 +167,6 @@ public class PlayScreen extends FootballGameScreen {
 
         infoBar.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
 
-        horizontalCardScroller.draw(elapsedTime, graphics2D, mLayerViewport, mScreenViewport);
+        horizontalCardScroller.draw(elapsedTime, graphics2D);
     }
 }

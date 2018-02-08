@@ -973,7 +973,7 @@ public class HorizontalCardScroller extends GameObject {
     }
 
     @Override
-    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D, LayerViewport layerViewport, ScreenViewport screenViewport) {
+    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         super.draw(elapsedTime, graphics2D);
 
         if(multiMode) {
