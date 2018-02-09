@@ -176,8 +176,7 @@ public class ListBox extends GameObject {
 
         //Draw the border
         paint.setColor(borderColor);
-        graphics2D.drawRect(mBound.getLeft() - 10, mBound.getBottom() - 10, mBound.getRight(), mBound.getTop() + 10, paint);
-        graphics2D.drawRect(mBound.getRight(), mBound.getBottom() - 10, mBound.getRight() + 60, mBound.getTop() + 10, paint);
+        graphics2D.drawRect(mBound.getLeft() - 10, mBound.getBottom() - 10, mBound.getRight() + 60, mBound.getTop() + 10, paint);
 
         //Draw the listbox itself
         paint.reset();
