@@ -2,20 +2,13 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.util.Log;
 
-import java.util.ArrayList;
-
+import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
-import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
-import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 import uk.ac.qub.eeecs.game.cardDemo.ui.SquadSelectionPane;
 
 
@@ -23,7 +16,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.SquadSelectionPane;
  * Created by Iñaki McKearney on 06/12/2017.
  */
 
-public class SquadScreen extends FootballGameScreen {
+public class SquadScreen extends GameScreen {
 
     private SquadSelectionPane selectionPane;
     private HorizontalCardScroller cardScroller;
@@ -35,7 +28,7 @@ public class SquadScreen extends FootballGameScreen {
      *
      * @param game Game instance to which the game screen belongs
      */
-    public SquadScreen(FootballGame game) {
+    public SquadScreen(Game game) {
         super("SquadScreen", game);
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("SquadBackground", "img/help-background.jpg");
@@ -48,7 +41,7 @@ public class SquadScreen extends FootballGameScreen {
         cardScroller.setSelectMode(true);
     }
 
-    private void changeToScreen(FootballGameScreen screen) {
+    private void changeToScreen(GameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

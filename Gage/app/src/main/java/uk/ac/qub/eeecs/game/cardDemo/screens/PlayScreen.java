@@ -5,14 +5,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
-import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
@@ -21,7 +19,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  * Created by stephenmcveigh on 04/12/2017.
  */
 
-public class PlayScreen extends FootballGameScreen {
+public class PlayScreen extends GameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
@@ -32,7 +30,7 @@ public class PlayScreen extends FootballGameScreen {
     private int playerScore, CPUScore;
     private PushButton mScenarioButton;
     private PushButton scrollerButton;
-    public Match currentMatch;
+    private Match currentMatch;
 
     private InfoBar infoBar;
 
@@ -47,7 +45,7 @@ public class PlayScreen extends FootballGameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
-    public PlayScreen(FootballGame game) {
+    public PlayScreen(Game game) {
         super("PlayScreen", game);
         currentMatch = new Match(this);
         AssetStore assetManager = mGame.getAssetManager();

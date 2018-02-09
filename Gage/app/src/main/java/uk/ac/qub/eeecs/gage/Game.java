@@ -8,6 +8,9 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IRenderSurface;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
+import uk.ac.qub.eeecs.game.cardDemo.screens.LoadGameScreen;
+import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -22,13 +25,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 /**
  * Central game class, providing access to core game services and management of
  * the update/render cycle.
  *
  * @version 1.0
  */
-public abstract class Game extends Fragment {
+public class Game extends Fragment {
 
     // /////////////////////////////////////////////////////////////////////////
     // Properties: Initialisation
@@ -94,17 +103,27 @@ public abstract class Game extends Fragment {
     /**
      * Asset Manager
      */
-    protected AssetStore mAssetManager;
+    private AssetStore mAssetManager;
 
     /**
      * Paint
      */
-    protected Paint mPaint;
+    private Paint mPaint;
 
     /**
      * Shared Preferences
      */
-    protected SharedPreferences mSharedPreferences;
+    private SharedPreferences mSharedPreferences;
+
+
+    /**
+     * Variables used within the game
+     */
+    private int gameID, wins, losses, draws, xp, difficulty, gameLength;
+    private ArrayList<Card> club;
+    private String pitchBackGround, playerName;
+    private String selectedFormation;
+    private ArrayList<Card> currentSquad;
 
     /**
      * Get the game's asset manager
@@ -126,7 +145,7 @@ public abstract class Game extends Fragment {
     /**
      * Screen Manager
      */
-    protected ScreenManager mScreenManager;
+    private ScreenManager mScreenManager;
 
     /**
      * Get the game's screen manager
@@ -140,7 +159,7 @@ public abstract class Game extends Fragment {
     /**
      * Input Service
      */
-    protected Input mInput;
+    private Input mInput;
 
     /**
      * Get the game's input service
@@ -154,7 +173,7 @@ public abstract class Game extends Fragment {
     /**
      * File IO Service
      */
-    protected FileIO mFileIO;
+    private FileIO mFileIO;
 
     /**
      * Get the game's file IO service
@@ -168,7 +187,7 @@ public abstract class Game extends Fragment {
     /**
      * Render Surface
      */
-    protected IRenderSurface mRenderSurface;
+    private IRenderSurface mRenderSurface;
 
 
     // /////////////////////////////////////////////////////////////////////////
@@ -299,6 +318,17 @@ public abstract class Game extends Fragment {
 
         //Create the paint
         mPaint = new Paint();
+
+        gameID = 0;
+        playerName = "Name";
+        club = new ArrayList<>();
+        wins = 0;
+        losses = 0;
+        draws = 0;
+        xp = 0;
+        difficulty = 0;
+        gameLength = 0;
+        pitchBackGround = "";
     }
 
     /*
@@ -340,6 +370,12 @@ public abstract class Game extends Fragment {
 
         // Get our input from the created view
         mInput = new Input(getActivity(), view);
+
+        // Create and add a stub game screen to the screen manager. We don't
+        // want to do this within the onCreate method as the menu screen
+        // will layout the buttons based on the size of the view.
+        LoadGameScreen stubLoadGameScreen = new LoadGameScreen(this);
+        mScreenManager.addScreen(stubLoadGameScreen);
 
         return view;
     }
@@ -397,7 +433,15 @@ public abstract class Game extends Fragment {
      * @return True if the back event has been consumed by the game, false otherwise.
      */
     public boolean onBackPressed() {
-        return false;
+        // If we are already at the menu screen then exit
+        if (mScreenManager.getCurrentScreen().getName().equals("MenuScreen"))
+            return false;
+
+        // Go back to the menu screen
+        getScreenManager().removeScreen(mScreenManager.getCurrentScreen().getName());
+        MenuScreen menuScreen = new MenuScreen(this);
+        getScreenManager().addScreen(menuScreen);
+        return true;
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -724,6 +768,80 @@ public abstract class Game extends Fragment {
 
             renderThread = new Thread(this);
             renderThread.start();
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Getters
+    ///////////////////////////////////////////////////////////////////////////
+    public String getMatchStats(){return String.format("%d | %d | %d", getWins(), getDraws(), getLosses());}
+    public int getGameID() {return gameID;}
+    public String getPlayerName() {return playerName;}
+    public ArrayList<Card> getClub() {return club;}
+    public int getWins() {return wins;}
+    public int getLosses() {return losses;}
+    public int getDraws() {return draws;}
+    public int getXp() {return xp;}
+    public int getDifficulty() {return difficulty;}
+    public int getGameLength() {return gameLength;}
+    public String getPitchBackGround() {return pitchBackGround;}
+    public ArrayList<Card> getCurrentSquad() {return currentSquad;}
+    public String getSelectedFormation() {return selectedFormation;}
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Setters
+    ///////////////////////////////////////////////////////////////////////////
+    public void setPlayerName(String name){this.playerName = name;}
+    public void setClub(ArrayList<Card> club) {this.club = new ArrayList<>(club);}
+    public void setWins(int numOfWins) {this.wins = numOfWins;}
+    public void setLosses(int numOfLosses) {this.losses = numOfLosses;}
+    public void setDraws(int numOfDraws) {this.draws = numOfDraws;}
+    public void setXp(int xp) {this.xp = xp;}
+    public void setDifficulty(int difficulty) {this.difficulty = difficulty;}
+    public void setGameLength(int gameLength) {this.gameLength = gameLength;}
+    public void setPitchBackGround(String pitchBackGround) {this.pitchBackGround = pitchBackGround;}
+    public void setCurrentSquad(ArrayList<Card> squad) {this.currentSquad = new ArrayList<>(squad);}
+    public void setSelectedFormation(String formation) {this.selectedFormation = formation;}
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Methods
+    ///////////////////////////////////////////////////////////////////////////
+    public void saveGame(int saveSlot) {
+        try {
+            JSONObject gameSavesObj = new JSONObject();
+            gameSavesObj.put("gameID", gameID);
+            gameSavesObj.put("playerName", playerName);
+            JSONArray clubArray = new JSONArray();
+            clubArray.put(club);
+            gameSavesObj.put("wins", wins);
+            gameSavesObj.put("losses", losses);
+            gameSavesObj.put("draws", draws);
+            gameSavesObj.put("xp", xp);
+            gameSavesObj.put("difficulty", difficulty);
+            gameSavesObj.put("gameLength", gameLength);
+            gameSavesObj.put("pitchBackGround", pitchBackGround);
+            mAssetManager.writeFile("save_" + saveSlot + ".json", gameSavesObj.toString());
+        }
+        catch(JSONException e){
+            Log.d("JSON", "Save fail : " + e.getMessage());
+        }
+    }
+
+    public void loadGame(int saveSlot) {
+        try {
+            JSONObject gameSavesObj = new JSONObject(mAssetManager.readFile("save_" + saveSlot + ".json"));
+            gameID = (int) gameSavesObj.get("gameID");
+            playerName = gameSavesObj.get("playerName").toString();
+            wins = (int) gameSavesObj.get("wins");
+            losses = (int) gameSavesObj.get("losses");
+            draws = (int) gameSavesObj.get("draws");
+            xp = (int) gameSavesObj.get("xp");
+            difficulty = (int) gameSavesObj.get("difficulty");
+            gameLength = (int) gameSavesObj.get("gameLength");
+            pitchBackGround = gameSavesObj.get("pitchBackGround").toString();
+        } catch (JSONException e) {
+            Log.d("JSON", "Load Failed : " + e.getMessage());
         }
     }
 }

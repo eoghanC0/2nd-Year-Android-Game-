@@ -1,23 +1,17 @@
 package uk.ac.qub.eeecs.game.cardDemo.ui;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 
 /**
@@ -40,7 +34,7 @@ public class SquadSelectionPane extends GameObject {
     private ListBox formationsListBox;
     private String selectedFormation;
 
-    public SquadSelectionPane(FootballGameScreen gameScreen) {
+    public SquadSelectionPane(GameScreen gameScreen) {
         super(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight() * 0.75f, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight()/2, null, gameScreen);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("Pitch_Top", "img/pitch_top.png");

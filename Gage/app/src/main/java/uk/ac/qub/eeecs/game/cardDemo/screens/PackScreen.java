@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.audio.Music;
@@ -15,10 +16,7 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
-import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.SplashScreen1;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
@@ -27,7 +25,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  * Created by stephenmcveigh on 07/12/2017.
  */
 
-public class PackScreen extends FootballGameScreen {
+public class PackScreen extends GameScreen {
 
     private final Bitmap background;
     //private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
@@ -63,7 +61,7 @@ public class PackScreen extends FootballGameScreen {
      *
      * @param game Game to which this screen belongs
      */
-    public PackScreen(FootballGame game) {
+    public PackScreen(Game game) {
         super("PackScreen", game);
 
         Log.d("DEBUG", "SCREEN WIDTH: " + mGame.getScreenWidth() + " SCREEN HEIGHT: " + mGame.getScreenHeight());
@@ -161,7 +159,7 @@ public class PackScreen extends FootballGameScreen {
      *
      * @param screen game screen to become active
      */
-    public void changeToScreen(FootballGameScreen screen) {
+    public void changeToScreen(GameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }
