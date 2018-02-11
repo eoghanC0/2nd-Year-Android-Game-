@@ -1,5 +1,6 @@
 package uk.ac.qub.eeecs.gage;
 
+import uk.ac.qub.eeecs.game.FootballGame;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -16,7 +17,7 @@ public class MainActivity extends Activity {
     /**
      * Game fragment instance
      */
-    private Game mGame;
+    private FootballGame mGame;
 
     /*
      * (non-Javadoc)
@@ -41,10 +42,10 @@ public class MainActivity extends Activity {
 
         // Add in the main game fragment
         FragmentManager fm = getFragmentManager();
-        mGame = (Game) fm.findFragmentById(R.id.activity_fragment_id);
+        mGame = (FootballGame) fm.findFragmentById(R.id.activity_fragment_id);
 
         if (mGame == null) {
-            mGame = new Game();
+            mGame = new FootballGame();
 
             fm.beginTransaction().add(R.id.activity_fragment_id, mGame)
                     .commit();

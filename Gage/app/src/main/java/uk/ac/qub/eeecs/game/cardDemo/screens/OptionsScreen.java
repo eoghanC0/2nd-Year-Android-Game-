@@ -6,23 +6,23 @@ import android.graphics.Rect;
 
 import java.util.List;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.FootballGame;
 
 
 /**
  * Created by aedan on 02/11/2017.
  */
 
-public class OptionsScreen extends GameScreen {
+public class OptionsScreen extends FootballGameScreen {
 
     /**
      * Define viewports for this layer and the associated screen projection
@@ -48,7 +48,7 @@ public class OptionsScreen extends GameScreen {
      *
      * @param game Game instance to which the game screen belongs
      */
-    public OptionsScreen(Game game) {
+    public OptionsScreen(FootballGame game) {
 
         super("OptionsScreen", game);
 
@@ -177,7 +177,7 @@ public class OptionsScreen extends GameScreen {
      *
      * @param screen game screen to become active
      */
-    private void changeToScreen(GameScreen screen) {
+    private void changeToScreen(FootballGameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

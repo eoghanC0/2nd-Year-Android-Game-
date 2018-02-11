@@ -3,13 +3,16 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.LayerViewport;
+import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
@@ -19,7 +22,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  * Created by eimhin on 27/11/2017.
  */
 
-public class HelpScreen extends GameScreen {
+public class HelpScreen extends FootballGameScreen {
 
     /**
      * Background image
@@ -54,7 +57,7 @@ public class HelpScreen extends GameScreen {
      *
      * @param game Game instance to which the game screen belongs
      */
-    public HelpScreen(Game game) {
+    public HelpScreen(FootballGame game) {
         super("HelpScreen", game);
 
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "H E L P  S C R E E N", "");
@@ -82,7 +85,7 @@ public class HelpScreen extends GameScreen {
         horizontalCardScroller.addSelectDestination(new BoundingBox(mGame.getScreenWidth() * 0.75f, 650, 100, 100));
     }
 
-    private void scrollerListener() {
+    public void scrollerListener() {
         if(horizontalCardScroller.isRemovedCardReady()) {
             removedCard = horizontalCardScroller.getRemovedCard();
         }

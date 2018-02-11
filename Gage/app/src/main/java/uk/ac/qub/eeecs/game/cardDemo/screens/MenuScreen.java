@@ -7,7 +7,6 @@ import android.graphics.Rect;
 
 import java.util.List;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.audio.Music;
@@ -15,7 +14,10 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
+import uk.ac.qub.eeecs.gage.world.LayerViewport;
+import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
@@ -23,7 +25,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
  *
  * @version 1.0
  */
-public class MenuScreen extends GameScreen {
+public class MenuScreen extends FootballGameScreen {
 
     // /////////////////////////////////////////////////////////////////////////
     // Properties
@@ -59,7 +61,7 @@ public class MenuScreen extends GameScreen {
      *
      * @param game Game to which this screen belongs
      */
-    public MenuScreen(Game game) {
+    public MenuScreen(FootballGame game) {
         super("MenuScreen", game);
 
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", mGame.getPlayerName(), "M A I N  M E N U", mGame.getMatchStats());
@@ -160,7 +162,7 @@ public class MenuScreen extends GameScreen {
      *
      * @param screen game screen to become active
      */
-    public void changeToScreen(GameScreen screen) {
+    public void changeToScreen(FootballGameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

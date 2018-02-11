@@ -7,20 +7,19 @@ import android.graphics.Paint;
 
 import java.util.List;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.PackScreen;
 
 /**
  * Created by Eoghan on 17/11/2017.
  */
 
-public class SplashScreen1 extends GameScreen {
+public class SplashScreen1 extends FootballGameScreen {
     private Bitmap splashBmp;
 
     /*
@@ -28,7 +27,7 @@ public class SplashScreen1 extends GameScreen {
      *
      * @param game Game instance to which the game screen belongs
      */
-    public SplashScreen1(Game game, String message) {
+    public SplashScreen1(FootballGame game, String message) {
         super("SplashScreen1", game);
 
         // Load in the bitmaps used on the Splash Screen
@@ -54,7 +53,7 @@ public class SplashScreen1 extends GameScreen {
         }
     }
 
-    private void changeToScreen(GameScreen screen) {
+    private void changeToScreen(FootballGameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

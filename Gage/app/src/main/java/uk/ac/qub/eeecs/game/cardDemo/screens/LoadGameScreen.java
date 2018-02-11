@@ -5,19 +5,19 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
+import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.ListBox;
 
 /**
  * Created by stephenmcveigh on 21/01/2018.
  */
 
-public class LoadGameScreen extends GameScreen {
+public class LoadGameScreen extends FootballGameScreen {
     private ListBox lbxGameSaves;
 
     private PushButton mNextButton;
@@ -28,7 +28,7 @@ public class LoadGameScreen extends GameScreen {
 
     //TODO: Erase button
 
-    public LoadGameScreen(Game game) {
+    public LoadGameScreen(FootballGame game) {
         super("LoadGameScreen", game);
         lbxGameSaves = new ListBox(600,500,400,300, this);
         AssetStore assetManager = mGame.getAssetManager();
@@ -48,7 +48,7 @@ public class LoadGameScreen extends GameScreen {
                 width * 0.925f, height * 0.9f, width / 10.0f, height / 6.0f, "NextButton","NextButtonActive", this );
         }
 
-    private void changeToScreen(GameScreen screen) {
+    private void changeToScreen(FootballGameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }
