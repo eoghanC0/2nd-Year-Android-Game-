@@ -42,6 +42,11 @@ public class PushButton extends Button {
      */
     private boolean mPushTriggered;
 
+    /**
+     * Used to keep track if button is enabled
+     */
+    private boolean isEnabled = true;
+
     // /////////////////////////////////////////////////////////////////////////
     // Properties: Button Appearance and Sound
     // /////////////////////////////////////////////////////////////////////////
@@ -149,8 +154,8 @@ public class PushButton extends Button {
     @Override
     protected void updateTriggerActions(TouchEvent touchEvent, Vector2 touchLocation) {
         // Trigger if the appropriate touch up or touch down has occurred
-        if ((!mTriggerOnRelease && touchEvent.type == TouchEvent.TOUCH_DOWN) ||
-                (mTriggerOnRelease && touchEvent.type == TouchEvent.TOUCH_UP)) {
+        if (((!mTriggerOnRelease && touchEvent.type == TouchEvent.TOUCH_DOWN) ||
+                (mTriggerOnRelease && touchEvent.type == TouchEvent.TOUCH_UP) && isEnabled)) {
             // Record the trigger
             mPushTriggered = true;
 
@@ -222,4 +227,9 @@ public class PushButton extends Button {
     public void setmPushBitmap(Bitmap bitmap) {
         this.mPushBitmap = bitmap;
     }
+
+    /**
+     * Sets the button's enabled property
+     */
+    public void setEnabled(boolean isEnabled) {this.isEnabled = isEnabled;}
 }

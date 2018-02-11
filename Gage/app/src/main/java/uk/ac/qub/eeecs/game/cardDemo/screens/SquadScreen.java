@@ -2,20 +2,15 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.util.Log;
 
-import java.util.ArrayList;
-
+import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
+import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
-import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 import uk.ac.qub.eeecs.game.cardDemo.ui.SquadSelectionPane;
 
 
@@ -48,7 +43,7 @@ public class SquadScreen extends FootballGameScreen {
         cardScroller.setSelectMode(true);
     }
 
-    private void changeToScreen(FootballGameScreen screen) {
+    private void changeToScreen(GameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }
@@ -57,6 +52,7 @@ public class SquadScreen extends FootballGameScreen {
     public void update(ElapsedTime elapsedTime) {
         cardScroller.update(elapsedTime);
         selectionPane.update(elapsedTime);
+        cardScroller.setSelectDestinations(selectionPane.getPlaceholders());
     }
 
     @Override

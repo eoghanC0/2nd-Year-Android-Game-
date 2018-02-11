@@ -13,7 +13,7 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
  *
  * @version 1.0
  */
-public class ToggleButton extends Button {
+public class Toggle extends Button {
 
     // /////////////////////////////////////////////////////////////////////////
     // Properties: Button State
@@ -87,7 +87,7 @@ public class ToggleButton extends Button {
      *                            space (screen by default)
      * @param gameScreen          Gamescreen to which this control belongs
      */
-    public ToggleButton(float x, float y, float width, float height,
+    public Toggle(float x, float y, float width, float height,
                         String offBitmap, String offTouchBitmap,
                         String onBitmap, String onTouchBitmap,
                         String onTriggerSound, String offTriggerSound,
@@ -121,7 +121,7 @@ public class ToggleButton extends Button {
      * @param onTouchBitmap  On button touch state bitmap
      * @param gameScreen     Gamescreen to which this control belongs
      */
-    public ToggleButton(float x, float y, float width, float height,
+    public Toggle(float x, float y, float width, float height,
                         String offBitmap,
                         String offTouchBitmap,
                         String onBitmap,
@@ -142,7 +142,7 @@ public class ToggleButton extends Button {
      * @param onBitmap   On button state bitmap
      * @param gameScreen Gamescreen to which this control belongs
      */
-    public ToggleButton(float x, float y, float width, float height,
+    public Toggle(float x, float y, float width, float height,
                         String offBitmap,
                         String onBitmap,
                         GameScreen gameScreen) {

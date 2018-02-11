@@ -16,6 +16,8 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 
+import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DOWN;
+
 /**
  * Created by stephenmcveigh on 08/01/2018.
  */
@@ -70,6 +72,8 @@ public class ListBox extends GameObject {
      */
     private PushButton btnNextPage, btnPreviousPage;
 
+    private boolean enabled = true;
+
     //////////////////////////////////////////////////////
     //  Constructors
     //////////////////////////////////////////////////////
@@ -83,14 +87,18 @@ public class ListBox extends GameObject {
         this.selectionColor = Color.BLUE;
         this.textColor = Color.BLACK;
         loadAssets();
-        btnPreviousPage = new PushButton(mBound.getRight() + 30, mBound.getBottom() + 25, 60,50, "upArrow","upArrowActive", gameScreen);
-        btnNextPage = new PushButton(mBound.getRight() + 30, mBound.getTop() - 25,60, 50,"downArrow","downArrowActive",  gameScreen);
+        btnPreviousPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * 0.05f, position.y - mBound.halfHeight + ITEM_HEIGHT/2, 60,50, "upArrow","upArrowActive", gameScreen);
+        btnNextPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * 0.05f, position.y + mBound.halfHeight - ITEM_HEIGHT/2,60, 50,"downArrow","downArrowActive",  gameScreen);
     }
 
     //////////////////////////////////////////////////////
     //  Getters
     //////////////////////////////////////////////////////
     public int getSelectedIndex() { return selectedIndex;}
+    public String getSelectedItem() {
+        if (selectedIndex == -1) return "";
+        return items.get(selectedIndex);
+    }
     public int getShowingPageNum() {return showingPageNum;}
     public ArrayList<String> getItems() {return items;}
 
@@ -106,8 +114,20 @@ public class ListBox extends GameObject {
     //////////////////////////////////////////////////////
     //  Methods
     //////////////////////////////////////////////////////
-    private void handleTouchEvents(Float touchY) {
-        int drawnIndex = (int)((touchY - mBound.getBottom()) / 100);
+    @Override
+    public void setPosition(float x, float y) {
+        super.setPosition(x,y);
+        setButtonPositions();
+    }
+
+    public void setButtonPositions() {
+        btnPreviousPage.setPosition(position.x + mBound.halfWidth - mBound.getWidth() * 0.05f, position.y - mBound.halfHeight + ITEM_HEIGHT/2);
+        btnNextPage.setPosition(position.x + mBound.halfWidth - mBound.getWidth() * 0.05f, position.y + mBound.halfHeight - ITEM_HEIGHT/2);
+    }
+
+    private void handleTouchEvents(Float touchX, Float touchY) {
+        if ((isNextButtonEnabled() || showingPageNum > 0) && touchX > position.x + mBound.halfWidth - mBound.getWidth() * 0.1f) return;
+        int drawnIndex = (int)((touchY - (position.y - mBound.halfHeight)) / 100);
         selectedIndex = (int)(showingPageNum * mBound.getHeight()/ 100 + drawnIndex);
         if (selectedIndex > items.size() - 1) selectedIndex = -1;
     }
@@ -149,8 +169,8 @@ public class ListBox extends GameObject {
 
         // Check for a touch event on this listBox
         for (TouchEvent touchEvent : input.getTouchEvents()) {
-            if (getBound().contains(touchEvent.x, touchEvent.y)) {
-                handleTouchEvents(touchEvent.y);
+            if (getBound().contains(touchEvent.x, touchEvent.y) && touchEvent.type == TOUCH_DOWN) {
+                handleTouchEvents(touchEvent.x, touchEvent.y);
             }
         }
 
@@ -174,10 +194,6 @@ public class ListBox extends GameObject {
 
         Paint paint = mGameScreen.getGame().getPaint(); //Get the game's paint object
 
-        //Draw the border
-        paint.setColor(borderColor);
-        graphics2D.drawRect(mBound.getLeft() - 10, mBound.getBottom() - 10, mBound.getRight() + 60, mBound.getTop() + 10, paint);
-
         //Draw the listbox itself
         paint.reset();
         paint.setColorFilter(new LightingColorFilter(backColor, 0));
@@ -188,7 +204,7 @@ public class ListBox extends GameObject {
         paint.setColor(selectionColor);
         if (selectedIndex / getNumberOfItemsPerPage() == showingPageNum && selectedIndex > -1) {
             int rectIndex = selectedIndex % getNumberOfItemsPerPage();
-            graphics2D.drawRect(mBound.getLeft(),mBound.getBottom() + rectIndex * 100,  mBound.getRight(), mBound.getBottom() + (rectIndex + 1) * 100, paint);
+            graphics2D.drawRect(position.x - mBound.halfWidth,position.y - mBound.halfHeight + rectIndex * 100,  position.x + mBound.halfWidth, position.y - mBound.halfHeight + (rectIndex + 1) * 100, paint);
         }
 
         //Draw the text
@@ -198,22 +214,34 @@ public class ListBox extends GameObject {
         for (int i = showingPageNum * getNumberOfItemsPerPage(); i < (showingPageNum + 1) * getNumberOfItemsPerPage(); i++) {
             if (i == items.size()) break;
             paint.setColor(textColor);
-            graphics2D.drawText(items.get(i), position.x, mBound.getBottom() + 60 + (ITEM_HEIGHT * (i - showingPageNum * getNumberOfItemsPerPage())), paint);
+            graphics2D.drawText(items.get(i), position.x, position.y - mBound.halfHeight + 60 + (ITEM_HEIGHT * (i - showingPageNum * getNumberOfItemsPerPage())), paint);
             paint.setColor(Color.GRAY);
-            float lineY = mBound.getBottom() + (ITEM_HEIGHT * (i + 1 - showingPageNum * getNumberOfItemsPerPage()));
+            float lineY = position.y - mBound.halfHeight + (ITEM_HEIGHT * (i + 1 - showingPageNum * getNumberOfItemsPerPage()));
             if (lineY < mBound.getTop()) {
-                graphics2D.drawLine(mBound.getLeft() + 10, lineY, mBound.getRight() - 10, lineY, paint);
+                graphics2D.drawLine(position.x - mBound.halfWidth + 10, lineY, position.x + mBound.halfWidth - 10, lineY, paint);
             }
         }
 
-        //Finally, draw the buttons
+        //draw the buttons
         paint.reset();
-        if (isNextButtonEnabled()) {
-            btnNextPage.draw(elapsedTime, graphics2D);
+        if (isNextButtonEnabled() || showingPageNum > 0) {
+            paint.setColor(Color.GRAY);
+            paint.setAlpha(200);
+            graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * 0.1f, position.y - mBound.halfHeight, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
+            if (isNextButtonEnabled()) {
+                btnNextPage.draw(elapsedTime, graphics2D);
+            }
+            if (showingPageNum > 0) {
+                btnPreviousPage.draw(elapsedTime, graphics2D);
+            }
         }
-        if (showingPageNum > 0) {
-            btnPreviousPage.draw(elapsedTime, graphics2D);
-        }
+
+        //Draw the border
+        paint.reset();
+        paint.setColor(borderColor);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(10);
+        graphics2D.drawRect(position.x - mBound.halfWidth, position.y - mBound.halfHeight, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
     }
 
     private boolean isNextButtonEnabled() {
