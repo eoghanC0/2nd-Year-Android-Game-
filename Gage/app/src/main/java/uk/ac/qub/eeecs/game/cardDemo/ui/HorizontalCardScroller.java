@@ -240,6 +240,7 @@ public class HorizontalCardScroller extends GameObject {
 
     private boolean removedCardReady = false;
     private Card removedCard;
+    private BoundingBox removedCardBound = null;
     private boolean touchDown = false;
     private Vector2 draggedCardOriginalPosition = new Vector2();
 
@@ -302,18 +303,18 @@ public class HorizontalCardScroller extends GameObject {
      * Test items
      */
     public void addTestData() {
-        addScrollerItem("0", 100);
-        addScrollerItem("1", 100);
-        addScrollerItem("2", 100);
-        addScrollerItem("3", 100);
-        addScrollerItem("4", 100);
-        addScrollerItem("5", 100);
-        addScrollerItem("6", 100);
-        addScrollerItem("7", 100);
-        addScrollerItem("8", 100);
-        addScrollerItem("9", 100);
-        addScrollerItem("10", 100);
-        addScrollerItem("11", 100);
+        Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "1", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "2", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "3", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "4", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "5", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "6", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "7", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "8", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "9", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "10", 100));
+        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "11", 100));
     }
 
     /**
@@ -354,16 +355,14 @@ public class HorizontalCardScroller extends GameObject {
 
     /**
      * Adds item to scroller
-     * @param playerID
-     * @param fitness
+     * @param card
      */
-    public void addScrollerItem(String playerID, int fitness) {
-        if((playerID != null || cardScrollerItems.size() <= maxScrollerItems) && !isAnimating() && !isItemSelected()) {
+    public void addScrollerItem(Card card) {
+        if((card != null || cardScrollerItems.size() <= maxScrollerItems) && !isAnimating() && !isItemSelected()) {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
 
-            Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
-            cardScrollerItems.add(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, playerID, fitness));
+            cardScrollerItems.add(card);
 
             // Check if card should be displayed immediately
             int relativePosition = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex - 1: -1;
@@ -542,7 +541,6 @@ public class HorizontalCardScroller extends GameObject {
      * Adds moveBy to distanceMoved then checks if distanceMoved
      * has reached the item distance
      * @param moveBy
-     * @param animation false = scroll true = select
      * @return
      */
     private boolean addAndCheckScrollerDistanceMoved(float moveBy) {
@@ -902,7 +900,8 @@ public class HorizontalCardScroller extends GameObject {
                         cardMoveAnimationTriggered = true;
                         movedCardOriginalPosition = draggedCardOriginalPosition;
                         cardScrollerItems.get(selectedItemIndex).position = new Vector2(selectDestination.x, selectDestination.y);
-                        removedCard = new Card(cardScrollerItems.get(selectedItemIndex));
+                        removedCard = cardScrollerItems.get(selectedItemIndex);
+                        removedCardBound = selectDestination;
                         removedCardReady = true;
                         inDestination = true;
                         break;
@@ -929,9 +928,17 @@ public class HorizontalCardScroller extends GameObject {
     public Card getRemovedCard() {
         if(removedCardReady) {
             removedCardReady = false;
-            return removedCard;
+            Card returned = removedCard;
+            removedCard = null;
+
+            return returned;
         }
         else return null;
+    }
+
+    public BoundingBox getRemovedCardBound() {
+        if (removedCardReady) return removedCardBound;
+        return null;
     }
 
     @Override
@@ -939,6 +946,9 @@ public class HorizontalCardScroller extends GameObject {
         super.update(elapsedTime);
         pushButtonLeft.update(elapsedTime);
         pushButtonRight.update(elapsedTime);
+
+        for (Card card : cardScrollerItems)
+            card.update(elapsedTime);
 
         if(cardScrollerItems.isEmpty()) return;
 
