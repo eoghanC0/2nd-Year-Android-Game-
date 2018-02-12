@@ -358,10 +358,11 @@ public class HorizontalCardScroller extends GameObject {
      * @param card
      */
     public void addScrollerItem(Card card) {
-        if((card != null || cardScrollerItems.size() <= maxScrollerItems) && !isAnimating() && !isItemSelected()) {
+        if(card != null && cardScrollerItems.size() <= maxScrollerItems && !isAnimating()) {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
 
+            card.setHeight((int) maxItemDimensions.y * 2);
             cardScrollerItems.add(card);
 
             // Check if card should be displayed immediately
