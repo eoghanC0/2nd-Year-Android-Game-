@@ -430,6 +430,11 @@ public class SquadSelectionPane extends GameObject {
 
         formationsListBox.draw(elapsedTime, graphics2D);
 
+        //Draw a separator between the scroller and the pitch
+        paint.reset();
+        paint.setStrokeWidth(10);
+        graphics2D.drawLine(position.x - mBound.halfWidth, position.y,position.x + mBound.halfWidth, position.y, paint);
+
         //Draw the border
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
