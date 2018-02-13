@@ -413,12 +413,6 @@ public class SquadSelectionPane extends GameObject {
         paint.setAlpha(200);
         graphics2D.drawBitmap(pitchStateBitmap, null, drawScreenRect, paint);
 
-        cardScroller.draw(elapsedTime, graphics2D);
-
-        // Draw displayed squadSelectionHolders
-        for (int i = shownPlaceholdersStartIndex; i < shownPlaceholdersEndIndex; i++)
-            squadSelectionHolders[i].draw(elapsedTime, graphics2D);
-
         //Draw the side bar with buttons and toggle
         paint.reset();
         paint.setColor(Color.GRAY);
@@ -428,12 +422,18 @@ public class SquadSelectionPane extends GameObject {
         if (currentSelectionArea > 0) previousAreaButton.draw(elapsedTime, graphics2D);
         showFormationsToggle.draw(elapsedTime, graphics2D);
 
-        formationsListBox.draw(elapsedTime, graphics2D);
-
         //Draw a separator between the scroller and the pitch
         paint.reset();
         paint.setStrokeWidth(10);
         graphics2D.drawLine(position.x - mBound.halfWidth, position.y,position.x + mBound.halfWidth, position.y, paint);
+
+        // Draw displayed squadSelectionHolders
+        for (int i = shownPlaceholdersStartIndex; i < shownPlaceholdersEndIndex; i++)
+            squadSelectionHolders[i].draw(elapsedTime, graphics2D);
+
+        cardScroller.draw(elapsedTime, graphics2D);
+
+        formationsListBox.draw(elapsedTime, graphics2D);
 
         //Draw the border
         paint.setStyle(Paint.Style.STROKE);
