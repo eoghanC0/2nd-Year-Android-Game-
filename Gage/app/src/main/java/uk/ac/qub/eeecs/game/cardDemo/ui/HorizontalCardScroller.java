@@ -361,12 +361,10 @@ public class HorizontalCardScroller extends GameObject {
         if(card != null && cardScrollerItems.size() <= maxScrollerItems && !isAnimating()) {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
-
+            
             card.setDraggingEnabled(false);
 
             if(multiMode) {
-                if(cardScrollerItems.size() == 0)
-                    calculateMultiItemsDisplayed(100f);
                 card.setHeight((int) maxItemDimensions.y * 2);
             } else {
                 Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
@@ -437,9 +435,7 @@ public class HorizontalCardScroller extends GameObject {
      * @param heightOccupyPercentage
      */
     public void setMultiMode(boolean value, int heightOccupyPercentage) {
-        if(!(cardScrollerItems.size() > 0)) {
-            Log.e("ERROR", "* * * You cannot set multi card mode unless there is at least 1 card in scroller * * *");
-        } else if(!value) {
+        if(!value) {
             multiMode = false;
             currentItemIndex = 0;
 
@@ -474,7 +470,7 @@ public class HorizontalCardScroller extends GameObject {
      * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
      */
     public void calculateMultiItemsDisplayed(float heightOccupyPercentage) {
-        if(!multiMode || !(cardScrollerItems.size() > 0)) return;
+        if(!multiMode) return;
         // Ensure heightOccupyPercentage is within bounds then divide by 100, else set to 1 (100%)
         if(heightOccupyPercentage <= 0 || heightOccupyPercentage > 100)
             heightOccupyPercentage = 1;
@@ -515,7 +511,7 @@ public class HorizontalCardScroller extends GameObject {
      */
     private void calculateCurrentMultiVectors() {
         // If a current item exists, draw any current items else return
-        if(!multiMode || currentItemIndex == -1) return;
+        if(!multiMode || currentItemIndex == -1 || cardScrollerItems.size() < 1) return;
 
         // Set position of current item
         cardScrollerItems.get(currentItemIndex).position = new Vector2(mBound.getLeft() + maxItemSpacing + cardScrollerItems.get(0).getBound().halfWidth, position.y);
@@ -659,7 +655,7 @@ public class HorizontalCardScroller extends GameObject {
             newCardMoveAnimationTriggered = false;
 
             // Calculate new positions of displayed cards
-            if(currentItemIndex == cardScrollerItems.size()){
+            if(currentItemIndex == cardScrollerItems.size() && cardScrollerItems.size() != 0){
                 reduceCurrentIndexAfterMoveNewCard = true;
                 pushButtonLeftPush = true;
                 itemDistance = mBound.getWidth();
