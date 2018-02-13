@@ -362,14 +362,26 @@ public class HorizontalCardScroller extends GameObject {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
 
-            card.setHeight((int) maxItemDimensions.y * 2);
+            card.setDraggingEnabled(false);
+
+            if(multiMode) {
+                if(cardScrollerItems.size() == 0)
+                    calculateMultiItemsDisplayed(100f);
+                card.setHeight((int) maxItemDimensions.y * 2);
+            } else {
+                Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
+                card.setHeight((int) dimensions.y * 2);
+            }
+
             cardScrollerItems.add(card);
 
             // Check if card should be displayed immediately
             int relativePosition = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex - 1: -1;
             if(multiMode && relativePosition != -1) {
+                calculateCurrentMultiVectors();
                 cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (relativePosition * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
-            }
+            } else
+                cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(position);
         }
     }
 
@@ -856,6 +868,7 @@ public class HorizontalCardScroller extends GameObject {
     }
 
     private void checkAndPerformDragCard() {
+        if(!selectMode) return;
         Input input = mGameScreen.getGame().getInput();
         //Consider all buffered touch events
         for (TouchEvent t : input.getTouchEvents()) {
@@ -937,6 +950,13 @@ public class HorizontalCardScroller extends GameObject {
     public BoundingBox getRemovedCardBound() {
         if (removedCardReady) return removedCardBound;
         return null;
+    }
+
+    /**
+     * Clears items in the scroller
+     */
+    public void clearScroller() {
+        cardScrollerItems.clear();
     }
 
     @Override
