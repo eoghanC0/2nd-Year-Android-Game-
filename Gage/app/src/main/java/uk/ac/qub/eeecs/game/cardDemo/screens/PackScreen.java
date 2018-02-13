@@ -30,9 +30,6 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 public class PackScreen extends FootballGameScreen {
 
-    private ScreenViewport mScreenViewport;
-    private LayerViewport mLayerViewport;
-
     private final Bitmap background;
     //private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
@@ -76,10 +73,6 @@ public class PackScreen extends FootballGameScreen {
      */
     public PackScreen(FootballGame game) {
         super("PackScreen", game);
-
-        // Instantiate variables
-        mLayerViewport = new LayerViewport();
-        mScreenViewport = new ScreenViewport();
 
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "P A C K  S C R E E N", "");
 
@@ -136,10 +129,6 @@ public class PackScreen extends FootballGameScreen {
          this.pack300Pressed = isPack300Pressed;
          this.pack500Pressed = isPack500Pressed;
          this.pack1000Pressed = isPack1000Pressed;
-
-        // Instantiate variables
-         mLayerViewport = new LayerViewport();
-         mScreenViewport = new ScreenViewport();
 
          infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "P A C K  S C R E E N", "");
 
@@ -294,16 +283,22 @@ public class PackScreen extends FootballGameScreen {
     }
 
      public void selectPackPlayers(int packSizes) {
-
+        int noOfRares = 0;
         Card packPlayers[] = new Card[packSizes];
         Random rnd = new Random();
         //Clear Scroller
         horizontalCardScroller.clearScroller();
         int highestRating = 0;
         for (int i = 0; i < packSizes; i++) {
-            Log.d("Debug4", "inside for");
             int rndPlayerID = rnd.nextInt(629);
             packPlayers[i] = new Card(960, 378,540, this, String.valueOf(rndPlayerID), 100);
+            if (packPlayers[i].isRare()) noOfRares = noOfRares + 1;
+            if (noOfRares > 3 && packPlayers[i].isRare()) {
+               while (packPlayers[i].isRare()) {
+                    rndPlayerID = rnd.nextInt(629);
+                    packPlayers[i] = new Card(960, 378,540, this, String.valueOf(rndPlayerID), 100);
+                }
+             }
             if (packPlayers[i].getRating() > highestRating) {
                 highestRating = packPlayers[i].getRating();
                 highestRatedCard = packPlayers[i];
