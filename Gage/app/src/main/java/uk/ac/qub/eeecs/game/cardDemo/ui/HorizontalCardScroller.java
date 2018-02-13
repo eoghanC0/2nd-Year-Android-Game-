@@ -929,10 +929,7 @@ public class HorizontalCardScroller extends GameObject {
     public Card getRemovedCard() {
         if(removedCardReady) {
             removedCardReady = false;
-            Card returned = removedCard;
-            removedCard = null;
-
-            return returned;
+            return removedCard;
         }
         else return null;
     }
