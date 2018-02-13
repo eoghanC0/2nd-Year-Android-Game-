@@ -427,11 +427,11 @@ public class SquadSelectionPane extends GameObject {
         paint.setStrokeWidth(10);
         graphics2D.drawLine(position.x - mBound.halfWidth, position.y,position.x + mBound.halfWidth, position.y, paint);
 
+        cardScroller.draw(elapsedTime, graphics2D);
+
         // Draw displayed squadSelectionHolders
         for (int i = shownPlaceholdersStartIndex; i < shownPlaceholdersEndIndex; i++)
             squadSelectionHolders[i].draw(elapsedTime, graphics2D);
-
-        cardScroller.draw(elapsedTime, graphics2D);
 
         formationsListBox.draw(elapsedTime, graphics2D);
 
