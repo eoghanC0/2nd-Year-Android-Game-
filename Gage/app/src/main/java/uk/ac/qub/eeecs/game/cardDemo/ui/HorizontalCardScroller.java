@@ -378,6 +378,7 @@ public class HorizontalCardScroller extends GameObject {
             // Check if card should be displayed immediately
             int relativePosition = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex - 1: -1;
             if(multiMode && relativePosition != -1) {
+                calculateCurrentMultiVectors();
                 cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (relativePosition * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
             } else
                 cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(position);
@@ -949,6 +950,13 @@ public class HorizontalCardScroller extends GameObject {
     public BoundingBox getRemovedCardBound() {
         if (removedCardReady) return removedCardBound;
         return null;
+    }
+
+    /**
+     * Clears items in the scroller
+     */
+    public void clearScroller() {
+        cardScrollerItems.clear();
     }
 
     @Override
