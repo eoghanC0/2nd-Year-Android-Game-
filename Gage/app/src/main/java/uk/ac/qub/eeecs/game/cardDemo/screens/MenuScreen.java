@@ -139,7 +139,7 @@ public class MenuScreen extends FootballGameScreen {
             else if (mSquadsButton.isPushTriggered())
                 changeToScreen(new SquadScreen(mGame));
             else if (mHelpButton.isPushTriggered())
-                changeToScreen(new HelpScreen(mGame));
+                changeToScreen(new PlayScreen(mGame));
             else if (mPacksButton.isPushTriggered())
                 changeToScreen(new PackScreen(mGame));
             else if (musicButton.isPushTriggered()) {

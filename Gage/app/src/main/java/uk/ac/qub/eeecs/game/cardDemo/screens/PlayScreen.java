@@ -163,5 +163,7 @@ public class PlayScreen extends FootballGameScreen {
         infoBar.draw(elapsedTime, graphics2D);
 
         horizontalCardScroller.draw(elapsedTime, graphics2D);
+        currentMatch.draw(elapsedTime, graphics2D);
+
     }
 }
