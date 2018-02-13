@@ -32,7 +32,7 @@ public class ListBox extends GameObject {
     //  Properties
     //////////////////////////////////////////////////////
     /*
-    The Array of strings that are displayed in the listbox
+    The Array of strings that are displayed in the list box
      */
     private ArrayList<String> items;
 
@@ -71,8 +71,6 @@ public class ListBox extends GameObject {
     The buttons on the listbox to move between pages
      */
     private PushButton btnNextPage, btnPreviousPage;
-
-    private boolean enabled = true;
 
     //////////////////////////////////////////////////////
     //  Constructors
