@@ -250,6 +250,8 @@ public class ListBox extends GameObject {
 
     public void addItem(String item) {items.add(item);}
 
+    public void clear() {items.clear();}
+
     public void removeItem(int index) {
         if (index == selectedIndex) {
             selectedIndex = -1;

@@ -10,7 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
@@ -24,8 +26,9 @@ import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
 public class FootballGame extends Game {
     private int gameID, wins, losses, draws, xp, difficulty, gameLength;
     private ArrayList<Card> club;
-    private String pitchBackGround, playerName;
+    private String pitchBackGround, playerName, lastSaveDate;
 
+    //For expansion/reduction of save slots
     private final int SAVE_SLOT_MAX = 3;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -105,6 +108,8 @@ public class FootballGame extends Game {
     public int getDifficulty() {return difficulty;}
     public int getGameLength() {return gameLength;}
     public String getPitchBackGround() {return pitchBackGround;}
+    public String getLastSaveDate() { return lastSaveDate;}
+    public int getSaveSlotMax() { return SAVE_SLOT_MAX;}
 
     ///////////////////////////////////////////////////////////////////////////
     // Setters
@@ -136,6 +141,8 @@ public class FootballGame extends Game {
             gameSavesObj.put("difficulty", difficulty);
             gameSavesObj.put("gameLength", gameLength);
             gameSavesObj.put("pitchBackGround", pitchBackGround);
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm dd/MM/yyyy");
+            gameSavesObj.put("lastSaveDate", sdf.format(GregorianCalendar.getInstance().getTime()));
             mAssetManager.writeFile("save_" + saveSlot + ".json", gameSavesObj.toString());
         }
         catch(JSONException e){
@@ -155,6 +162,7 @@ public class FootballGame extends Game {
             difficulty = (int) gameSavesObj.get("difficulty");
             gameLength = (int) gameSavesObj.get("gameLength");
             pitchBackGround = gameSavesObj.get("pitchBackGround").toString();
+            lastSaveDate = gameSavesObj.get("lastSaveDate").toString();
         } catch (JSONException e) {
             Log.d("JSON", "Load Failed : " + e.getMessage());
         }
