@@ -29,6 +29,7 @@ public class SquadSelectionPane extends GameObject {
     //////////////////////////////////////////////
     private final float SIDE_BAR_COVERAGE = 0.1f;
     private final float TOGGLE_BITMAP_ASPECT_RATIO = 72f/168f;
+    private final int LISTBOX_ANIMATION_LENGTH = 8;
 
     //////////////////////////////////////////////
     //  Properties
@@ -52,7 +53,6 @@ public class SquadSelectionPane extends GameObject {
      */
     private boolean listBoxMoving = false;
     private int listBoxAnimationCounter = 0;
-    private int listBoxAnimationLength = 8;
     private float openListBoxPositionY;
 
     /**
@@ -77,7 +77,7 @@ public class SquadSelectionPane extends GameObject {
     /**
      * The bounds of the placeholders which currently allow drag and drop
      */
-    private ArrayList<BoundingBox> availablePlaceholders = new ArrayList<>();
+    private ArrayList<BoundingBox> availableDropAreas = new ArrayList<>();
 
     /**
      * Properties for drag and drop
@@ -192,13 +192,13 @@ public class SquadSelectionPane extends GameObject {
      */
     private void animateListBox() {
         if (showFormationsToggle.isToggledOn()) {
-            formationsListBox.position.add(0, formationsListBox.getBound().getHeight() / listBoxAnimationLength * -1);
+            formationsListBox.position.add(0, formationsListBox.getBound().getHeight() / LISTBOX_ANIMATION_LENGTH * -1);
         } else {
-            formationsListBox.position.add(0, formationsListBox.getBound().getHeight() / listBoxAnimationLength);
+            formationsListBox.position.add(0, formationsListBox.getBound().getHeight() / LISTBOX_ANIMATION_LENGTH);
         }
         formationsListBox.setButtonPositions();
         listBoxAnimationCounter++;
-        if (listBoxAnimationCounter == listBoxAnimationLength) listBoxMoving = false;
+        if (listBoxAnimationCounter == LISTBOX_ANIMATION_LENGTH) listBoxMoving = false;
     }
 
     /**
@@ -253,11 +253,24 @@ public class SquadSelectionPane extends GameObject {
 
                 // For each select destination, check if touch up is within the bounds of the destination BoundingBox
                 if(checkIfTouchInArea(squadSelectionHolders[selectedItemIndex].position, cardScroller.getBound())) {
-                    cardScroller.addScrollerItem(new Card(squadSelectionHolders[selectedItemIndex].getCard()));
+                    cardScroller.addScrollerItem(squadSelectionHolders[selectedItemIndex].getCard());
                     squadSelectionHolders[selectedItemIndex].setCard(null);
                     squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
-                } else
-                    squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
+                } else {
+                    boolean foundPlaceholder = false;
+                    for (BoundingBox placeholder : availableDropAreas) {
+                        if (checkIfTouchInArea(squadSelectionHolders[selectedItemIndex].position, placeholder) && squadSelectionHolders[selectedItemIndex].getCard() != null) {
+                            int indexOfDroppedCardHolder = (int) ((((numberOfCardsOnLevel[currentSelectionArea]*(2*placeholder.x-2*position.x+mBound.getWidth()))/mBound.getWidth())-1)/2);
+                            squadSelectionHolders[indexOfDroppedCardHolder].setCard(squadSelectionHolders[selectedItemIndex].getCard());
+                            squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
+                            squadSelectionHolders[selectedItemIndex].setCard(null);
+                            foundPlaceholder = true;
+                            break;
+                        }
+                    }
+                    if (!foundPlaceholder)
+                        squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
+                }
 
                 selectedItemIndex = -1;
             }
@@ -333,12 +346,12 @@ public class SquadSelectionPane extends GameObject {
      */
     private void calculateAvailableHolders() {
         // Calculate available positions
-        availablePlaceholders.clear();
+        availableDropAreas.clear();
         for (int i = shownPlaceholdersStartIndex; i < shownPlaceholdersEndIndex; i++) {
             if (squadSelectionHolders[i].getCard() == null)
-                availablePlaceholders.add(squadSelectionHolders[i].getBound());
+                availableDropAreas.add(squadSelectionHolders[i].getBound());
         }
-        cardScroller.setSelectDestinations(availablePlaceholders);
+        cardScroller.setSelectDestinations(availableDropAreas);
     }
 
     /**
@@ -413,25 +426,25 @@ public class SquadSelectionPane extends GameObject {
         paint.setAlpha(200);
         graphics2D.drawBitmap(pitchStateBitmap, null, drawScreenRect, paint);
 
-        //Draw the side bar with buttons and toggle
-        paint.reset();
-        paint.setColor(Color.GRAY);
-        paint.setAlpha(200);
-        graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE, position.y, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
-        if (currentSelectionArea < 3) nextAreaButton.draw(elapsedTime, graphics2D);
-        if (currentSelectionArea > 0) previousAreaButton.draw(elapsedTime, graphics2D);
-        showFormationsToggle.draw(elapsedTime, graphics2D);
-
         //Draw a separator between the scroller and the pitch
         paint.reset();
         paint.setStrokeWidth(10);
         graphics2D.drawLine(position.x - mBound.halfWidth, position.y,position.x + mBound.halfWidth, position.y, paint);
 
-        cardScroller.draw(elapsedTime, graphics2D);
-
         // Draw displayed squadSelectionHolders
         for (int i = shownPlaceholdersStartIndex; i < shownPlaceholdersEndIndex; i++)
             squadSelectionHolders[i].draw(elapsedTime, graphics2D);
+
+        //Draw the side bar with buttons and toggle
+        paint.reset();
+        paint.setColor(Color.GRAY);
+        paint.setAlpha(175);
+        graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE, position.y, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
+        if (currentSelectionArea < 3) nextAreaButton.draw(elapsedTime, graphics2D);
+        if (currentSelectionArea > 0) previousAreaButton.draw(elapsedTime, graphics2D);
+        showFormationsToggle.draw(elapsedTime, graphics2D);
+
+        cardScroller.draw(elapsedTime, graphics2D);
 
         formationsListBox.draw(elapsedTime, graphics2D);
 
