@@ -3,6 +3,7 @@ package uk.ac.qub.eeecs.game.cardDemo.ui;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -260,7 +261,13 @@ public class SquadSelectionPane extends GameObject {
                     boolean foundPlaceholder = false;
                     for (BoundingBox placeholder : availableDropAreas) {
                         if (checkIfTouchInArea(squadSelectionHolders[selectedItemIndex].position, placeholder) && squadSelectionHolders[selectedItemIndex].getCard() != null) {
-                            int indexOfDroppedCardHolder = (int) ((((numberOfCardsOnLevel[currentSelectionArea]*(2*placeholder.x-2*position.x+mBound.getWidth()))/mBound.getWidth())-1)/2);
+                            int indexOfDroppedCardHolder = (int) ((2*numberOfCardsOnLevel[currentSelectionArea]*placeholder.x-2*numberOfCardsOnLevel[currentSelectionArea]*position.x+numberOfCardsOnLevel[currentSelectionArea]*mBound.getWidth()-mBound.getWidth())/(2*mBound.getWidth())) + shownPlaceholdersStartIndex;
+                            Log.i("Cards on Level", String.valueOf(numberOfCardsOnLevel[currentSelectionArea]));
+                            Log.i("placeholder x", String.valueOf(placeholder.x));
+                            Log.i("position x", String.valueOf(position.x));
+                            Log.i("bound width", String.valueOf(mBound.getWidth()));
+
+                            Log.i("i", String.valueOf(indexOfDroppedCardHolder));
                             squadSelectionHolders[indexOfDroppedCardHolder].setCard(squadSelectionHolders[selectedItemIndex].getCard());
                             squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
                             squadSelectionHolders[selectedItemIndex].setCard(null);
@@ -303,7 +310,7 @@ public class SquadSelectionPane extends GameObject {
         // Calculate available positions
         calculateAvailableHolders();
 
-        //Calculate the indicies of the placeholders that are drawn
+        //Calculate the indices of the placeholders that are drawn
         calculateShownPlaceholderIndicies();
     }
 
@@ -442,6 +449,10 @@ public class SquadSelectionPane extends GameObject {
         graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE, position.y, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
         if (currentSelectionArea < 3) nextAreaButton.draw(elapsedTime, graphics2D);
         if (currentSelectionArea > 0) previousAreaButton.draw(elapsedTime, graphics2D);
+        paint.reset();
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(20);
+        graphics2D.drawText("Formation", position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, mBound.getBottom() + mBound.getHeight()*7/12 - mBound.getHeight()/24, paint);
         showFormationsToggle.draw(elapsedTime, graphics2D);
 
         cardScroller.draw(elapsedTime, graphics2D);
