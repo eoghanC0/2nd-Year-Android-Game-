@@ -262,12 +262,6 @@ public class SquadSelectionPane extends GameObject {
                     for (BoundingBox placeholder : availableDropAreas) {
                         if (checkIfTouchInArea(squadSelectionHolders[selectedItemIndex].position, placeholder) && squadSelectionHolders[selectedItemIndex].getCard() != null) {
                             int indexOfDroppedCardHolder = (int) ((2*numberOfCardsOnLevel[currentSelectionArea]*placeholder.x-2*numberOfCardsOnLevel[currentSelectionArea]*position.x+numberOfCardsOnLevel[currentSelectionArea]*mBound.getWidth()-mBound.getWidth())/(2*mBound.getWidth())) + shownPlaceholdersStartIndex;
-                            Log.i("Cards on Level", String.valueOf(numberOfCardsOnLevel[currentSelectionArea]));
-                            Log.i("placeholder x", String.valueOf(placeholder.x));
-                            Log.i("position x", String.valueOf(position.x));
-                            Log.i("bound width", String.valueOf(mBound.getWidth()));
-
-                            Log.i("i", String.valueOf(indexOfDroppedCardHolder));
                             squadSelectionHolders[indexOfDroppedCardHolder].setCard(squadSelectionHolders[selectedItemIndex].getCard());
                             squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
                             squadSelectionHolders[selectedItemIndex].setCard(null);
