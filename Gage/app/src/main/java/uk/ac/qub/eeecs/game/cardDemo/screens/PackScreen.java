@@ -19,7 +19,6 @@ import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.packScreenSplashScreen;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
