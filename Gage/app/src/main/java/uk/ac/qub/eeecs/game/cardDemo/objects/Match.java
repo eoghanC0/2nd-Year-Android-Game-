@@ -2,6 +2,7 @@ package uk.ac.qub.eeecs.game.cardDemo.objects;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -23,6 +24,7 @@ public class Match extends GameObject {
     private Game mGame;
     private MatchEvent newEvent;
 
+    private boolean winnerDecided;
     public enum GameState{MIDFIELD, PLAYER_A_DANGEROUS_ATTACK, PLAYER_A_ATTACK, PLAYER_B_ATTACK, PLAYER_B_DANGEROUS_ATTACK };
 
     public Match(GameScreen gameScreen){
@@ -54,51 +56,65 @@ public class Match extends GameObject {
 
     public GameState getGameState() {return gameState;}
 
-    public void scenario(){
+    public void makeScenario(){
         newEvent = new MatchEvent(mGameScreen, gameState);
-        String winner = newEvent.runScenario(gameState);
-        if (winner.equals("PlayerA")){
-            if (gameState.equals(GameState.PLAYER_A_DANGEROUS_ATTACK)){
-                setPlayerAScore(getPlayerAScore() + 1);
-                setGameState(gameState.MIDFIELD);
-            } else{
-                switch (getGameState()){
-                    case MIDFIELD:
-                        setGameState(gameState.PLAYER_A_ATTACK);
-                        break;
-                    case PLAYER_A_ATTACK:
-                        setGameState(gameState.PLAYER_A_DANGEROUS_ATTACK);
-                        break;
-                    case PLAYER_B_ATTACK:
-                        setGameState(gameState.MIDFIELD);
-                        break;
-                    case PLAYER_B_DANGEROUS_ATTACK:
-                        setGameState(gameState.PLAYER_B_ATTACK);
-                        break;
+        winnerDecided = false;
+    }
+
+    private void displayWinner(){
+        String winner = newEvent.getWinner();
+         if (winner != null){
+
+            if (winner.equals("Player")){
+                if (gameState.equals(GameState.PLAYER_A_DANGEROUS_ATTACK)){
+                    setPlayerAScore(getPlayerAScore() + 1);
+                    setGameState(gameState.MIDFIELD);
+                } else{
+                    switch (getGameState()){
+                        case MIDFIELD:
+                            setGameState(gameState.PLAYER_A_ATTACK);
+                            break;
+                        case PLAYER_A_ATTACK:
+                            setGameState(gameState.PLAYER_A_DANGEROUS_ATTACK);
+                            break;
+                        case PLAYER_B_ATTACK:
+                            setGameState(gameState.MIDFIELD);
+                            break;
+                        case PLAYER_B_DANGEROUS_ATTACK:
+                            setGameState(gameState.PLAYER_B_ATTACK);
+                            break;
+                    }
                 }
-            }
-        } else if (winner.equals("PlayerB")){
-            if (gameState.equals(GameState.PLAYER_B_DANGEROUS_ATTACK)){
-                setPlayerBScore(getPlayerBScore() + 1);
-                setGameState(gameState.MIDFIELD);
-            } else{
-                switch (getGameState()){
-                    case MIDFIELD:
-                        setGameState(gameState.PLAYER_B_ATTACK);
-                        break;
-                    case PLAYER_B_ATTACK:
-                        setGameState(gameState.PLAYER_B_DANGEROUS_ATTACK);
-                        break;
-                    case PLAYER_A_ATTACK:
-                        setGameState(gameState.MIDFIELD);
-                        break;
-                    case PLAYER_A_DANGEROUS_ATTACK:
-                        setGameState(gameState.PLAYER_A_ATTACK);
-                        break;
+            } else if (winner.equals("CPU")) {
+                if (gameState.equals(GameState.PLAYER_B_DANGEROUS_ATTACK)) {
+                    setPlayerBScore(getPlayerBScore() + 1);
+                    setGameState(gameState.MIDFIELD);
+                } else {
+                    switch (getGameState()) {
+                        case MIDFIELD:
+                            setGameState(gameState.PLAYER_B_ATTACK);
+                            break;
+                        case PLAYER_B_ATTACK:
+                            setGameState(gameState.PLAYER_B_DANGEROUS_ATTACK);
+                            break;
+                        case PLAYER_A_ATTACK:
+                            setGameState(gameState.MIDFIELD);
+                            break;
+                        case PLAYER_A_DANGEROUS_ATTACK:
+                            setGameState(gameState.PLAYER_A_ATTACK);
+                            break;
+                    }
                 }
             }
         }
+    }
 
+    private void checkForWinner(){
+        if (newEvent != null)
+            if (newEvent.getWinner() != null){
+                displayWinner();
+                winnerDecided = true;
+            }
 
 
     }
@@ -106,8 +122,12 @@ public class Match extends GameObject {
 
     @Override
     public void update(ElapsedTime elapsedTime) {
-
-    }
+        if (newEvent != null){
+            newEvent.update(elapsedTime);
+            if (!winnerDecided)
+                checkForWinner();
+        }
+     }
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
