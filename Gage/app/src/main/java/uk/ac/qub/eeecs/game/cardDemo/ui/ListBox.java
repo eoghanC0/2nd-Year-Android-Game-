@@ -3,7 +3,6 @@ package uk.ac.qub.eeecs.game.cardDemo.ui;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -26,7 +25,8 @@ public class ListBox extends GameObject {
     //////////////////////////////////////////////////////
     //  Constants
     //////////////////////////////////////////////////////
-    private int ITEM_HEIGHT = 100;
+    public final int ITEM_HEIGHT = 100;
+    public final float SIDE_BAR_COVERAGE = 0.1f;
 
     //////////////////////////////////////////////////////
     //  Properties
@@ -85,8 +85,8 @@ public class ListBox extends GameObject {
         this.selectionColor = Color.BLUE;
         this.textColor = Color.BLACK;
         loadAssets();
-        btnPreviousPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * 0.05f, position.y - mBound.halfHeight + ITEM_HEIGHT/2, 60,50, "upArrow","upArrowActive", gameScreen);
-        btnNextPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * 0.05f, position.y + mBound.halfHeight - ITEM_HEIGHT/2,60, 50,"downArrow","downArrowActive",  gameScreen);
+        btnPreviousPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y - mBound.halfHeight + ITEM_HEIGHT/2, 60,50, "upArrow","upArrowActive", gameScreen);
+        btnNextPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y + mBound.halfHeight - ITEM_HEIGHT/2,60, 50,"downArrow","downArrowActive",  gameScreen);
     }
 
     //////////////////////////////////////////////////////
@@ -118,13 +118,35 @@ public class ListBox extends GameObject {
         setButtonPositions();
     }
 
+    /**
+     * Set the position of the next and previous page buttons on this listbox
+     */
     public void setButtonPositions() {
-        btnPreviousPage.setPosition(position.x + mBound.halfWidth - mBound.getWidth() * 0.05f, position.y - mBound.halfHeight + ITEM_HEIGHT/2);
-        btnNextPage.setPosition(position.x + mBound.halfWidth - mBound.getWidth() * 0.05f, position.y + mBound.halfHeight - ITEM_HEIGHT/2);
+        btnPreviousPage.setPosition(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y - mBound.halfHeight + ITEM_HEIGHT/2);
+        btnNextPage.setPosition(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y + mBound.halfHeight - ITEM_HEIGHT/2);
     }
 
-    private void handleTouchEvents(Float touchX, Float touchY) {
-        if ((isNextButtonEnabled() || showingPageNum > 0) && touchX > position.x + mBound.halfWidth - mBound.getWidth() * 0.1f) return;
+    /**
+     * Check if the passed in coordinates are inside the side bar of the list box
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    private boolean touchOccurredInSideBar(float x, float y) {
+        if (x > position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE && x < position.x + mBound.halfWidth
+                && y > position.y - mBound.halfHeight && y < position.y + mBound.halfHeight) return true;
+        return false;
+    }
+
+    /**
+     * Set the selected index of the list box depending on the coordinates of a touch event
+     *
+     * @param touchX
+     * @param touchY
+     */
+    private void handleTouchEvents(float touchX, float touchY) {
+        if (touchOccurredInSideBar(touchX, touchY)) return; //Exit if the touch event occurs in the side bar
         int drawnIndex = (int)((touchY - (position.y - mBound.halfHeight)) / 100);
         selectedIndex = (int)(showingPageNum * mBound.getHeight()/ 100 + drawnIndex);
         if (selectedIndex > items.size() - 1) selectedIndex = -1;
@@ -136,14 +158,20 @@ public class ListBox extends GameObject {
         }
     }
 
+    private int getNumberOfItemsPerPage() {
+        return (int)(mBound.getHeight() / ITEM_HEIGHT);
+    }
+
+    private boolean isNextButtonEnabled() {
+        if (getNumberOfItemsPerPage() * (showingPageNum + 1) < items.size())
+            return true;
+        return false;
+    }
+
     private void handleNextButtonTrigger() {
         if (isNextButtonEnabled()) {
             showingPageNum++;
         }
-    }
-
-    private int getNumberOfItemsPerPage() {
-        return (int)(mBound.getHeight() / ITEM_HEIGHT);
     }
 
     private void loadAssets() {
@@ -225,7 +253,7 @@ public class ListBox extends GameObject {
         if (isNextButtonEnabled() || showingPageNum > 0) {
             paint.setColor(Color.GRAY);
             paint.setAlpha(200);
-            graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * 0.1f, position.y - mBound.halfHeight, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
+            graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE, position.y - mBound.halfHeight, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
             if (isNextButtonEnabled()) {
                 btnNextPage.draw(elapsedTime, graphics2D);
             }
@@ -242,13 +270,9 @@ public class ListBox extends GameObject {
         graphics2D.drawRect(position.x - mBound.halfWidth, position.y - mBound.halfHeight, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
     }
 
-    private boolean isNextButtonEnabled() {
-        if (getNumberOfItemsPerPage() * (showingPageNum + 1) < items.size())
-            return true;
-        return false;
-    }
-
     public void addItem(String item) {items.add(item);}
+
+    public void clear() {items.clear();}
 
     public void removeItem(int index) {
         if (index == selectedIndex) {
