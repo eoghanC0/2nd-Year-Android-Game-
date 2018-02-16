@@ -31,18 +31,10 @@ public class PlayScreen extends FootballGameScreen {
     private double currentGameTime;
     private int playerScore, CPUScore;
     private PushButton mScenarioButton;
-    private PushButton scrollerButton;
+
     public Match currentMatch;
 
     private InfoBar infoBar;
-
-    private boolean scrollerEnabled = true;
-    private boolean scrollerDisplayed = false;
-    private boolean scrollerAnimationTriggered = false;
-    private int scrollerMoveDirection = 1;
-    private float distanceMoved = 0;
-
-    private HorizontalCardScroller horizontalCardScroller;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -58,9 +50,7 @@ public class PlayScreen extends FootballGameScreen {
 
         mScenarioButton = new PushButton(100f, 100f, 100, 100,
                 "PlayScreenBackground", this );
-        scrollerButton = new PushButton(mGame.getScreenWidth() * 0.5f, mGame.getScreenHeight() * 0.9f, mGame.getScreenWidth() * 0.2f, mGame.getScreenHeight() * 0.1f, "MenuButton", "MenuButtonPushed", this);
-        scrollerButton.setButtonText("Show Scroller", 20, Color.rgb(242, 242, 242));
-        scrollerButton.setButtonTextSizeMax();
+
 
         totalGameTimeLength = mGame.getIntPreference("GameLength");
         currentGameTime = 0.0;
@@ -69,10 +59,7 @@ public class PlayScreen extends FootballGameScreen {
         CPUScore = currentMatch.getPlayerBScore();
 
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "M A I N  M E N U", "0 | 0 | 0");
-        horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() * 0.5f, (mGame.getScreenHeight() * 0.5f) + (mGame.getScreenHeight()), mGame.getScreenWidth(), mGame.getScreenHeight() * 0.4f, this);
-        horizontalCardScroller.addTestData();
-        horizontalCardScroller.setMultiMode(true, 100);
-        horizontalCardScroller.setSelectMode(true);
+
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -88,62 +75,22 @@ public class PlayScreen extends FootballGameScreen {
         infoBar.setAreaThreeText(String.format("%2.2f", currentGameTime / totalGameTimeLength * 90));
     }
 
-    /**
-     * Called when the scroller button is clicked to trigger the scroller
-     * move animation
-     */
-    private void scrollerButtonClicked() {
-        if(!scrollerEnabled || scrollerAnimationTriggered || horizontalCardScroller.isAnimating()) return;
 
-        if(scrollerDisplayed) scrollerMoveDirection = 1;
-        else scrollerMoveDirection = -1;
 
-        scrollerAnimationTriggered = true;
-    }
-
-    /**
-     * Checks if scroller animation is triggered then performs animation
-     */
-    private void checkAndPerformScrollerAnimation() {
-        if(!scrollerAnimationTriggered) return;
-
-        // Move scroller
-        float moveBy = scrollerMoveDirection * mGame.getScreenHeight() * 0.05f;
-
-        // Move scroller
-        // Draw current item
-        horizontalCardScroller.adjustPosition(0, moveBy);
-        scrollerButton.adjustPosition(0f, moveBy * 0.6f);
-
-        // Add to distance moved
-        distanceMoved += Math.abs(moveBy);
-
-        // If intended distance has been moved, end animation
-        if(distanceMoved >= mGame.getScreenHeight() * 0.75f) {
-            scrollerAnimationTriggered = false;
-            scrollerDisplayed = !scrollerDisplayed;
-            distanceMoved = 0;
-            if(scrollerDisplayed) scrollerButton.setButtonText("Hide Players");
-            else scrollerButton.setButtonText("Show Players");
-        }
-
-    }
 
     @Override
     public void update(ElapsedTime elapsedTime) {
         mScenarioButton.update(elapsedTime);
-        scrollerButton.update(elapsedTime);
-        horizontalCardScroller.update(elapsedTime);
 
         currentGameTime += elapsedTime.stepTime;
         if (mScenarioButton.isPushTriggered()){
-            currentMatch.scenario();
+            currentMatch.makeScenario();
         }
 
-        if (scrollerButton.isPushTriggered()) scrollerButtonClicked();
 
         updateInfoBar();
-        checkAndPerformScrollerAnimation();
+
+        currentMatch.update(elapsedTime);
     }
 
     @Override
@@ -158,10 +105,10 @@ public class PlayScreen extends FootballGameScreen {
         paint.setColor(Color.BLUE);
 
         mScenarioButton.draw(elapsedTime, graphics2D);
-        scrollerButton.draw(elapsedTime, graphics2D);
 
         infoBar.draw(elapsedTime, graphics2D);
 
-        horizontalCardScroller.draw(elapsedTime, graphics2D);
+       currentMatch.draw(elapsedTime, graphics2D);
+
     }
 }

@@ -2,6 +2,7 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
@@ -91,7 +92,7 @@ public class LoadGameScreen extends FootballGameScreen {
             mGame.setWins(rand.nextInt(50) + 1);
             mGame.setLosses(rand.nextInt(50) + 1);
             mGame.setDraws(rand.nextInt(50) + 1);
-            mGame.setXp(rand.nextInt(50) + 1);
+            mGame.setXp(rand.nextInt(5000) + 1);
             mGame.setDifficulty(rand.nextInt(3) + 1);
             mGame.setGameLength(rand.nextInt(90) + 1);
             mGame.setPitchBackGround("BG" + i);
@@ -134,5 +135,14 @@ public class LoadGameScreen extends FootballGameScreen {
         lbxGameSaves.draw(elapsedTime, graphics2D);
         mNextButton.draw(elapsedTime, graphics2D,null,null);
         mDeleteButton.draw(elapsedTime, graphics2D,null,null);
+
+        //Title
+        myPaint.setTextSize(200.0f);
+        myPaint.setTextAlign(Paint.Align.CENTER);
+        graphics2D.drawText("Football Trumps", mGame.getScreenWidth() * 0.5f + 6.0f, mGame.getScreenHeight() * 0.2f + 4.0f, myPaint);
+        myPaint.setColor(Color.rgb(10,100,250));
+        myPaint.setFakeBoldText(true);
+        myPaint.setStyle(Paint.Style.FILL);
+        graphics2D.drawText("Football Trumps", mGame.getScreenWidth() * 0.5f, mGame.getScreenHeight() * 0.2f, myPaint);
     }
 }
