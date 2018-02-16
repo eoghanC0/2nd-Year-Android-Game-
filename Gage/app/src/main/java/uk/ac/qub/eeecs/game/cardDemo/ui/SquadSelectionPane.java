@@ -121,6 +121,7 @@ public class SquadSelectionPane extends GameObject {
                 mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), "DownArrow", "DownArrow_Pushed", gameScreen);
         openListBoxPositionY = position.y + mBound.getHeight()*3/12;
         formationsListBox = new ListBox(position.x, openListBoxPositionY, mBound.getWidth()/1.5f, mBound.getHeight()/2, gameScreen);
+        formationsListBox.setSelectionColor(Color.CYAN);
         setUpFormationsListBox();
         initializeCardHolders();
     }

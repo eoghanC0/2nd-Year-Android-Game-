@@ -4,11 +4,11 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
@@ -238,11 +238,44 @@ public class HorizontalCardScroller extends GameObject {
      */
     private boolean autoScroll = false;
 
-    private boolean removedCardReady = false;
-    private Card removedCard;
-    private BoundingBox removedCardBound = null;
+    /**
+     * Used for the card drag methods
+     */
     private boolean touchDown = false;
+
+    /**
+     * Stores positino of dragged card before it was dragged
+     */
     private Vector2 draggedCardOriginalPosition = new Vector2();
+
+    /**
+     * Stores whether a removed card is ready to be retrieved by an external call
+     */
+    private boolean removedCardReady = false;
+
+    /**
+     * Removed card
+     */
+    private Card removedCard;
+
+    /**
+     * Bound of removed card
+     */
+    private BoundingBox removedCardBound = null;
+
+    /**
+     * TESTING VARIABLES
+     */
+
+    /**
+     * Determines whether to use simulated touch events or touch events from device
+     */
+    private boolean useSimulatedTouchEvents = false;
+
+    /**
+     * Contains the simulated touch events
+     */
+    private List<TouchEvent> simulatedTouchEvents = new ArrayList<TouchEvent>();
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -330,11 +363,8 @@ public class HorizontalCardScroller extends GameObject {
      * Sets the value of selectMode
      * @param value
      */
-    public void setSelectMode(boolean value) {
-        if(multiMode)
-            selectMode = value;
-        else
-            Log.d("ERROR", "* * * Multi mode must be enabled to enable select mode * * *");
+    public void setSelectMode(boolean selectMode) {
+        this.selectMode = selectMode;
     }
 
     /**
@@ -344,6 +374,7 @@ public class HorizontalCardScroller extends GameObject {
      * @return Vector2 containing the half width and half height of the bitmap
      */
     private Vector2 getNewBitmapDimensions(Bitmap bitmap, int maxHeight, boolean occupyFullHeight) {
+        if(bitmap == null) bitmap = baseBitmap;
         if(maxHeight == 0 || (bitmap.getHeight() < maxHeight && !occupyFullHeight)) return new Vector2(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
 
         float scaleFactor = (float) maxHeight / bitmap.getHeight();
@@ -361,7 +392,7 @@ public class HorizontalCardScroller extends GameObject {
         if(card != null && cardScrollerItems.size() <= maxScrollerItems && !isAnimating()) {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
-            
+
             card.setDraggingEnabled(false);
 
             if(multiMode) {
@@ -759,7 +790,7 @@ public class HorizontalCardScroller extends GameObject {
      * Check if a touch is within the general area of a certain location
      * @param userTouchLocation
      */
-    private boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
+    public boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
         if(userTouchLocation == null || touchDestination == null) return false;
 
         if(touchDestination.contains(userTouchLocation.x, userTouchLocation.y)) return true;
@@ -865,21 +896,25 @@ public class HorizontalCardScroller extends GameObject {
 
     private void checkAndPerformDragCard() {
         if(!selectMode) return;
-        Input input = mGameScreen.getGame().getInput();
+
+        List<TouchEvent> touchEvents;
+        if(!useSimulatedTouchEvents) touchEvents = mGameScreen.getGame().getInput().getTouchEvents();
+        else touchEvents = simulatedTouchEvents;
+
         //Consider all buffered touch events
-        for (TouchEvent t : input.getTouchEvents()) {
+        for (TouchEvent t : touchEvents) {
             // If there is no touch down yet, check for a touch down
             if(!touchDown) {
                 // Check if touch event is a touch down
                 if (t.type == TouchEvent.TOUCH_DOWN) {
                     // Breaker to determine the amount of cards to iterate through while checking check location
-                    int breaker = currentItemIndex + 1;
+                    int breaker = currentItemIndex + 1 >= cardScrollerItems.size() ? 0 : currentItemIndex + 1;
                     if(multiMode)
                         breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
 
                     // Check if the touch location is within the bounds of any displayed cards
-                    for (int i = currentItemIndex; i < currentItemIndex + breaker; i++) {
-                        if(checkIfTouchInArea(new Vector2(t.x, t.y), cardScrollerItems.get(i).getBound())) {
+                    for (int i = 0; i < breaker; i++) {
+                        if(checkIfTouchInArea(new Vector2(t.x, t.y), cardScrollerItems.get(currentItemIndex + i).getBound())) {
                             selectedItemIndex = i;
                             touchDown = true;
                             draggedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, cardScrollerItems.get(selectedItemIndex).position.y);
@@ -892,9 +927,9 @@ public class HorizontalCardScroller extends GameObject {
 
             // If touch event is a drag event, modify position of card
             if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
-                if (!Float.isNaN(input.getTouchX(t.pointer))) {
-                    cardScrollerItems.get(selectedItemIndex).position.x = input.getTouchX(t.pointer);
-                    cardScrollerItems.get(selectedItemIndex).position.y = input.getTouchY(t.pointer);
+                if (!Float.isNaN(t.x)) {
+                    cardScrollerItems.get(selectedItemIndex).position.x = t.x;
+                    cardScrollerItems.get(selectedItemIndex).position.y = t.y;
                 }
             }
             // If touch event is a touch up event, check if location is within a select destination and remove card
@@ -955,9 +990,36 @@ public class HorizontalCardScroller extends GameObject {
         cardScrollerItems.clear();
     }
 
+    /**
+     * * * * * * * * * * *
+     *   TESTING METHODS
+     * * * * * * * * * * *
+     */
+    public void updateSimulatedTouchEvents() {
+        if(!useSimulatedTouchEvents) return;
+        pushButtonLeft.setUseSimulatedTouchEvents(true);
+        pushButtonLeft.setSimulatedTouchEvents(simulatedTouchEvents);
+        pushButtonRight.setUseSimulatedTouchEvents(true);
+        pushButtonLeft.setSimulatedTouchEvents(simulatedTouchEvents);
+
+        for (Card card : cardScrollerItems) {
+            card.setUseSimulatedTouchEvents(true);
+            card.setSimulatedTouchEvents(simulatedTouchEvents);
+        }
+    }
+
+    /**
+     * * * * * * * * * * *
+     *   UPDATE AND DRAW
+     * * * * * * * * * * *
+     */
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
+
+        updateSimulatedTouchEvents();
+
         pushButtonLeft.update(elapsedTime);
         pushButtonRight.update(elapsedTime);
 
@@ -1137,5 +1199,26 @@ public class HorizontalCardScroller extends GameObject {
 
     public void setSelectDestinations(ArrayList<BoundingBox> selectDestinations) {
         this.selectDestinations = selectDestinations;
+    }
+
+    public void setPushButtonLeftPush(boolean pushButtonLeftPush) {
+        this.pushButtonLeftPush = pushButtonLeftPush;
+    }
+
+    public void setPushButtonRightPush(boolean pushButtonRightPush) {
+        this.pushButtonRightPush = pushButtonRightPush;
+    }
+
+    public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
+        this.simulatedTouchEvents = simulatedTouchEvents;
+    }
+
+    public void setUseSimulatedTouchEvents(boolean useSimulatedTouchEvents) {
+        if(useSimulatedTouchEvents) {
+            this.useSimulatedTouchEvents = true;
+            updateSimulatedTouchEvents();
+        } else {
+            this.useSimulatedTouchEvents = false;
+        }
     }
 }
