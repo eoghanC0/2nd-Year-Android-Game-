@@ -43,7 +43,8 @@ public class ListBoxTest {
         rand = new Random();
 
         mockScreen = new HelpScreen(game);
-        testListBox = new ListBox(100,100,100,456, mockScreen);
+
+        testListBox = new ListBox(500, 500, 500, 567, mockScreen);
         testListBox.items.add("Test1");
         testListBox.items.add("Test2");
         testListBox.items.add("Test3");
@@ -55,16 +56,41 @@ public class ListBoxTest {
     //////////////////////////////////////////////////////
     //  Constructors
     //////////////////////////////////////////////////////
+
     @Test
-    public void test_Constructor() {
+    public void test_Constructor_height() {
         assert(testListBox.getBound().getHeight() % 100 == 0);
+    }
+    @Test
+    public void test_Constructor_items() {
         assert(testListBox.items != null);
+    }
+    @Test
+    public void test_Constructor_selectedIndex() {
         assert(testListBox.selectedIndex == -1);
+    }
+    @Test
+    public void test_Constructor_backColor() {
         assert(testListBox.backColor == Color.WHITE);
+    }
+    @Test
+    public void test_Constructor_borderColor() {
         assert(testListBox.borderColor == Color.BLACK);
+    }
+    @Test
+    public void test_Constructor_selectionColor() {
         assert(testListBox.selectionColor == Color.BLUE);
+    }
+    @Test
+    public void test_Constructor_textColor() {
         assert(testListBox.textColor == Color.BLACK);
+    }
+    @Test
+    public void test_Constructor_btnNextPage() {
         assert(testListBox.btnNextPage != null);
+    }
+    @Test
+    public void test_Constructor_btnPreviousPage() {
         assert(testListBox.btnPreviousPage != null);
     }
 
@@ -150,26 +176,74 @@ public class ListBoxTest {
     //  Methods
     //////////////////////////////////////////////////////
     @Test
-    public void test_setPosition() {
+    public void test_setPosition_positionX() {
         float x = rand.nextFloat() * game.getScreenWidth();
         float y = rand.nextFloat() * game.getScreenHeight();
         testListBox.setPosition(x,y);
         assert(testListBox.position.x == x);
+    }
+
+    @Test
+    public void test_setPosition_positionY() {
+        float x = rand.nextFloat() * game.getScreenWidth();
+        float y = rand.nextFloat() * game.getScreenHeight();
+        testListBox.setPosition(x,y);
         assert(testListBox.position.y == y);
+    }
+
+    @Test
+    public void test_setPosition_boundX() {
+        float x = rand.nextFloat() * game.getScreenWidth();
+        float y = rand.nextFloat() * game.getScreenHeight();
+        testListBox.setPosition(x,y);
         assert(testListBox.getBound().x == x);
+    }
+
+    @Test
+    public void test_setPosition_boundY() {
+        float x = rand.nextFloat() * game.getScreenWidth();
+        float y = rand.nextFloat() * game.getScreenHeight();
+        testListBox.setPosition(x,y);
         assert(testListBox.getBound().y == y);
     }
 
     @Test
-    public void test_setButtonPositions() {
+    public void test_setButtonPositions_positionX() {
         testListBox.position.x = 500;
         testListBox.position.y = 500;
         testListBox.getBound().halfWidth = 100;
         testListBox.getBound().halfHeight = 300;
         testListBox.setButtonPositions();
         assert(testListBox.btnPreviousPage.position.x == 590);
+    }
+
+    @Test
+    public void test_setButtonPositions_positionY() {
+        testListBox.position.x = 500;
+        testListBox.position.y = 500;
+        testListBox.getBound().halfWidth = 100;
+        testListBox.getBound().halfHeight = 300;
+        testListBox.setButtonPositions();
         assert(testListBox.btnPreviousPage.position.y == 250);
+    }
+
+    @Test
+    public void test_setButtonPositions_boundX() {
+        testListBox.position.x = 500;
+        testListBox.position.y = 500;
+        testListBox.getBound().halfWidth = 100;
+        testListBox.getBound().halfHeight = 300;
+        testListBox.setButtonPositions();
         assert(testListBox.btnNextPage.position.x == 590);
+    }
+
+    @Test
+    public void test_setButtonPositions_boundY() {
+        testListBox.position.x = 500;
+        testListBox.position.y = 500;
+        testListBox.getBound().halfWidth = 100;
+        testListBox.getBound().halfHeight = 300;
+        testListBox.setButtonPositions();
         assert(testListBox.btnNextPage.position.y == 750);
     }
 
@@ -240,7 +314,7 @@ public class ListBoxTest {
     }
 
     @Test
-    public void test_handleTouchEvents() {
+    public void test_handleTouchEvents_firstPage_firstItem() {
         testListBox.position.x = 500;
         testListBox.position.y = 500;
         testListBox.getBound().halfWidth = 100;
@@ -252,33 +326,86 @@ public class ListBoxTest {
         testListBox.items.add("Test4");
         testListBox.items.add("Test5");
 
-        //Test general case of a touch on different levels of the first page
         testListBox.showingPageNum = 0;
         float x = 500f;
         float y = 550f;
         testListBox.handleTouchEvents(x,y);
         assert(testListBox.selectedIndex == 0);
-        y = 650f;
+    }
+
+    @Test
+    public void test_handleTouchEvents_firstPage_secondItem() {
+        testListBox.position.x = 500;
+        testListBox.position.y = 500;
+        testListBox.getBound().halfWidth = 100;
+        testListBox.getBound().halfHeight = 100;
+        testListBox.items.clear();
+        testListBox.items.add("Test1");
+        testListBox.items.add("Test2");
+        testListBox.items.add("Test3");
+        testListBox.items.add("Test4");
+        testListBox.items.add("Test5");
+
+        testListBox.showingPageNum = 0;
+        float x = 500f;
+        float y = 650f;
         testListBox.handleTouchEvents(x,y);
         assert(testListBox.selectedIndex == 1);
+    }
 
-        //Test a touch on a higher page
+    @Test
+    public void test_handleTouchEvents_higherPage() {
+        testListBox.position.x = 500;
+        testListBox.position.y = 500;
+        testListBox.getBound().halfWidth = 100;
+        testListBox.getBound().halfHeight = 100;
+        testListBox.items.clear();
+        testListBox.items.add("Test1");
+        testListBox.items.add("Test2");
+        testListBox.items.add("Test3");
+        testListBox.items.add("Test4");
+        testListBox.items.add("Test5");
+
+        float x = 500f;
+        float y = 550f;
+
         testListBox.showingPageNum = 2;
-        y = 550f;
         testListBox.handleTouchEvents(x,y);
         assert(testListBox.selectedIndex == 4);
+    }
 
-        //Test a touch out of the bounds of the items array
-        y = 650f;
+    @Test
+    public void test_handleTouchEvents_NoItem() {
+        testListBox.position.x = 500;
+        testListBox.position.y = 500;
+        testListBox.getBound().halfWidth = 100;
+        testListBox.getBound().halfHeight = 100;
+        testListBox.items.clear();
+        testListBox.items.add("Test1");
+        testListBox.items.add("Test2");
+        testListBox.items.add("Test3");
+        testListBox.items.add("Test4");
+        testListBox.items.add("Test5");
+
+        testListBox.showingPageNum = 0;
+        float x = 500f;
+        float y = 650f;
+
+        testListBox.showingPageNum = 2;
+
         testListBox.handleTouchEvents(x,y);
         assert(testListBox.selectedIndex == -1);
     }
 
     @Test
-    public void test_handlePrevButtonTrigger() {
+    public void test_handlePrevButtonTrigger_isPrevPage() {
         testListBox.showingPageNum = 2;
         testListBox.handlePrevButtonTrigger();
         assert(testListBox.showingPageNum == 1);
+    }
+
+    @Test
+    public void test_handlePrevButtonTrigger_noPrevPage() {
         testListBox.showingPageNum = 0;
         testListBox.handlePrevButtonTrigger();
         assert(testListBox.showingPageNum == 0);
@@ -291,8 +418,7 @@ public class ListBoxTest {
     }
 
     @Test
-    public void test_isNextButtonEnabled() {
-        //Test case of no more items on next page
+    public void test_isNextButtonEnabled_noMoreItems() {
         testListBox.getBound().halfHeight = 300f;
         testListBox.items.clear();
         testListBox.items.add("Test1");
@@ -300,8 +426,10 @@ public class ListBoxTest {
         testListBox.items.add("Test3");
         testListBox.showingPageNum = 0;
         assert(!testListBox.isNextButtonEnabled());
+    }
 
-        //Test case of more items on next page
+    @Test
+    public void test_isNextButtonEnabled_moreItems() {
         testListBox.getBound().halfHeight = 100f;
         testListBox.items.clear();
         testListBox.items.add("Test1");
@@ -312,8 +440,7 @@ public class ListBoxTest {
     }
 
     @Test
-    public void test_handleNextButtonTrigger() {
-        //Test case of no more items on next page
+    public void test_handleNextButtonTrigger_noMoreItems() {
         testListBox.getBound().halfHeight = 300f;
         testListBox.items.clear();
         testListBox.items.add("Test1");
@@ -322,8 +449,10 @@ public class ListBoxTest {
         testListBox.showingPageNum = 0;
         testListBox.handleNextButtonTrigger();
         assert(testListBox.showingPageNum == 0);
+    }
 
-        //Test case of more items on next page
+    @Test
+    public void test_handleNextButtonTrigger_moreItems() {
         testListBox.getBound().halfHeight = 100f;
         testListBox.items.clear();
         testListBox.items.add("Test1");
@@ -351,7 +480,7 @@ public class ListBoxTest {
     }
 
     @Test
-    public void test_RemoveItem_Selected_Index() {
+    public void test_RemoveItem_selectedIndex_newSelectedIndex() {
         testListBox.clear();
         testListBox.items.add("Test");
         testListBox.items.add("Test");
@@ -360,11 +489,22 @@ public class ListBoxTest {
         testListBox.selectedIndex = 3;
         testListBox.removeItem(3);
         assert(testListBox.selectedIndex == -1);
+    }
+
+    @Test
+    public void test_RemoveItem_selectedIndex_newSize() {
+        testListBox.clear();
+        testListBox.items.add("Test");
+        testListBox.items.add("Test");
+        testListBox.items.add("Test");
+        testListBox.items.add("Test");
+        testListBox.selectedIndex = 3;
+        testListBox.removeItem(3);
         assert(testListBox.getItems().size() == 3);
     }
 
     @Test
-    public void test_RemoveItem_Not_Selected_Index() {
+    public void test_RemoveItem_notSelectedIndex_newSelectedIndex() {
         testListBox.items.add("Test");
         testListBox.items.add("Test");
         testListBox.items.add("Test");
@@ -372,6 +512,16 @@ public class ListBoxTest {
         testListBox.selectedIndex = 1;
         testListBox.removeItem(3);
         assert(testListBox.selectedIndex == 1);
+    }
+
+    @Test
+    public void test_RemoveItem_notSelectedIndex_newSize() {
+        testListBox.items.add("Test");
+        testListBox.items.add("Test");
+        testListBox.items.add("Test");
+        testListBox.items.add("Test");
+        testListBox.selectedIndex = 1;
+        testListBox.removeItem(3);
         assert(testListBox.getItems().size() == 3);
     }
 }
