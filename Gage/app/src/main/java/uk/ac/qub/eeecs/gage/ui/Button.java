@@ -5,6 +5,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
@@ -181,12 +184,15 @@ public abstract class Button extends GameObject {
     public void update(ElapsedTime elapsedTime,
                        LayerViewport layerViewport, ScreenViewport screenViewport) {
         // Consider any touch events occurring in this update
+
         Input input = mGameScreen.getGame().getInput();
+
+        List<TouchEvent> touchEvents = useSimulatedTouchEvents ? simulatedTouchEvents : mGameScreen.getGame().getInput().getTouchEvents();
 
         BoundingBox bound = getBound();
 
         // Check for a trigger event on this button
-        for (TouchEvent touchEvent : input.getTouchEvents()) {
+        for (TouchEvent touchEvent : touchEvents) {
             getTouchLocation(touchLocation, touchEvent.x, touchEvent.y,
                     layerViewport, screenViewport);
             if (bound.contains(touchLocation.x, touchLocation.y)) {
@@ -195,19 +201,21 @@ public abstract class Button extends GameObject {
             }
         }
 
-        // Check for any touch events on this button
-        for (int idx = 0; idx < TouchHandler.MAX_TOUCHPOINTS; idx++) {
-            if (input.existsTouch(idx)) {
-                getTouchLocation(touchLocation,
-                        input.getTouchX(idx), input.getTouchY(idx),
-                        layerViewport, screenViewport);
-                if (bound.contains(touchLocation.x, touchLocation.y)) {
-                    if (!mIsPushed) {
-                        // Record the button has been touched and take button specific behaviour
-                        mIsPushed = true;
-                        updateTouchActions(touchLocation);
+        if(!useSimulatedTouchEvents) {
+            // Check for any touch events on this button
+            for (int idx = 0; idx < TouchHandler.MAX_TOUCHPOINTS; idx++) {
+                if (input.existsTouch(idx)) {
+                    getTouchLocation(touchLocation,
+                            input.getTouchX(idx), input.getTouchY(idx),
+                            layerViewport, screenViewport);
+                    if (bound.contains(touchLocation.x, touchLocation.y)) {
+                        if (!mIsPushed) {
+                            // Record the button has been touched and take button specific behaviour
+                            mIsPushed = true;
+                            updateTouchActions(touchLocation);
+                        }
+                        return;
                     }
-                    return;
                 }
             }
         }
@@ -358,6 +366,17 @@ public abstract class Button extends GameObject {
     public void adjustPosition(float x, float y) {
         position.add(x, y);
         buttonText.textLocation.add(x, y);
+    }
+
+    private boolean useSimulatedTouchEvents = false;
+    private List<TouchEvent> simulatedTouchEvents = new ArrayList<TouchEvent>();
+
+    public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
+        this.simulatedTouchEvents = simulatedTouchEvents;
+    }
+
+    public void setUseSimulatedTouchEvents(boolean useSimulatedTouchEvents) {
+        this.useSimulatedTouchEvents = useSimulatedTouchEvents;
     }
 
 }
