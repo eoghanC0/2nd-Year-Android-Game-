@@ -31,6 +31,12 @@ public class CardHolder extends GameObject {
         super(gameScreen);
     }
 
+    public CardHolder(int height, float x, float y, GameScreen gameScreen){
+        super(gameScreen);
+        setPosition(x, y);
+        setHeight(height);
+    }
+
     //////////////////////////////////////////////
     //  Setters
     //////////////////////////////////////////////
@@ -66,6 +72,7 @@ public class CardHolder extends GameObject {
         mBound.halfHeight = height / 2f;
         mBound.halfWidth = height * 225/355/2f;
     }
+
 
     /**
      * Updates the card
