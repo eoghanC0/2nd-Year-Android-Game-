@@ -215,11 +215,11 @@ public class PackScreen extends FootballGameScreen {
             changeToScreen(new MenuScreen(mGame));
         else if (m100PackButton.isPushTriggered()) {
             pack100Pressed = true;
-        pack300Pressed = false;
-        pack500Pressed = false;
-        pack1000Pressed = false;
-        drawPopup = true;
-        selectPackPlayers(1);
+            pack300Pressed = false;
+            pack500Pressed = false;
+            pack1000Pressed = false;
+            drawPopup = true;
+            selectPackPlayers(1);
         //changeToScreen(new packScreenSplashScreen(mGame,highestRatedCard, pack100Pressed,pack300Pressed,pack500Pressed,pack1000Pressed));
         } else if (m300PackButton.isPushTriggered()) {
             //changeToScreen(new SplashScreen1(mGame));
@@ -237,7 +237,7 @@ public class PackScreen extends FootballGameScreen {
             pack1000Pressed = false;
             drawPopup = true;
             selectPackPlayers(5);
-            horizontalCardScroller.setMultiMode(true, 80);
+        //    horizontalCardScroller.setMultiMode(true, 80);
         } else if (m1000PackButton.isPushTriggered()) {
             //changeToScreen(new SplashScreen1(mGame));
 // check if player has enough xp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -281,6 +281,8 @@ public class PackScreen extends FootballGameScreen {
 
         if (pack1000Pressed || pack500Pressed || pack300Pressed || pack100Pressed) {
             if (drawPopup) {
+                m500PackButton.setEnabled(false);
+                m300PackButton.setEnabled(false);
                 packPopUp.draw(elapsedTime, graphics2D);
                 displayHorizontalScroller = false;
                 if (packPopUp.getYesorNo()) {
@@ -288,18 +290,23 @@ public class PackScreen extends FootballGameScreen {
                     displayHorizontalScroller = true;
                     horizontalCardScroller.draw(elapsedTime, graphics2D);
                     packPopUp.setYesorNo(false);
+                    m300PackButton.setEnabled(true);
+                    m500PackButton.setEnabled(true);
                 } else if (packPopUp.getHasNoBeenPressed()) {
                     drawPopup = false;
                     displayHorizontalScroller = false;
                     packPopUp.setHasNoBeenPressed(false);
+                    m300PackButton.setEnabled(true);
+                    m500PackButton.setEnabled(true);
                 }
             }
-            if (displayHorizontalScroller) horizontalCardScroller.draw(elapsedTime,graphics2D);
-            }
+            if (displayHorizontalScroller) horizontalCardScroller.draw(elapsedTime, graphics2D);
         }
+    }
 
 
     public void selectPackPlayers(int packSizes) {
+        Log.d("Debug11", "selectPackPlayers called");
         int noOfRares = 0;
         Card packPlayers[] = new Card[packSizes];
         Random rnd = new Random();
@@ -330,6 +337,7 @@ public class PackScreen extends FootballGameScreen {
                 highestRatedCard = packPlayers[i];
             }
             horizontalCardScroller.addScrollerItem(packPlayers[i]);
+            Log.d("Debug1", "item added to scroller");
             mGame.getClub().add(packPlayers[i]);
         }
 
