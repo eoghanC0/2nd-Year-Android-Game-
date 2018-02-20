@@ -58,39 +58,73 @@ public class HorizontalCardScrollerTest {
     }
 
     @Test
-    public void testConstructor_ValidData() {
-        float x = 0, y = 0, width = 100, height = 50;
-        scroller = new HorizontalCardScroller(x, y, width, height, gameScreen);
-
-        assertEquals(scroller.position.x, x);
-        assertEquals(scroller.position.y, y);
-        assertEquals(scroller.getBound().getWidth(), width);
-        assertEquals(scroller.getBound().getHeight(), height);
+    public void testConstructor_CheckPosition() {
+        boolean result = scroller.position.x == 0 && scroller.position.y == 0 ? true : false;
+        assertEquals(true, result);
     }
 
     @Test
-    public void test_ConstructorInvalidData() {
+    public void testConstructor_CheckWidth() {
+        boolean result = scroller.getBound().getWidth() == 500 ? true : false;
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void testConstructor_CheckHeight() {
+        boolean result = scroller.getBound().getHeight() == 200 ? true : false;
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void test_Constructor_InvalidData_CheckPosition() {
         float x = 0, y = 0, width = -98.23f, height = -11;
         scroller = new HorizontalCardScroller(x, y, width, height, gameScreen);
 
-        assertEquals(scroller.position.x, x);
-        assertEquals(scroller.position.y, y);
-        assertEquals(scroller.getBound().getWidth(), 98.23f);
-        assertEquals(scroller.getBound().getHeight(), 11.0f);
+        boolean result = scroller.position.x == 0 && scroller.position.y == 0 ? true : false;
+        assertEquals(true, result);
     }
 
     @Test
-    public void test_addScrollerItem_OneItem() {
+    public void test_Constructor_InvalidData_CheckWidth() {
+        float x = 0, y = 0, width = -98.23f, height = -11;
+        scroller = new HorizontalCardScroller(x, y, width, height, gameScreen);
+
+        boolean result = scroller.getBound().getWidth() == 98.23f ? true : false;
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void test_Constructor_InvalidData_CheckHeight() {
+        float x = 0, y = 0, width = -98.23f, height = -11;
+        scroller = new HorizontalCardScroller(x, y, width, height, gameScreen);
+
+        boolean result = scroller.getBound().getHeight() == 11 ? true : false;
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void test_addScrollerItem_OneItem_CheckItemCount() {
         scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
         assertEquals(scroller.getItemCount(), 1);
+    }
+
+    @Test
+    public void test_addScrollerItem_OneItem_CheckCurrentItemIndex() {
+        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
         assertEquals(scroller.getCurrentItemIndex(), 0);
     }
 
     @Test
-    public void test_addScrollerItem_TwoItems() {
+    public void test_addScrollerItem_TwoItems_CheckItemCount() {
         scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
         scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "2", 100));
         assertEquals(scroller.getItemCount(), 2);
+    }
+
+    @Test
+    public void test_addScrollerItem_TwoItems_CheckCurrentItemIndex() {
+        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "2", 100));
         assertEquals(scroller.getCurrentItemIndex(), 0);
     }
 
@@ -310,20 +344,20 @@ public class HorizontalCardScrollerTest {
      * Multi Item Tests
      */
     @Test
-    public void test_setMultiMode_0Items() {
+    public void test_setMultiMode_0ItemsInScroller() {
         scroller.setMultiMode(true, 100);
         assertEquals(scroller.getMultiMode(), true);
     }
 
     @Test
-    public void test_setMultiMode_True_1Item() {
+    public void test_setMultiMode_True_1ItemInScroller() {
         scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
         scroller.setMultiMode(true, 100);
         assertEquals(scroller.getMultiMode(), true);
     }
 
     @Test
-    public void test_calculateMultiItemsDisplayed_MultipleItems() {
+    public void test_calculateMultiItemsDisplayed_MultipleItemsInScroller() {
         scroller.addTestData();
         // calculateMultiItemsDisplayed() is triggered by setMultiMode()
         scroller.setMultiMode(true, 100);
@@ -331,7 +365,7 @@ public class HorizontalCardScrollerTest {
     }
 
     @Test
-    public void test_setMultiMode_True_False_1Item() {
+    public void test_setMultiMode_True_False_1ItemInScroller_CheckPosition() {
         scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
         scroller.setMultiMode(true, 100);
         scroller.setMultiMode(false, 100);
@@ -340,7 +374,7 @@ public class HorizontalCardScrollerTest {
     }
 
     @Test
-    public void test_setMultiMode_True_False_MultipleItems() {
+    public void test_setMultiMode_True_False_MultipleItemsInScroller_CheckPosition() {
         scroller.addTestData();
         scroller.setMultiMode(true, 100);
         scroller.setMultiMode(false, 100);
@@ -349,7 +383,7 @@ public class HorizontalCardScrollerTest {
     }
 
     @Test
-    public void test_calculateNextMultiVectors_1Item() {
+    public void test_calculateNextMultiVectors_1ItemInScroller() {
         scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
@@ -357,25 +391,66 @@ public class HorizontalCardScrollerTest {
     }
 
     @Test
-    public void test_calculateNextMultiVectors_MultipleItems_ScrollDirection_True() {
+    public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionTrue_CheckNextItemIndex() {
         scroller.addTestData();
         scroller.setScrollDirection(true);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
         assertEquals(scroller.getNextItemIndex(), 9);
-        assertEquals((scroller.getCardScrollerItems().get(9).position.x == -661.0f) && (scroller.getCardScrollerItems().get(6).position.y == 0.0), true);
-        assertEquals((scroller.getCardScrollerItems().get(10).position.x == -501.0f) && (scroller.getCardScrollerItems().get(7).position.y == 0.0), true);
     }
 
     @Test
-    public void test_calculateNextMultiVectors_MultipleItems_ScrollDirection_False() {
+    public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionTrue_CheckPosition_Item9() {
+        scroller.addTestData();
+        scroller.setScrollDirection(true);
+        scroller.setMultiMode(true, 100);
+        scroller.calculateNextMultiVectors();
+        assertEquals((scroller.getCardScrollerItems().get(9).position.x == -661.0f) && (scroller.getCardScrollerItems().get(9).position.y == 0.0), true);
+    }
+
+    @Test
+    public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionTrue_CheckPosition_Item10() {
+        scroller.addTestData();
+        scroller.setScrollDirection(true);
+        scroller.setMultiMode(true, 100);
+        scroller.calculateNextMultiVectors();
+        assertEquals((scroller.getCardScrollerItems().get(10).position.x == -501.0f) && (scroller.getCardScrollerItems().get(10).position.y == 0.0), true);
+    }
+
+    @Test
+    public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionFalse_CheckNextItemIndex() {
         scroller.addTestData();
         scroller.setScrollDirection(false);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
         assertEquals(scroller.getNextItemIndex(), 3);
+    }
+
+    @Test
+    public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionFalse_CheckPosition_Item3() {
+        scroller.addTestData();
+        scroller.setScrollDirection(false);
+        scroller.setMultiMode(true, 100);
+        scroller.calculateNextMultiVectors();
         assertEquals((scroller.getCardScrollerItems().get(3).position.x == 339f) && (scroller.getCardScrollerItems().get(3).position.y == 0.0), true);
+    }
+
+    @Test
+    public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionFalse_CheckPosition_Item4() {
+        scroller.addTestData();
+        scroller.setScrollDirection(false);
+        scroller.setMultiMode(true, 100);
+        scroller.calculateNextMultiVectors();
         assertEquals((scroller.getCardScrollerItems().get(4).position.x == 499f) && (scroller.getCardScrollerItems().get(4).position.y == 0.0), true);
+    }
+
+    @Test
+    public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionFalse_CheckPosition_Item5() {
+        scroller.addTestData();
+        scroller.setScrollDirection(false);
+        scroller.setMultiMode(true, 100);
+        scroller.calculateNextMultiVectors();
+        assertEquals(scroller.getNextItemIndex(), 3);
         assertEquals((scroller.getCardScrollerItems().get(5).position.x == 659f) && (scroller.getCardScrollerItems().get(5).position.y == 0.0), true);
     }
 
@@ -386,13 +461,13 @@ public class HorizontalCardScrollerTest {
     }
 
     @Test
-    public void test_addSelectDestination_ValidData() {
+    public void test_addSelectDestination_ValidBoundingBox() {
         scroller.addSelectDestination(new BoundingBox(0,0,1,1));
         assertEquals(scroller.getSelectDestinations().size(), 1);
     }
 
     @Test
-    public void test_addSelectDestination_InvalidData() {
+    public void test_addSelectDestination_InvalidBoundingBox() {
         scroller.addSelectDestination(null);
         assertEquals(scroller.getSelectDestinations().size(), 0);
     }
@@ -438,15 +513,23 @@ public class HorizontalCardScrollerTest {
     }
 
     @Test
-    public void test_adjustPosition_ButtonPositionsChanged() {
-        Vector2[] originalPositions = new Vector2[2];
-        originalPositions[0] = scroller.getPushButtonLeft().position;
-        originalPositions[1] = scroller.getPushButtonRight().position;
+    public void test_adjustPosition_ButtonPositionsChanged_CheckPosition_ButtonLeft() {
+        Vector2 originalPosition;
+        originalPosition = scroller.getPushButtonLeft().position;
         scroller.adjustPosition(10,10);
-        originalPositions[0].add(10,10);
-        originalPositions[1].add(10,10);
-        assertEquals(scroller.getPushButtonLeft().position, originalPositions[0]);
-        assertEquals(scroller.getPushButtonRight().position, originalPositions[1]);
+        originalPosition.add(10,10);
+        boolean result = scroller.getPushButtonLeft().position.x == originalPosition.x && scroller.getPushButtonLeft().position.y == originalPosition.y ? true : false;
+        assertEquals(true, result);
+    }
+
+    @Test
+    public void test_adjustPosition_ButtonPositionsChanged_CheckPosition_ButtonRight() {
+        Vector2 originalPosition;
+        originalPosition = scroller.getPushButtonRight().position;
+        scroller.adjustPosition(10,10);
+        originalPosition.add(10,10);
+        boolean result = scroller.getPushButtonRight().position.x == originalPosition.x && scroller.getPushButtonRight().position.y == originalPosition.y ? true : false;
+        assertEquals(true, result);
     }
 
     @Test
@@ -472,11 +555,17 @@ public class HorizontalCardScrollerTest {
     }
 
     @Test
-    public void test_checkIfTouchInArea() {
+    public void test_checkIfTouchInArea_InArea() {
         Vector2 touchLocation = new Vector2(50, 50);
         BoundingBox selectDestination = new BoundingBox(50, 50, 5, 5);
         assertEquals(scroller.checkIfTouchInArea(touchLocation, selectDestination), true);
+    }
 
+    @Test
+    public void test_checkIfTouchInArea_OutsideArea() {
+        Vector2 touchLocation = new Vector2(25, 25);
+        BoundingBox selectDestination = new BoundingBox(50, 50, 5, 5);
+        assertEquals(scroller.checkIfTouchInArea(touchLocation, selectDestination), false);
     }
 
 }
