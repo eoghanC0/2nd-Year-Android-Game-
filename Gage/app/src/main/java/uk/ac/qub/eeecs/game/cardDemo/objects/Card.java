@@ -111,8 +111,6 @@ public class Card extends Sprite {
 
     private AssetStore assetManager = mGameScreen.getGame().getAssetManager();
 
-    private int lastGamePlayNumber = -1;
-
     private boolean showingStats = true;
 
     private boolean draggingEnabled = false;
@@ -141,7 +139,6 @@ public class Card extends Sprite {
             Random rnd = new Random();
             String randPlayerID = relevantPlayerIDs.get(rnd.nextInt(relevantPlayerIDs.size()));
             populateCardProperties(randPlayerID, playersArray);
-            this.playerID = playerID;
         } catch (JSONException e) {
             Log.e("Error", "The JSON file could not be read", e);
         }
@@ -177,9 +174,7 @@ public class Card extends Sprite {
         return lastName;
     }
 
-    public String getClub() {
-        return club;
-    }
+    public String getClub() { return club; }
 
     public String getNation() {
         return nation;
@@ -249,19 +244,11 @@ public class Card extends Sprite {
         return fitness;
     }
 
-    public int getLastGamePlayNumber() {
-        return lastGamePlayNumber;
-    }
-
     // ///////////////////////////////////////////////////////////
     // Setters
     // ///////////////////////////////////////////////////////////
     public void setFitness(int fitness) {
         this.fitness = fitness;
-    }
-
-    public void setLastGamePlayNumber(int lastGamePlayNumber) {
-        this.lastGamePlayNumber = lastGamePlayNumber;
     }
 
     public void setHeight(int height) {
@@ -278,42 +265,61 @@ public class Card extends Sprite {
     // Methods
     // ///////////////////////////////////////////////////////////
 
+    private JSONArray getPlayersArray() throws JSONException {
+        JSONObject playerJson = new JSONObject(assetManager.readAsset("player_json/all_cards.json"));
+        return playerJson.getJSONArray("players");
+    }
+
     private ArrayList<String> getRelevantPlayerIDs(boolean rare, int minRating, int maxRating, String playerPosition, JSONArray playersArray) throws JSONException{
         //Get an array of playerIDs where the player is rare/non-rare (depending on the parameter)
         ArrayList<String> playerIDs = new ArrayList<>();
         for (int i = 0; i < playersArray.length(); i++) {
-            if ((boolean) playersArray.getJSONObject(i).get("rare") == rare &&
-                    (int) playersArray.getJSONObject(i).get("rating") >= minRating &&
-                    (int) playersArray.getJSONObject(i).get("rating") <= maxRating) {
+            if (playersArray.getJSONObject(i).getBoolean("rare") == rare &&
+                    playersArray.getJSONObject(i).getInt("rating") >= minRating &&
+                    playersArray.getJSONObject(i).getInt("rating") <= maxRating) {
                 if (playerPosition == null || playerPosition.equals("")) {
-                    playerIDs.add((String) playersArray.getJSONObject(i).get("id"));
-                } else if (playersArray.getJSONObject(i).get("rating").equals(playerPosition)) {
-                    playerIDs.add((String) playersArray.getJSONObject(i).get("id"));
+                    playerIDs.add(playersArray.getJSONObject(i).getString("id"));
+                } else if (playersArray.getJSONObject(i).getString("position").equals(playerPosition)) {
+                    playerIDs.add(playersArray.getJSONObject(i).getString("id"));
                 }
             }
         }
         return playerIDs;
     }
 
-    private JSONArray getPlayersArray() throws JSONException {
-        JSONObject playerJson = new JSONObject(assetManager.readAsset("player_json/all_cards.json"));
-        return (JSONArray) playerJson.get("players");
+    private JSONObject getJSONPlayer(String playerID, JSONArray playersArray) throws JSONException{
+        return playersArray.getJSONObject(Integer.parseInt(playerID));
     }
 
-    private void populateCardProperties(String playerID, JSONArray playersArray) throws JSONException {
-        JSONObject thisPlayerJSON = playersArray.getJSONObject(Integer.parseInt(playerID));
-        displayName = (String) thisPlayerJSON.get("displayName");
-        firstName = (String) thisPlayerJSON.get("firstName");
-        lastName = (String) thisPlayerJSON.get("lastName");
+    private void populateNames(JSONObject thisPlayer) throws JSONException{
+        playerID = thisPlayer.getString("id");
+        displayName = thisPlayer.getString("displayName");
+        firstName = thisPlayer.getString("firstName");
+        lastName = thisPlayer.getString("lastName");
         if (displayName.equals(""))
             displayName = lastName;
-        JSONObject clubDetails = (JSONObject) thisPlayerJSON.get("club");
-        club = (String) clubDetails.get("name");
-        abbrClub = (String) clubDetails.get("abbrName");
-        JSONObject nationDetails = (JSONObject) thisPlayerJSON.get("nation");
-        nation = (String) nationDetails.get("name");
-        abbrNation = (String) nationDetails.get("abbrName");
-        playerPosition = (String) thisPlayerJSON.get("position");
+    }
+
+    private void populateClubDetails(JSONObject thisPlayer) throws JSONException{
+        JSONObject clubDetails = thisPlayer.getJSONObject("club");
+        club = clubDetails.getString("name");
+        abbrClub = clubDetails.getString("abbrName");
+        if (assetManager.getBitmap("club_" + clubDetails.getString("name")) == null)
+            assetManager.loadAndAddBitmap("club_" + clubDetails.getString("name"), "img/clubBadgeBitmaps/" + clubDetails.getString("logo"));
+        clubBadge = assetManager.getBitmap("club_" + clubDetails.getString("name"));
+    }
+
+    private void populateNationDetails(JSONObject thisPlayer) throws JSONException{
+        JSONObject nationDetails = thisPlayer.getJSONObject("nation");
+        nation = nationDetails.getString("name");
+        abbrNation = nationDetails.getString("abbrName");
+        if (assetManager.getBitmap("nation_" + nationDetails.getString("name")) == null)
+            assetManager.loadAndAddBitmap("nation_" + nationDetails.getString("name"), "img/nationBitmaps/" + nationDetails.getString("logo"));
+        nationFlag = assetManager.getBitmap("nation_" + nationDetails.getString("name"));
+    }
+
+    private void populatePositionDetails(JSONObject thisPlayer) throws JSONException{
+        playerPosition = thisPlayer.getString("position");
         switch (playerPosition) {
             case "Forward":
                 abbrPlayerPosition = "FWD";
@@ -328,61 +334,64 @@ public class Card extends Sprite {
                 abbrPlayerPosition = "GK";
                 break;
         }
-        JSONArray attributes = (JSONArray) thisPlayerJSON.get("attributes");
+    }
+
+    private void populateAttributeDetails(JSONObject thisPlayer) throws JSONException{
+        JSONArray attributes = thisPlayer.getJSONArray("attributes");
         for (int i = 0; i < attributes.length(); i++) {
-            JSONObject attribute = (JSONObject) attributes.get(i);
-            switch ((String) attribute.get("name")) {
+            JSONObject attribute = attributes.getJSONObject(i);
+            switch (attribute.getString("name")) {
                 case "PAC":
-                    pace = (int) attribute.get("value");
+                    pace = attribute.getInt("value");
                     break;
                 case "SHO":
-                    shooting = (int) attribute.get("value");
+                    shooting = attribute.getInt("value");
                     break;
                 case "PAS":
-                    passing = (int) attribute.get("value");
+                    passing = attribute.getInt("value");
                     break;
                 case "DRI":
-                    dribbling = (int) attribute.get("value");
+                    dribbling = attribute.getInt("value");
                     break;
                 case "DEF":
-                    defending = (int) attribute.get("value");
+                    defending = attribute.getInt("value");
                     break;
                 case "HEA":
-                    heading = (int) attribute.get("value");
+                    heading = attribute.getInt("value");
                     break;
                 case "DIV":
-                    diving = (int) attribute.get("value");
+                    diving = attribute.getInt("value");
                     break;
                 case "HAN":
-                    handling = (int) attribute.get("value");
+                    handling = attribute.getInt("value");
                     break;
                 case "KIC":
-                    kicking = (int) attribute.get("value");
+                    kicking = attribute.getInt("value");
                     break;
                 case "REF":
-                    reflexes = (int) attribute.get("value");
+                    reflexes = attribute.getInt("value");
                     break;
                 case "SPD":
-                    speed = (int) attribute.get("value");
+                    speed = attribute.getInt("value");
                     break;
                 case "POS":
-                    positioning = (int) attribute.get("value");
+                    positioning = attribute.getInt("value");
                     break;
             }
         }
-        rating = (int) thisPlayerJSON.get("rating");
-        rare = (boolean) thisPlayerJSON.get("rare");
-        if (assetManager.getBitmap("player_" + playerID) == null)
-            assetManager.loadAndAddBitmap("player_" + playerID, "img/playerBitmaps/" + (String) thisPlayerJSON.get("headshotBitmap"));
-        if (assetManager.getBitmap("club_" + (String) clubDetails.get("name")) == null)
-            assetManager.loadAndAddBitmap("club_" + (String) clubDetails.get("name"), "img/clubBadgeBitmaps/" + (String) clubDetails.get("logo"));
-        if (assetManager.getBitmap("nation_" + (String) nationDetails.get("name")) == null)
-            assetManager.loadAndAddBitmap("nation_" + (String) nationDetails.get("name"), "img/nationBitmaps/" + (String) nationDetails.get("logo"));
-        headshot = assetManager.getBitmap("player_" + playerID);
-        nationFlag = assetManager.getBitmap("nation_" + (String) nationDetails.get("name"));
-        clubBadge = assetManager.getBitmap("club_" + (String) clubDetails.get("name"));
-        if (rating >= 75) {
-            if (rare) {
+        rating = thisPlayer.getInt("rating");
+    }
+
+    private void populateHeadshot(JSONObject thisPlayer) throws JSONException{
+        if (assetManager.getBitmap("player_" + thisPlayer.getString("id")) == null)
+            assetManager.loadAndAddBitmap("player_" + thisPlayer.getString("id"), "img/playerBitmaps/" + thisPlayer.get("headshotBitmap"));
+        headshot = assetManager.getBitmap("player_" + thisPlayer.getString("id"));
+    }
+
+    private void populateBackground(JSONObject thisPlayer) throws JSONException{
+        rare = thisPlayer.getBoolean("rare");
+        if (thisPlayer.getInt("rating") >= 75) {
+            if (thisPlayer.getBoolean("rare")) {
                 if (assetManager.getBitmap("gold_rare_card") == null)
                     assetManager.loadAndAddBitmap("gold_rare_card", "img/RareGoldCard.png");
                 cardBackground = assetManager.getBitmap("gold_rare_card");
@@ -391,8 +400,8 @@ public class Card extends Sprite {
                     assetManager.loadAndAddBitmap("gold_common_card", "img/CommonGoldCard.png");
                 cardBackground = assetManager.getBitmap("gold_common_card");
             }
-        } else if (rating >= 65) {
-            if (rare) {
+        } else if (thisPlayer.getInt("rating") >= 65) {
+            if (thisPlayer.getBoolean("rare")) {
                 if (assetManager.getBitmap("silver_rare_card") == null)
                     assetManager.loadAndAddBitmap("silver_rare_card", "img/RareSilverCard.png");
                 cardBackground = assetManager.getBitmap("silver_rare_card");
@@ -402,7 +411,7 @@ public class Card extends Sprite {
                 cardBackground = assetManager.getBitmap("silver_common_card");
             }
         } else {
-            if (rare) {
+            if (thisPlayer.getBoolean("rare")) {
                 if (assetManager.getBitmap("bronze_rare_card") == null)
                     assetManager.loadAndAddBitmap("bronze_rare_card", "img/RareBronzeCard.png");
                 cardBackground = assetManager.getBitmap("bronze_rare_card");
@@ -412,7 +421,17 @@ public class Card extends Sprite {
                 cardBackground = assetManager.getBitmap("bronze_common_card");
             }
         }
+    }
 
+    private void populateCardProperties(String playerID, JSONArray playersArray) throws JSONException {
+        JSONObject thisPlayerJSON = getJSONPlayer(playerID, playersArray);
+        populateNames(thisPlayerJSON);
+        populateClubDetails(thisPlayerJSON);
+        populateNationDetails(thisPlayerJSON);
+        populatePositionDetails(thisPlayerJSON);
+        populateAttributeDetails(thisPlayerJSON);
+        populateHeadshot(thisPlayerJSON);
+        populateBackground(thisPlayerJSON);
     }
 
     private boolean useSimulatedTouchEvents = false;

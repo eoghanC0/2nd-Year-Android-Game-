@@ -44,7 +44,6 @@ public class MatchEvent extends GameObject{
     private int animationCounter, size = 250;
     private float height, leftHolderPosition, rightHolderPosition;
 
-
     //Properties for using the side scroller
     private boolean scrollerEnabled = true;
     private boolean scrollerDisplayed = false;
@@ -61,9 +60,7 @@ public class MatchEvent extends GameObject{
     private int selectedItemIndex = 0;
     private Vector2 draggedCardOriginalPosition = new Vector2();
 
-    private String winner = null;
-
-
+    private String winner;
 
 
     public MatchEvent(GameScreen gameScreen, Match.GameState gameState){
@@ -71,7 +68,7 @@ public class MatchEvent extends GameObject{
         mGame = mGameScreen.getGame();
         generateSccenario(gameState);
         animationCounter = 0;
-        height = mGame.getScreenHeight() / 2;
+        height = mGame.getScreenHeight() * 0.5f;
         leftHolderPosition = mGame.getScreenWidth() * 0.1f;
         rightHolderPosition = mGame.getScreenWidth() * 0.9f;
 
@@ -91,6 +88,7 @@ public class MatchEvent extends GameObject{
 
         confirmPlayer = new PushButton(mGame.getScreenWidth() / 2.0f, mGame.getScreenHeight() / 2.3f, 200, 100, "ConfirmButton", mGameScreen  );
 
+        winner = null;
 
 
     }
@@ -98,7 +96,6 @@ public class MatchEvent extends GameObject{
     public String getWinner(){
         return winner;
     }
-
 
     //method to generate a random scenario
     private void generateSccenario(Match.GameState gameState){
@@ -232,8 +229,7 @@ public class MatchEvent extends GameObject{
             //larger stat wins
             if (smallestStat.equals("Player"))winner = "CPU";
         }
-        Log.d("DEBUG", "calculate winner : " + winner);
-        clearCounter = animationCounter;
+       clearCounter = animationCounter;
 
     }
 
@@ -354,8 +350,6 @@ public class MatchEvent extends GameObject{
             if(removedCard.getBound().intersects(cardHolder1.getBound())) {
                 if (cardHolder1.getCard() != null){
                     tempCard = cardHolder1.getCard();
-
-                    Log.d("DEBUG", "Card holder player: " + tempCard.getLastName());
                     tempCardReady = true;
                 }
                 cardHolder1.setCard(removedCard);
