@@ -65,8 +65,6 @@ public class HelpScreen extends FootballGameScreen {
 
         // Load in bitmaps
         assetManager.loadAndAddBitmap("HelpBackground", "img/MainBackground.jpg");
-        assetManager.loadAndAddBitmap("LeftArrow", "img/LeftArrow.png");
-        assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
 
         assetManager.loadAndAddBitmap("HelpGetPlayers", "img/help-get-new-players.png");
         assetManager.loadAndAddBitmap("HelpPlayAGame", "img/help-play-a-game.png");
@@ -75,7 +73,8 @@ public class HelpScreen extends FootballGameScreen {
 
         background = assetManager.getBitmap("HelpBackground");
 
-        menuScreenButton = new PushButton(mGame.getScreenHeight() * 0.06f,mGame.getScreenHeight() * 0.94f, mGame.getScreenHeight() * 0.1f,mGame.getScreenHeight() * 0.1f, "LeftArrow", "LeftArrowActive", this);
+        menuScreenButton = new PushButton(mGame.getScreenHeight() * 0.1f, mGame.getScreenHeight() - (mGame.getScreenHeight() * 0.1f), mGame.getScreenHeight() * 0.15f, mGame.getScreenHeight() * 0.15f,
+                "ArrowBack", "ArrowBackPushed",this );
 
         horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
         horizontalImageScroller.addScrollerItem(assetManager.getBitmap("HelpPlayAGame"));
