@@ -342,9 +342,10 @@ public class SquadSelectionPane extends GameObject {
      * new formations is performed
      */
     private void setFormationFromListBox() {
-        formationString = formationsListBox.getSelectedItem();
-        if (!formationString.equals(""))
+        if (!formationString.equals(formationsListBox.getSelectedItem())) {
+            formationString = formationsListBox.getSelectedItem();
             assignCardsToLevels();
+        }
     }
 
     /**
