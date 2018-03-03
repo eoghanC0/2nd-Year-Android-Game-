@@ -15,8 +15,6 @@ import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
@@ -48,7 +46,7 @@ public class MenuScreen extends FootballGameScreen {
     private Music myMusic;
 
     private final Bitmap background;
-    private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
+    private final Rect backgroundRect = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
     private boolean musicButtonState = false;
 
@@ -69,7 +67,7 @@ public class MenuScreen extends FootballGameScreen {
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
 
-        assetManager.loadAndAddBitmap("menuScreenBackground", "img/help-background.jpg");
+        assetManager.loadAndAddBitmap("menuScreenBackground", "img/MainBackground.jpg");
         background = assetManager.getBitmap("menuScreenBackground");
         assetManager.loadAndAddBitmap("HelpIcon", "img/HelpIcon.png");
         assetManager.loadAndAddBitmap("HelpIconPushed", "img/HelpIconPushed.png");
@@ -81,6 +79,8 @@ public class MenuScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("packsIcon", "img/ball2.jpg");
         assetManager.loadAndAddBitmap("MenuButton", "img/MenuButton.png");
         assetManager.loadAndAddBitmap("MenuButtonPushed", "img/MenuButtonPushed.png");
+        assetManager.loadAndAddBitmap("ArrowBack", "img/ArrowBack.png");
+        assetManager.loadAndAddBitmap("ArrowBackPushed", "img/ArrowBackPushed.png");
 
         // Define the spacing that will be used to position the buttons
         int screenWidth = game.getScreenWidth();
@@ -179,7 +179,7 @@ public class MenuScreen extends FootballGameScreen {
         graphics2D.clear(Color.WHITE);
         Paint myPaint = mGame.getPaint();
         myPaint.setTextSize(36);
-        graphics2D.drawBitmap(background,null, backGroundRectangle, myPaint);
+        graphics2D.drawBitmap(background,null, backgroundRect, myPaint);
         myPaint.setTextSize(72);
 
         infoBar.draw(elapsedTime, graphics2D);

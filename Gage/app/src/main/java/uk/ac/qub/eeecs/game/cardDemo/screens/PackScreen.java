@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
+import android.view.Menu;
 
 import java.util.Random;
 
@@ -53,6 +54,10 @@ public class PackScreen extends FootballGameScreen {
     private boolean pack1000Pressed;
     private boolean drawPopup = true;
     private  boolean displayHorizontalScroller = false;
+    private boolean notEnoughCoins;
+
+    private int costOfPack = 0;
+    private  int newXP = 0;
 
     // Define the spacing that will be used to position the buttons
     int spacingX = getGame().getScreenWidth() / 4;
@@ -60,14 +65,11 @@ public class PackScreen extends FootballGameScreen {
 
     private Card highestRatedCard;
 
-    private ScreenViewport screenViewport;
-    private LayerViewport layerViewport;
-
     private Bitmap baseBitmap;
     private Bitmap backOfCard;
 
     private popUpWindow packPopUp;
-    private Boolean drawHorizontalScroller = false;
+private popUpWindow notEnoughCoinsPopUp;
 
     private HorizontalCardScroller horizontalCardScroller;
 
@@ -122,11 +124,12 @@ public class PackScreen extends FootballGameScreen {
         m500PackButton.setButtonText("5 Player Pack  Cost:500xp", 32, Color.WHITE);
         m1000PackButton.setButtonText("11 Player Pack  Cost:1000xp", 32, Color.WHITE);
 
+        m500PackButton.setEnabled(true);
+        m300PackButton.setEnabled(true);
+
         horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this);
         packPopUp = new popUpWindow(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this, "Are you sure you want to buy this pack?", "Yes", "No");
-
-        layerViewport = new LayerViewport();
-        screenViewport = new ScreenViewport();
+        notEnoughCoinsPopUp = new popUpWindow(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this, "You dont have enough XP to buy this", "Cancel", "Menu");
 
         assetManager.loadAndAddBitmap("BaseBitmap", "img/CardFront.png");
         baseBitmap = assetManager.getBitmap("BaseBitmap");
@@ -135,8 +138,6 @@ public class PackScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("CardBack", "img/CardBack.png");
         backOfCard = assetManager.getBitmap("CardBack");
     }
-
-
 
     public PackScreen(FootballGame game, Boolean isPack100Pressed, Boolean isPack300Pressed, Boolean isPack500Pressed, Boolean isPack1000Pressed) {
         super("PackScreen", game);
@@ -200,6 +201,7 @@ public class PackScreen extends FootballGameScreen {
         infoBar.update(elapsedTime);
         horizontalCardScroller.update(elapsedTime);
         packPopUp.update(elapsedTime);
+        notEnoughCoinsPopUp.update(elapsedTime);
 
         // Update each button and transition if needed
         mSquadsButton.update(elapsedTime);
@@ -208,6 +210,8 @@ public class PackScreen extends FootballGameScreen {
         m300PackButton.update(elapsedTime);
         m500PackButton.update(elapsedTime);
         m1000PackButton.update(elapsedTime);
+
+        infoBar.setAreaThreeText("XP : " + String.valueOf(mGame.getXp()));
 
         if (mSquadsButton.isPushTriggered())
             changeToScreen(new SquadScreen(mGame));
@@ -218,8 +222,15 @@ public class PackScreen extends FootballGameScreen {
             pack300Pressed = false;
             pack500Pressed = false;
             pack1000Pressed = false;
-            drawPopup = true;
-            selectPackPlayers(1);
+            if (mGame.getXp() >= 100) {
+                drawPopup = true;
+                selectPackPlayers(1);
+                notEnoughCoins = false;
+                costOfPack = 100;
+            }
+            else {
+                notEnoughCoins = true;
+            }
         //changeToScreen(new packScreenSplashScreen(mGame,highestRatedCard, pack100Pressed,pack300Pressed,pack500Pressed,pack1000Pressed));
         } else if (m300PackButton.isPushTriggered()) {
             //changeToScreen(new SplashScreen1(mGame));
@@ -227,16 +238,31 @@ public class PackScreen extends FootballGameScreen {
             pack300Pressed = true;
             pack500Pressed = false;
             pack1000Pressed = false;
-            drawPopup = true;
-            selectPackPlayers(3);
+            if (mGame.getXp() >= 300) {
+                drawPopup = true;
+                selectPackPlayers(3);
+                notEnoughCoins = false;
+                costOfPack = 300;
+            }
+            else {
+                notEnoughCoins = true;
+            }
+
         } else if (m500PackButton.isPushTriggered()) {
             //changeToScreen(new SplashScreen1(mGame));
             pack100Pressed = false;
             pack300Pressed = false;
             pack500Pressed = true;
             pack1000Pressed = false;
-            drawPopup = true;
-            selectPackPlayers(5);
+            if (mGame.getXp() >= 500) {
+                drawPopup = true;
+                selectPackPlayers(5);
+                notEnoughCoins = false;
+                costOfPack = 500;
+            }
+            else {
+                notEnoughCoins = true;
+            }
         //    horizontalCardScroller.setMultiMode(true, 80);
         } else if (m1000PackButton.isPushTriggered()) {
             //changeToScreen(new SplashScreen1(mGame));
@@ -245,8 +271,15 @@ public class PackScreen extends FootballGameScreen {
             pack300Pressed = false;
             pack500Pressed = false;
             pack1000Pressed = true;
-            drawPopup = true;
-            selectPackPlayers(11);
+            if (mGame.getXp() >= 1000) {
+                drawPopup = true;
+                selectPackPlayers(11);
+                notEnoughCoins = false;
+                costOfPack = 1000;
+            }
+            else {
+                notEnoughCoins = true;
+            }
             horizontalCardScroller.setMultiMode(true, 80);
         }
     }
@@ -280,33 +313,54 @@ public class PackScreen extends FootballGameScreen {
         m1000PackButton.draw(elapsedTime, graphics2D, null, null);
 
         if (pack1000Pressed || pack500Pressed || pack300Pressed || pack100Pressed) {
-            if (drawPopup) {
+            if (notEnoughCoins) {
+                notEnoughCoinsPopUp.draw(elapsedTime, graphics2D);
                 m500PackButton.setEnabled(false);
                 m300PackButton.setEnabled(false);
-                packPopUp.draw(elapsedTime, graphics2D);
-                displayHorizontalScroller = false;
-                if (packPopUp.getYesorNo()) {
+                if (notEnoughCoinsPopUp.getYesorNo()) {
                     drawPopup = false;
-                    displayHorizontalScroller = true;
-                    horizontalCardScroller.draw(elapsedTime, graphics2D);
+                    notEnoughCoins = false;
+                    notEnoughCoinsPopUp.setYesorNo(false);
                     packPopUp.setYesorNo(false);
                     m300PackButton.setEnabled(true);
                     m500PackButton.setEnabled(true);
-                } else if (packPopUp.getHasNoBeenPressed()) {
-                    drawPopup = false;
-                    displayHorizontalScroller = false;
-                    packPopUp.setHasNoBeenPressed(false);
-                    m300PackButton.setEnabled(true);
-                    m500PackButton.setEnabled(true);
+                } else if (notEnoughCoinsPopUp.getHasNoBeenPressed()) {
+                    notEnoughCoinsPopUp.setHasNoBeenPressed(false);
+                    packPopUp.setYesorNo(false);
+                    changeToScreen(new MenuScreen(mGame));
                 }
+            } else {
+                if (drawPopup) {
+                    m500PackButton.setEnabled(false);
+                    m300PackButton.setEnabled(false);
+                    packPopUp.draw(elapsedTime, graphics2D);
+                    displayHorizontalScroller = false;
+                    if (packPopUp.getYesorNo()) {
+                        newXP = mGame.getXp() - costOfPack;
+                        mGame.setXp(newXP);
+                        drawPopup = false;
+                        displayHorizontalScroller = true;
+                        horizontalCardScroller.draw(elapsedTime, graphics2D);
+                        notEnoughCoinsPopUp.setYesorNo(false);
+                        packPopUp.setYesorNo(false);
+                        m300PackButton.setEnabled(true);
+                        m500PackButton.setEnabled(true);
+                    } else if (packPopUp.getHasNoBeenPressed()) {
+                        drawPopup = false;
+                        displayHorizontalScroller = false;
+                        notEnoughCoinsPopUp.setHasNoBeenPressed(false);
+                        packPopUp.setHasNoBeenPressed(false);
+                        m300PackButton.setEnabled(true);
+                        m500PackButton.setEnabled(true);
+                    }
+                }
+                if (displayHorizontalScroller) horizontalCardScroller.draw(elapsedTime, graphics2D);
             }
-            if (displayHorizontalScroller) horizontalCardScroller.draw(elapsedTime, graphics2D);
         }
     }
 
 
     public void selectPackPlayers(int packSizes) {
-        Log.d("Debug11", "selectPackPlayers called");
         int noOfRares = 0;
         Card packPlayers[] = new Card[packSizes];
         Random rnd = new Random();
@@ -337,7 +391,6 @@ public class PackScreen extends FootballGameScreen {
                 highestRatedCard = packPlayers[i];
             }
             horizontalCardScroller.addScrollerItem(packPlayers[i]);
-            Log.d("Debug1", "item added to scroller");
             mGame.getClub().add(packPlayers[i]);
         }
 

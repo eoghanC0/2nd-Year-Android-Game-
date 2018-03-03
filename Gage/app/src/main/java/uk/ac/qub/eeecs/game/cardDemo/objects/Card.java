@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
@@ -433,13 +434,26 @@ public class Card extends Sprite {
         populateBackground(thisPlayerJSON);
     }
 
+    private boolean useSimulatedTouchEvents = false;
+    private List<TouchEvent> simulatedTouchEvents = new ArrayList<TouchEvent>();
+
+    public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
+        this.simulatedTouchEvents = simulatedTouchEvents;
+    }
+
+    public void setUseSimulatedTouchEvents(boolean useSimulatedTouchEvents) {
+        this.useSimulatedTouchEvents = useSimulatedTouchEvents;
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         // Consider any touch events occurring in this update
-        Input input = mGameScreen.getGame().getInput();
+        List<TouchEvent> touchEvents;
+        if(useSimulatedTouchEvents) touchEvents = simulatedTouchEvents;
+        else touchEvents = mGameScreen.getGame().getInput().getTouchEvents();
 
         // Check for a touch event on this listBox
-        for (TouchEvent touchEvent : input.getTouchEvents()) {
+        for (TouchEvent touchEvent : touchEvents) {
             if (getBound().contains(touchEvent.x, touchEvent.y)) {
                 if (touchEvent.type == DOUBLE_TAP)
                     showingStats = !showingStats;
