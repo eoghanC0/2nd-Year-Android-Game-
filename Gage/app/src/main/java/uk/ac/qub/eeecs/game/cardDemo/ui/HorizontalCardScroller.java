@@ -361,7 +361,7 @@ public class HorizontalCardScroller extends GameObject {
 
     /**
      * Sets the value of selectMode
-     * @param value
+     * @param selectMode
      */
     public void setSelectMode(boolean selectMode) {
         this.selectMode = selectMode;
@@ -1003,8 +1003,8 @@ public class HorizontalCardScroller extends GameObject {
         pushButtonLeft.setSimulatedTouchEvents(simulatedTouchEvents);
 
         for (Card card : cardScrollerItems) {
-            card.setUseSimulatedTouchEvents(true);
-            card.setSimulatedTouchEvents(simulatedTouchEvents);
+//            card.setUseSimulatedTouchEvents(true);
+//            card.setSimulatedTouchEvents(simulatedTouchEvents);
         }
     }
 

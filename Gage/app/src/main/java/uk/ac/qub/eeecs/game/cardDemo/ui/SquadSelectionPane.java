@@ -3,7 +3,6 @@ package uk.ac.qub.eeecs.game.cardDemo.ui;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -28,9 +27,9 @@ public class SquadSelectionPane extends GameObject {
     //////////////////////////////////////////////
     //  Constants
     //////////////////////////////////////////////
-    private final float SIDE_BAR_COVERAGE = 0.1f;
-    private final float TOGGLE_BITMAP_ASPECT_RATIO = 72f/168f;
-    private final int LISTBOX_ANIMATION_LENGTH = 8;
+    private final float SIDE_BAR_COVERAGE = 0.1f;  // The percentage cover of the side bar from the right hand side of the element
+    private final float TOGGLE_BITMAP_ASPECT_RATIO = 72f/168f;  // The aspect ratio of the toggle bitmap
+    private final int LISTBOX_ANIMATION_LENGTH = 8;  // The number of frames the listbox animation is carried out over ~ higher = slower
 
     //////////////////////////////////////////////
     //  Properties
@@ -52,7 +51,6 @@ public class SquadSelectionPane extends GameObject {
     /**
      * Properties Used for Animation
      */
-    private boolean listBoxMoving = false;
     private int listBoxAnimationCounter = 0;
     private float openListBoxPositionY;
 
@@ -83,8 +81,7 @@ public class SquadSelectionPane extends GameObject {
     /**
      * Properties for drag and drop
      */
-    private boolean touchDown = false;
-    private int selectedItemIndex = 0;
+    private int selectedItemIndex = -1;
     private Vector2 draggedCardOriginalPosition = new Vector2();
 
     /**
@@ -97,21 +94,21 @@ public class SquadSelectionPane extends GameObject {
      * Properties to hold the selected formation and the number of players in each of the 4 sections of the pitch
      */
     private String formationString = "";
-    private int[] numberOfCardsOnLevel = new int[4];
+    private int[] numberOfCardsOnLevel = {0,0,0,1}; // Always only 1 goalkeeper
 
     //////////////////////////////////////////////
     //  Constructors
     //////////////////////////////////////////////
+
+    /**
+     * @param gameScreen The screen the pane is displayed on
+     */
     public SquadSelectionPane(GameScreen gameScreen) {
         super(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight()/2, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight(), null, gameScreen);
         loadAssets();
         pitchStateBitmap = assetManager.getBitmap("Pitch_Top");
 
         //Set up the UI Elements of the SelectionPane
-        cardScroller = new HorizontalCardScroller(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight() * 0.25f, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight()/2, gameScreen);
-        cardScroller.addTestData();
-        cardScroller.setMultiMode(true, 80);
-        cardScroller.setSelectMode(true);
         showFormationsToggle = new Toggle( mBound.getRight() - mBound.getWidth() * (SIDE_BAR_COVERAGE/2),mBound.getBottom() + mBound.getHeight()*7/12,
                 mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f) * (TOGGLE_BITMAP_ASPECT_RATIO),
                 "ToggleButton_Off", "ToggleButton_On", gameScreen);
@@ -124,6 +121,11 @@ public class SquadSelectionPane extends GameObject {
         formationsListBox.setSelectionColor(Color.CYAN);
         setUpFormationsListBox();
         initializeCardHolders();
+        //TODO : Populate the squad with the previous squad
+        cardScroller = new HorizontalCardScroller(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight() * 0.25f, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight()/2, gameScreen);
+        cardScroller.addTestData(); //TODO : Replace this with populating the scroller with the club
+        cardScroller.setMultiMode(true, 80);
+        cardScroller.setSelectMode(true);
     }
 
     //////////////////////////////////////////////
@@ -186,6 +188,8 @@ public class SquadSelectionPane extends GameObject {
             case 3 :
                 pitchStateBitmap = assetManager.getBitmap("Pitch_Goal");
                 break;
+            default :
+                break;
         }
     }
 
@@ -200,96 +204,120 @@ public class SquadSelectionPane extends GameObject {
         }
         formationsListBox.setButtonPositions();
         listBoxAnimationCounter++;
-        if (listBoxAnimationCounter == LISTBOX_ANIMATION_LENGTH) listBoxMoving = false;
     }
 
     /**
      * Check if a touch is within the general area of a certain location
-     * @param userTouchLocation
-     * @param touchDestination
+     * @param destination The bounding box where coords are to be checked
+     * @return CoordsInArea
      */
-    private boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
-        if(userTouchLocation == null || touchDestination == null) return false;
+    private boolean checkIfCoordsInArea(float x, float y, BoundingBox destination) {
+        return destination.contains(x, y);
+    }
 
-        if(touchDestination.contains(userTouchLocation.x, userTouchLocation.y)) return true;
-
+    /**
+     * Checks if the touch event is contained within a card placeholder.
+     * If so, trigger the drag
+     * @param t The touch event to be considered
+     */
+    private boolean checkTouchInCardAndTriggerDrag(TouchEvent t, int holderIndex) {
+        // Check if the touch location is within the bounds of the displayed card
+        if(checkIfCoordsInArea(t.x, t.y, squadSelectionHolders[holderIndex].getBound())) {
+            selectedItemIndex = holderIndex;
+            draggedCardOriginalPosition.set(squadSelectionHolders[selectedItemIndex].position.x, squadSelectionHolders[selectedItemIndex].position.y);
+            return true;
+        }
         return false;
     }
 
     /**
-     * Checks for touch input and performs necessary actions to move a card
-     * and trigger any associated events
+     * Sets the position of the card placeholder to the current position of the touch event
+     * @param touchEvent The touch event to be considered
      */
-    private void checkAndPerformDragCard() {
+    private boolean checkSelectedItemAndPerformDrag(TouchEvent touchEvent) {
+        if (selectedItemIndex > -1) {
+            if (squadSelectionHolders[selectedItemIndex].getCard() != null) {
+                //A holder is selected which contains a card
+                squadSelectionHolders[selectedItemIndex].setPosition(touchEvent.x, touchEvent.y);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Drops the dragged card into the card scroller if they are overlapping.
+     * Returns true if overlapping and returns false if not.
+     * @return success
+     */
+    private boolean dropIntoScroller() {
+        if(checkIfCoordsInArea(squadSelectionHolders[selectedItemIndex].position.x, squadSelectionHolders[selectedItemIndex].position.y, cardScroller.getBound())) {
+            cardScroller.addScrollerItem(squadSelectionHolders[selectedItemIndex].getCard());
+            squadSelectionHolders[selectedItemIndex].setCard(null);
+            return true; //success
+        }
+        return false; //failure
+    }
+
+    /**
+     * Drops the dragged card into another card holder if they are overlapping
+     */
+    private boolean dropIntoHolder(BoundingBox placeholder) {
+        if (checkIfCoordsInArea(squadSelectionHolders[selectedItemIndex].position.x, squadSelectionHolders[selectedItemIndex].position.y, placeholder)) {
+            int indexOfDroppedCardHolder = (int) ((2*numberOfCardsOnLevel[currentSelectionArea]*placeholder.x-2*numberOfCardsOnLevel[currentSelectionArea]*position.x+numberOfCardsOnLevel[currentSelectionArea]*mBound.getWidth()-mBound.getWidth())/(2*mBound.getWidth())) + shownPlaceholdersStartIndex;
+            squadSelectionHolders[indexOfDroppedCardHolder].setCard(squadSelectionHolders[selectedItemIndex].getCard());
+            squadSelectionHolders[selectedItemIndex].setCard(null);
+            return true; //success
+        }
+        return false; //failure
+    }
+
+    /**
+     * Performs the card drop in the required place.
+     * Sets the position of the card holder back to the original position
+     */
+    private void performDrop() {
+        if (selectedItemIndex > -1) {
+            if(!dropIntoScroller()) {
+                for (BoundingBox placeholder : availableDropAreas) {
+                    if (dropIntoHolder(placeholder)) break;
+                }
+            }
+            squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
+            selectedItemIndex = -1;
+        }
+    }
+
+    /**
+     * Gets user input and carries out the required drag and drop methods depending on the input
+     */
+    private void performDragAndDropFromHolders() {
         Input input = mGameScreen.getGame().getInput();
-        //Consider all buffered touch events
+
         for (TouchEvent t : input.getTouchEvents()) {
-            // If there is no touch down yet, check for a touch down
-            if(!touchDown) {
-                // Check if touch event is a touch down
-                if (t.type == TouchEvent.TOUCH_DOWN) {
-                    // Check if the touch location is within the bounds of any displayed cards
+            switch (t.type) {
+                case TouchEvent.TOUCH_DOWN:
+                    //Loop through the displayed indices
                     for (int i = shownPlaceholdersStartIndex; i < shownPlaceholdersEndIndex; i++) {
-
-                        if(checkIfTouchInArea(new Vector2(t.x, t.y), squadSelectionHolders[i].getBound())) {
-                            selectedItemIndex = i;
-                            touchDown = true;
-                            draggedCardOriginalPosition = new Vector2(squadSelectionHolders[selectedItemIndex].position.x, squadSelectionHolders[selectedItemIndex].position.y);
-                        }
+                        if (checkTouchInCardAndTriggerDrag(t, i)) break;
                     }
-                } else // No touch down
-                    continue;
-            }
-
-            // If touch event is a drag event, modify position of card
-            if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
-                if (!Float.isNaN(input.getTouchX(t.pointer)) && squadSelectionHolders[selectedItemIndex].getCard() != null) {
-                    squadSelectionHolders[selectedItemIndex].setPosition(input.getTouchX(t.pointer), input.getTouchY(t.pointer));
-                }
-            }
-            // If touch event is a touch up event, check if location is within a select destination and remove card
-            // else return card to original position
-            if (t.type == TouchEvent.TOUCH_UP) {
-                touchDown = false;
-                if(selectedItemIndex < -1) return;
-
-                // For each select destination, check if touch up is within the bounds of the destination BoundingBox
-                if(checkIfTouchInArea(squadSelectionHolders[selectedItemIndex].position, cardScroller.getBound())) {
-                    cardScroller.addScrollerItem(squadSelectionHolders[selectedItemIndex].getCard());
-                    squadSelectionHolders[selectedItemIndex].setCard(null);
-                    squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
-                } else {
-                    boolean foundPlaceholder = false;
-                    for (BoundingBox placeholder : availableDropAreas) {
-                        if (checkIfTouchInArea(squadSelectionHolders[selectedItemIndex].position, placeholder) && squadSelectionHolders[selectedItemIndex].getCard() != null) {
-                            int indexOfDroppedCardHolder = (int) ((2*numberOfCardsOnLevel[currentSelectionArea]*placeholder.x-2*numberOfCardsOnLevel[currentSelectionArea]*position.x+numberOfCardsOnLevel[currentSelectionArea]*mBound.getWidth()-mBound.getWidth())/(2*mBound.getWidth())) + shownPlaceholdersStartIndex;
-                            squadSelectionHolders[indexOfDroppedCardHolder].setCard(squadSelectionHolders[selectedItemIndex].getCard());
-                            squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
-                            squadSelectionHolders[selectedItemIndex].setCard(null);
-                            foundPlaceholder = true;
-                            break;
-                        }
-                    }
-                    if (!foundPlaceholder)
-                        squadSelectionHolders[selectedItemIndex].setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
-                }
-
-                selectedItemIndex = -1;
+                    break;
+                case TouchEvent.TOUCH_DRAGGED:
+                    checkSelectedItemAndPerformDrag(t);
+                    break;
+                case TouchEvent.TOUCH_UP:
+                    performDrop();
+                    break;
+                default:
+                    break;
             }
         }
     }
 
     /**
-     * Checks if the selected item of the list box has changed
-     * If so, the item is retrieved and the calculations to figure out the positions of
-     * new formations is performed
+     * Reads the current formation and assigns the correct number of cards to each level
      */
-    private void checkListBoxChanged() {
-        // Check if formation is different to stored formation
-        if(formationString.equals(formationsListBox.getSelectedItem())) return;
-
-        formationString = formationsListBox.getSelectedItem();
-
+    private void assignCardsToLevels() {
         // Split formation
         String temp[] = formationString.split("-");
 
@@ -297,7 +325,6 @@ public class SquadSelectionPane extends GameObject {
         numberOfCardsOnLevel[0] = Integer.valueOf(temp[2]);
         numberOfCardsOnLevel[1] = Integer.valueOf(temp[1]);
         numberOfCardsOnLevel[2] = Integer.valueOf(temp[0]);
-        numberOfCardsOnLevel[3] = 1;
 
         // Calculate positions of holders
         calculateHolderPositions();
@@ -305,17 +332,28 @@ public class SquadSelectionPane extends GameObject {
         // Calculate available positions
         calculateAvailableHolders();
 
-        //Calculate the indices of the placeholders that are drawn
-        calculateShownPlaceholderIndicies();
+        // Calculate the indices of the placeholders that are drawn
+        calculateShownPlaceholderIndices();
+    }
+
+    /**
+     * Checks if the selected item of the list box has changed
+     * If so, the item is retrieved and the calculations to figure out the positions of
+     * new formations is performed
+     */
+    private void setFormationFromListBox() {
+        formationString = formationsListBox.getSelectedItem();
+        if (!formationString.equals(""))
+            assignCardsToLevels();
     }
 
     /**
      * returns whether all of the placeholders contain a card or not
-     * @return
+     * @return squadIsFull
      */
-    public boolean isSquadFull() {
-        for (int i = 0; i < squadSelectionHolders.length; i++) {
-            if (squadSelectionHolders[i].getCard() == null) return false;
+    public boolean squadIsFull() {
+        for (CardHolder holder : squadSelectionHolders) {
+            if (holder.getCard() == null) return false;
         }
         return true;
     }
@@ -325,16 +363,19 @@ public class SquadSelectionPane extends GameObject {
      */
     private void calculateHolderPositions() {
         int numberOfHoldersDealtWith = 0;
-        for (int i = 0; i < numberOfCardsOnLevel.length; i++) {
-            for (int j = 0; j < numberOfCardsOnLevel[i]; j++) {
+        for (int numOfCards : numberOfCardsOnLevel) {
+            for (int j = 0; j < numOfCards; j++) {
                 squadSelectionHolders[j + numberOfHoldersDealtWith].setPosition(position.x - mBound.halfWidth + mBound.getWidth()*((2*j)+1)
-                        /(numberOfCardsOnLevel[i]*2), position.y + mBound.getHeight() * 0.25f);
+                        /(numOfCards*2), position.y + mBound.getHeight() * 0.25f);
             }
-            numberOfHoldersDealtWith += numberOfCardsOnLevel[i];
+            numberOfHoldersDealtWith += numOfCards;
         }
     }
 
-    private void calculateShownPlaceholderIndicies() {
+    /**
+     * Calculates the indices of the displayed card placeholders within the squadSelectionHolders array
+     */
+    private void calculateShownPlaceholderIndices() {
         shownPlaceholdersStartIndex = 0;
         shownPlaceholdersEndIndex = 0;
         for (int i = 0; i < currentSelectionArea; i++) {
@@ -361,23 +402,56 @@ public class SquadSelectionPane extends GameObject {
      * If so, the position the card was dropped is cross referenced with the displayed
      * holders to determine it's position
      */
-    private void checkIfRemovedCardReady() {
+    //TODO : Move this to the scroller class
+    private void getCardFromScroller() {
         if (cardScroller.isRemovedCardReady()) {
-            Card removedCard = new Card(cardScroller.getRemovedCard());
+            Card removedCard = cardScroller.getRemovedCard();
                 for (int i = shownPlaceholdersStartIndex; i < shownPlaceholdersEndIndex; i++) {
                     if(removedCard.getBound().intersects(squadSelectionHolders[i].getBound())) {
                         squadSelectionHolders[i].setCard(removedCard);
                         break;
                     }
                 }
-
             cardScroller.removeSelectDestination(cardScroller.getSelectDestinations().indexOf(cardScroller.getRemovedCardBound()));
+        }
+    }
+
+    /**
+     * Check trigger and increment the selection area, reset the background and reposition the holders
+     */
+    private void handleNextAreaButtonTrigger() {
+        if (currentSelectionArea < 3) {
+            currentSelectionArea++;
+            setCurrentBackground();
+            calculateShownPlaceholderIndices();
+        }
+    }
+
+    /**
+     * Check trigger and decrement the selection area, reset the background and reposition the holders
+     */
+    private void handlePreviousAreaButtonTrigger() {
+        if (currentSelectionArea > 0) {
+            currentSelectionArea--;
+            setCurrentBackground();
+            calculateShownPlaceholderIndices();
+        }
+    }
+
+    /**
+     * Check the listbox toggle/position and trigger an animation to open/close the listbox if needed
+     */
+    private void checkToggleAndTriggerListBoxAnimation() {
+        //Show/Hide the list box when the toggle is changed
+        if ((showFormationsToggle.isToggledOn() && formationsListBox.position.y > openListBoxPositionY) ||
+                (!showFormationsToggle.isToggledOn() && formationsListBox.position.y == openListBoxPositionY)) {
+            listBoxAnimationCounter = 0;
         }
     }
 
     @Override
     public void update(ElapsedTime elapsedTime) {
-        if (listBoxMoving) {
+        if (listBoxAnimationCounter < LISTBOX_ANIMATION_LENGTH) {
             animateListBox();
         } else {
             //update UI
@@ -386,33 +460,20 @@ public class SquadSelectionPane extends GameObject {
             formationsListBox.update(elapsedTime);
             showFormationsToggle.update(elapsedTime);
             cardScroller.update(elapsedTime);
+
             for (CardHolder squadSelectionHolder : squadSelectionHolders) {
                 squadSelectionHolder.update(elapsedTime);
             }
 
-            //Change the background and drawn placeholders when the selectionArea is changed
-            if (nextAreaButton.isPushTriggered() && currentSelectionArea < 3) {
-                currentSelectionArea++;
-                setCurrentBackground();
-                calculateShownPlaceholderIndicies();
-            }
-            if (previousAreaButton.isPushTriggered() && currentSelectionArea > 0) {
-                currentSelectionArea--;
-                setCurrentBackground();
-                calculateShownPlaceholderIndicies();
-            }
-
-            //Show/Hide the list box when the toggle is changed
-            if ((showFormationsToggle.isToggledOn() && formationsListBox.position.y > openListBoxPositionY) ||
-                    (!showFormationsToggle.isToggledOn() && formationsListBox.position.y == openListBoxPositionY)) {
-                listBoxAnimationCounter = 0;
-                listBoxMoving = true;
-            }
-
+            if (nextAreaButton.isPushTriggered())
+                handleNextAreaButtonTrigger();
+            if (previousAreaButton.isPushTriggered())
+                handlePreviousAreaButtonTrigger();
+            checkToggleAndTriggerListBoxAnimation();
             calculateAvailableHolders();
-            checkListBoxChanged();
-            checkAndPerformDragCard();
-            checkIfRemovedCardReady();
+            setFormationFromListBox();
+            performDragAndDropFromHolders();
+            getCardFromScroller();
         }
     }
 
