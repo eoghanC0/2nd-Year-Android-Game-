@@ -147,8 +147,8 @@ public class ListBox extends GameObject {
      */
     private void handleTouchEvents(float touchX, float touchY) {
         if (touchOccurredInSideBar(touchX, touchY)) return; //Exit if the touch event occurs in the side bar
-        int drawnIndex = (int)((touchY - (position.y - mBound.halfHeight)) / 100);
-        selectedIndex = (int)(showingPageNum * mBound.getHeight()/ 100 + drawnIndex);
+        int drawnIndex = (int)((touchY - (position.y - mBound.halfHeight)) / ITEM_HEIGHT);
+        selectedIndex = (int)(showingPageNum * mBound.getHeight()/ ITEM_HEIGHT + drawnIndex);
         if (selectedIndex > items.size() - 1) selectedIndex = -1;
     }
 

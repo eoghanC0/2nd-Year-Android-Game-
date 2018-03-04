@@ -19,6 +19,11 @@ import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.ListBox;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by stephenmcveigh on 24/01/2018.
  */
@@ -59,39 +64,39 @@ public class ListBoxTest {
 
     @Test
     public void test_Constructor_height() {
-        assert(testListBox.getBound().getHeight() % 100 == 0);
+        assertEquals(0, testListBox.getBound().getHeight() % 100, 0);
     }
     @Test
     public void test_Constructor_items() {
-        assert(testListBox.items != null);
+        assertNotNull(testListBox.items);
     }
     @Test
     public void test_Constructor_selectedIndex() {
-        assert(testListBox.selectedIndex == -1);
+        assertEquals(-1, testListBox.selectedIndex);
     }
     @Test
     public void test_Constructor_backColor() {
-        assert(testListBox.backColor == Color.WHITE);
+        assertEquals(Color.WHITE, testListBox.backColor);
     }
     @Test
     public void test_Constructor_borderColor() {
-        assert(testListBox.borderColor == Color.BLACK);
+        assertEquals(Color.BLACK,testListBox.borderColor);
     }
     @Test
     public void test_Constructor_selectionColor() {
-        assert(testListBox.selectionColor == Color.BLUE);
+        assertEquals(Color.BLUE, testListBox.selectionColor);
     }
     @Test
     public void test_Constructor_textColor() {
-        assert(testListBox.textColor == Color.BLACK);
+        assertEquals(Color.BLACK, testListBox.textColor);
     }
     @Test
     public void test_Constructor_btnNextPage() {
-        assert(testListBox.btnNextPage != null);
+        assertNotNull(testListBox.btnNextPage);
     }
     @Test
     public void test_Constructor_btnPreviousPage() {
-        assert(testListBox.btnPreviousPage != null);
+        assertNotNull(testListBox.btnPreviousPage);
     }
 
     //////////////////////////////////////////////////////
@@ -100,24 +105,24 @@ public class ListBoxTest {
     @Test
     public void test_getSelectedIndex() {
         testListBox.selectedIndex = rand.nextInt(5);
-        assert(testListBox.getSelectedIndex() == testListBox.selectedIndex);
+        assertEquals(testListBox.selectedIndex, testListBox.getSelectedIndex());
     }
 
     @Test
     public void test_getSelectedItem() {
         testListBox.selectedIndex = rand.nextInt(5);
-        assert(testListBox.getSelectedItem() == testListBox.items.get(testListBox.selectedIndex));
+        assertEquals(testListBox.items.get(testListBox.selectedIndex), testListBox.getSelectedItem());
     }
 
     @Test
     public void test_getShowingPageNum() {
         testListBox.showingPageNum = rand.nextInt(1);
-        assert(testListBox.getShowingPageNum() == testListBox.showingPageNum);
+        assertEquals(testListBox.showingPageNum, testListBox.getShowingPageNum());
     }
 
     @Test
     public void test_getItems() {
-        assert(testListBox.getItems() == testListBox.items);
+        assertEquals(testListBox.items, testListBox.getItems());
     }
 
     //////////////////////////////////////////////////////
@@ -133,7 +138,7 @@ public class ListBoxTest {
         testArray.add("TestData5");
         testArray.add("TestData6");
         testListBox.setArray(testArray);
-        assert(testListBox.items == testArray);
+        assertEquals(testArray, testListBox.items);
     }
 
     @Test
@@ -142,7 +147,7 @@ public class ListBoxTest {
         int green = rand.nextInt(255);
         int blue = rand.nextInt(255);
         testListBox.setBackColor(Color.rgb(red,green,blue));
-        assert(testListBox.backColor == Color.rgb(red,green,blue));
+        assertEquals(Color.rgb(red,green,blue), testListBox.backColor);
     }
 
     @Test
@@ -151,7 +156,7 @@ public class ListBoxTest {
         int green = rand.nextInt(255);
         int blue = rand.nextInt(255);
         testListBox.setBorderColor(Color.rgb(red,green,blue));
-        assert(testListBox.borderColor == Color.rgb(red,green,blue));
+        assertEquals(Color.rgb(red,green,blue), testListBox.borderColor);
     }
 
     @Test
@@ -160,7 +165,7 @@ public class ListBoxTest {
         int green = rand.nextInt(255);
         int blue = rand.nextInt(255);
         testListBox.setSelectionColor(Color.rgb(red,green,blue));
-        assert(testListBox.selectionColor == Color.rgb(red,green,blue));
+        assertEquals(Color.rgb(red,green,blue), testListBox.selectionColor);
     }
 
     @Test
@@ -169,7 +174,7 @@ public class ListBoxTest {
         int green = rand.nextInt(255);
         int blue = rand.nextInt(255);
         testListBox.setTextColor(Color.rgb(red,green,blue));
-        assert(testListBox.textColor == Color.rgb(red,green,blue));
+        assertEquals(Color.rgb(red,green,blue), testListBox.textColor);
     }
 
     //////////////////////////////////////////////////////
@@ -180,7 +185,7 @@ public class ListBoxTest {
         float x = rand.nextFloat() * game.getScreenWidth();
         float y = rand.nextFloat() * game.getScreenHeight();
         testListBox.setPosition(x,y);
-        assert(testListBox.position.x == x);
+        assertEquals(x, testListBox.position.x, 0);
     }
 
     @Test
@@ -188,7 +193,7 @@ public class ListBoxTest {
         float x = rand.nextFloat() * game.getScreenWidth();
         float y = rand.nextFloat() * game.getScreenHeight();
         testListBox.setPosition(x,y);
-        assert(testListBox.position.y == y);
+        assertEquals(y, testListBox.position.y, 0);
     }
 
     @Test
@@ -196,7 +201,7 @@ public class ListBoxTest {
         float x = rand.nextFloat() * game.getScreenWidth();
         float y = rand.nextFloat() * game.getScreenHeight();
         testListBox.setPosition(x,y);
-        assert(testListBox.getBound().x == x);
+        assertEquals(x, testListBox.getBound().x,0);
     }
 
     @Test
@@ -204,7 +209,7 @@ public class ListBoxTest {
         float x = rand.nextFloat() * game.getScreenWidth();
         float y = rand.nextFloat() * game.getScreenHeight();
         testListBox.setPosition(x,y);
-        assert(testListBox.getBound().y == y);
+        assertEquals(y, testListBox.getBound().y, 0);
     }
 
     @Test
@@ -214,7 +219,7 @@ public class ListBoxTest {
         testListBox.getBound().halfWidth = 100;
         testListBox.getBound().halfHeight = 300;
         testListBox.setButtonPositions();
-        assert(testListBox.btnPreviousPage.position.x == 590);
+        assertEquals(590, testListBox.btnPreviousPage.position.x, 0);
     }
 
     @Test
@@ -224,7 +229,7 @@ public class ListBoxTest {
         testListBox.getBound().halfWidth = 100;
         testListBox.getBound().halfHeight = 300;
         testListBox.setButtonPositions();
-        assert(testListBox.btnPreviousPage.position.y == 250);
+        assertEquals(250, testListBox.btnPreviousPage.position.y, 0);
     }
 
     @Test
@@ -234,7 +239,7 @@ public class ListBoxTest {
         testListBox.getBound().halfWidth = 100;
         testListBox.getBound().halfHeight = 300;
         testListBox.setButtonPositions();
-        assert(testListBox.btnNextPage.position.x == 590);
+        assertEquals(590, testListBox.btnNextPage.position.x, 0);
     }
 
     @Test
@@ -244,7 +249,7 @@ public class ListBoxTest {
         testListBox.getBound().halfWidth = 100;
         testListBox.getBound().halfHeight = 300;
         testListBox.setButtonPositions();
-        assert(testListBox.btnNextPage.position.y == 750);
+        assertEquals(750, testListBox.btnNextPage.position.y, 0);
     }
 
     @Test
@@ -255,7 +260,7 @@ public class ListBoxTest {
         testListBox.getBound().halfHeight = 300;
         float x = 590f;
         float y = 500f;
-        assert(testListBox.touchOccurredInSideBar(x,y));
+        assertTrue(testListBox.touchOccurredInSideBar(x,y));
     }
 
     @Test
@@ -266,7 +271,7 @@ public class ListBoxTest {
         testListBox.getBound().halfHeight = 300;
         float x = 500f;
         float y = 500f;
-        assert(!testListBox.touchOccurredInSideBar(x,y));
+        assertFalse(testListBox.touchOccurredInSideBar(x,y));
     }
 
     @Test
@@ -277,7 +282,7 @@ public class ListBoxTest {
         testListBox.getBound().halfHeight = 300;
         float x = 580f;
         float y = 500f;
-        assert(!testListBox.touchOccurredInSideBar(x,y));
+        assertFalse(testListBox.touchOccurredInSideBar(x,y));
     }
 
     @Test
@@ -288,7 +293,7 @@ public class ListBoxTest {
         testListBox.getBound().halfHeight = 300;
         float x = 590f;
         float y = 200f;
-        assert(!testListBox.touchOccurredInSideBar(x,y));
+        assertFalse(testListBox.touchOccurredInSideBar(x,y));
     }
 
     @Test
@@ -299,7 +304,7 @@ public class ListBoxTest {
         testListBox.getBound().halfHeight = 300;
         float x = 600f;
         float y = 500f;
-        assert(!testListBox.touchOccurredInSideBar(x,y));
+        assertFalse(testListBox.touchOccurredInSideBar(x,y));
     }
 
     @Test
@@ -310,76 +315,83 @@ public class ListBoxTest {
         testListBox.getBound().halfHeight = 300;
         float x = 590f;
         float y = 800f;
-        assert(!testListBox.touchOccurredInSideBar(x,y));
+        assertFalse(testListBox.touchOccurredInSideBar(x,y));
     }
 
     @Test
     public void test_handleTouchEvents_firstPage_firstItem() {
-        testListBox.position.x = 500;
-        testListBox.position.y = 500;
-        testListBox.getBound().halfWidth = 100;
-        testListBox.getBound().halfHeight = 100;
+        testListBox.position.x = 500f;
+        testListBox.position.y = 500f;
+        testListBox.getBound().halfWidth = 100f;
+        testListBox.getBound().halfHeight = 100f;
         testListBox.items.clear();
         testListBox.items.add("Test1");
         testListBox.items.add("Test2");
         testListBox.items.add("Test3");
         testListBox.items.add("Test4");
         testListBox.items.add("Test5");
+        testListBox.items.add("Test6");
 
         testListBox.showingPageNum = 0;
+        testListBox.selectedIndex = -1;
         float x = 500f;
-        float y = 550f;
+        float y = 450f;
         testListBox.handleTouchEvents(x,y);
-        assert(testListBox.selectedIndex == 0);
+        assertEquals(0, testListBox.selectedIndex);
     }
 
     @Test
     public void test_handleTouchEvents_firstPage_secondItem() {
-        testListBox.position.x = 500;
-        testListBox.position.y = 500;
-        testListBox.getBound().halfWidth = 100;
-        testListBox.getBound().halfHeight = 100;
+        testListBox.position.x = 500f;
+        testListBox.position.y = 500f;
+        testListBox.getBound().halfWidth = 100f;
+        testListBox.getBound().halfHeight = 100f;
         testListBox.items.clear();
         testListBox.items.add("Test1");
         testListBox.items.add("Test2");
         testListBox.items.add("Test3");
         testListBox.items.add("Test4");
         testListBox.items.add("Test5");
+        testListBox.items.add("Test6");
 
         testListBox.showingPageNum = 0;
+        testListBox.selectedIndex = -1;
         float x = 500f;
-        float y = 650f;
+        float y = 550f;
         testListBox.handleTouchEvents(x,y);
-        assert(testListBox.selectedIndex == 1);
+
+        assertEquals(1, testListBox.selectedIndex);
     }
 
     @Test
     public void test_handleTouchEvents_higherPage() {
-        testListBox.position.x = 500;
-        testListBox.position.y = 500;
-        testListBox.getBound().halfWidth = 100;
-        testListBox.getBound().halfHeight = 100;
+        testListBox.position.x = 500f;
+        testListBox.position.y = 500f;
+        testListBox.getBound().halfWidth = 100f;
+        testListBox.getBound().halfHeight = 100f;
         testListBox.items.clear();
         testListBox.items.add("Test1");
         testListBox.items.add("Test2");
         testListBox.items.add("Test3");
         testListBox.items.add("Test4");
         testListBox.items.add("Test5");
+        testListBox.items.add("Test6");
 
         float x = 500f;
-        float y = 550f;
+        float y = 450f;
 
         testListBox.showingPageNum = 2;
+        testListBox.selectedIndex = -1;
         testListBox.handleTouchEvents(x,y);
-        assert(testListBox.selectedIndex == 4);
+        assertEquals(4, testListBox.selectedIndex);
     }
 
     @Test
     public void test_handleTouchEvents_NoItem() {
-        testListBox.position.x = 500;
-        testListBox.position.y = 500;
-        testListBox.getBound().halfWidth = 100;
-        testListBox.getBound().halfHeight = 100;
+        testListBox.position.x = 500f;
+        testListBox.position.y = 500f;
+        testListBox.getBound().halfWidth = 100f;
+        testListBox.getBound().halfHeight = 100f;
         testListBox.items.clear();
         testListBox.items.add("Test1");
         testListBox.items.add("Test2");
@@ -389,32 +401,32 @@ public class ListBoxTest {
 
         testListBox.showingPageNum = 0;
         float x = 500f;
-        float y = 650f;
+        float y = 550f;
 
         testListBox.showingPageNum = 2;
-
+        testListBox.selectedIndex = -1;
         testListBox.handleTouchEvents(x,y);
-        assert(testListBox.selectedIndex == -1);
+        assertEquals(-1, testListBox.selectedIndex);
     }
 
     @Test
     public void test_handlePrevButtonTrigger_isPrevPage() {
         testListBox.showingPageNum = 2;
         testListBox.handlePrevButtonTrigger();
-        assert(testListBox.showingPageNum == 1);
+        assertEquals(1, testListBox.showingPageNum);
     }
 
     @Test
     public void test_handlePrevButtonTrigger_noPrevPage() {
         testListBox.showingPageNum = 0;
         testListBox.handlePrevButtonTrigger();
-        assert(testListBox.showingPageNum == 0);
+        assertEquals(0, testListBox.showingPageNum);
     }
 
     @Test
     public void test_getNumberOfItemsPerPage() {
-        testListBox.getBound().halfHeight = 225f;
-        assert(testListBox.getNumberOfItemsPerPage() == 5);
+        testListBox.getBound().halfHeight = 250f;
+        assertEquals(5, testListBox.getNumberOfItemsPerPage());
     }
 
     @Test
@@ -425,7 +437,7 @@ public class ListBoxTest {
         testListBox.items.add("Test2");
         testListBox.items.add("Test3");
         testListBox.showingPageNum = 0;
-        assert(!testListBox.isNextButtonEnabled());
+        assertFalse(testListBox.isNextButtonEnabled());
     }
 
     @Test
@@ -436,7 +448,7 @@ public class ListBoxTest {
         testListBox.items.add("Test2");
         testListBox.items.add("Test3");
         testListBox.showingPageNum = 0;
-        assert(testListBox.isNextButtonEnabled());
+        assertTrue(testListBox.isNextButtonEnabled());
     }
 
     @Test
@@ -448,7 +460,7 @@ public class ListBoxTest {
         testListBox.items.add("Test3");
         testListBox.showingPageNum = 0;
         testListBox.handleNextButtonTrigger();
-        assert(testListBox.showingPageNum == 0);
+        assertEquals(0, testListBox.showingPageNum);
     }
 
     @Test
@@ -460,14 +472,14 @@ public class ListBoxTest {
         testListBox.items.add("Test3");
         testListBox.showingPageNum = 0;
         testListBox.handleNextButtonTrigger();
-        assert(testListBox.showingPageNum == 1);
+        assertEquals(1, testListBox.showingPageNum);
     }
 
     @Test
     public void test_addItem() {
         testListBox.clear();
         testListBox.addItem("Test");
-        assert(testListBox.items.size() == 1);
+        assertEquals(1, testListBox.items.size());
     }
 
     @Test
@@ -476,7 +488,7 @@ public class ListBoxTest {
         testListBox.items.add("Test");
         testListBox.items.add("Test");
         testListBox.clear();
-        assert(testListBox.items.size() == 1);
+        assertEquals(0, testListBox.items.size());
     }
 
     @Test
@@ -488,7 +500,7 @@ public class ListBoxTest {
         testListBox.items.add("Test");
         testListBox.selectedIndex = 3;
         testListBox.removeItem(3);
-        assert(testListBox.selectedIndex == -1);
+        assertEquals(-1,testListBox.selectedIndex);
     }
 
     @Test
@@ -500,7 +512,7 @@ public class ListBoxTest {
         testListBox.items.add("Test");
         testListBox.selectedIndex = 3;
         testListBox.removeItem(3);
-        assert(testListBox.getItems().size() == 3);
+        assertEquals(3, testListBox.getItems().size());
     }
 
     @Test
@@ -511,18 +523,19 @@ public class ListBoxTest {
         testListBox.items.add("Test");
         testListBox.selectedIndex = 1;
         testListBox.removeItem(3);
-        assert(testListBox.selectedIndex == 1);
+        assertEquals(1, testListBox.selectedIndex);
     }
 
     @Test
     public void test_RemoveItem_notSelectedIndex_newSize() {
+        testListBox.clear();
         testListBox.items.add("Test");
         testListBox.items.add("Test");
         testListBox.items.add("Test");
         testListBox.items.add("Test");
         testListBox.selectedIndex = 1;
         testListBox.removeItem(3);
-        assert(testListBox.getItems().size() == 3);
+        assertEquals(3, testListBox.getItems().size());
     }
 }
 
