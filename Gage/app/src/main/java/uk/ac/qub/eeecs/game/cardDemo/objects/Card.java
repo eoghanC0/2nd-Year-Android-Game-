@@ -131,12 +131,12 @@ public class Card extends GameObject {
         }
     }
 
-    public Card(GameScreen gameScreen, boolean rare, int minRating, int maxRating) {
+    public Card(GameScreen gameScreen, boolean rare, String playerPosition,int minRating, int maxRating) {
         //The aspect ratio of the card is 225/355
         super(100, 100, 225, 355, null, gameScreen);
         try {
             JSONArray playersArray = getPlayersArray();
-            ArrayList<String> relevantPlayerIDs = getRelevantPlayerIDs(rare, minRating, maxRating,null, playersArray);
+            ArrayList<String> relevantPlayerIDs = getRelevantPlayerIDs(rare, minRating, maxRating,playerPosition, playersArray);
             Random rnd = new Random();
             String randPlayerID = relevantPlayerIDs.get(rnd.nextInt(relevantPlayerIDs.size()));
             populateCardProperties(randPlayerID, playersArray);
