@@ -60,8 +60,6 @@ public class LoadGameScreen extends FootballGameScreen {
                 width * 0.9f, height * 0.8f, height / 4.0f, height / 4.0f, "NextButton","NextButtonActive", this );
         deleteButton = new PushButton(
                 width * 0.1f, height * 0.8f, height / 4.0f, height / 4.0f, "DeleteIcon","DeleteIconPushed", this );
-
-
     }
 
     private void changeToScreen(FootballGameScreen screen) {
@@ -77,6 +75,7 @@ public class LoadGameScreen extends FootballGameScreen {
     //gets save name, time/date etc and adds to list box for each save.
     private void setupSavesListBox(){
         lbxGameSaves.clear();
+        mGame.initialiseNewGame(1);
         mGame.setXp(20000);
     }
 
