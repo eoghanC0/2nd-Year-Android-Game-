@@ -10,7 +10,9 @@ import android.graphics.BitmapFactory.Options;
 import android.media.SoundPool;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,7 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import uk.ac.qub.eeecs.gage.R;
 import uk.ac.qub.eeecs.gage.engine.audio.Music;
@@ -176,24 +180,37 @@ public class FileIO {
     /**
      * @return a string (i.e. the data stored in the file)
      */
-    public String readFile(String fileName) throws IOException {
-        File file = new File(mContext.getFilesDir().getPath() + File.separator + fileName);
-        if (file != null) {
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
+    public String readFile(int saveSlot) throws IOException {
+        File dir = new File(mContext.getFilesDir().getPath());
+        for (File file : dir.listFiles()) {
+            if (file.getName().contains("ID_" + saveSlot)) {
+                FileReader fileReader = new FileReader(file);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
 
-            while ((receiveString = bufferedReader.readLine()) != null) {
-                stringBuilder.append(receiveString);
+                while ((receiveString = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(receiveString);
+                }
+                bufferedReader.close();
+                fileReader.close();
+                return stringBuilder.toString();
             }
-            bufferedReader.close();
-            fileReader.close();
-            Log.i("READ:", "Read Successful");
-            return stringBuilder.toString();
         }
         Log.e("Error", "File not found");
         return "";
+    }
+
+    public ArrayList<String> getSaveFileNames() {
+        ArrayList<String> fileNames = new ArrayList<>();
+        File dir = new File(mContext.getFilesDir().getPath());
+        for (File file : dir.listFiles()) {
+            if (file.getName().contains("ID_")) {
+                fileNames.add(file.getName());
+            }
+        }
+        Collections.sort(fileNames);
+        return fileNames;
     }
 
     /**
@@ -207,33 +224,28 @@ public class FileIO {
         outWriter.append(data);
         outWriter.close();
         out.close();
-        Log.i("SAVE:", "Save Successful");
     }
 
-    /*
-    Get all of the files stored in external storage
+    /**
+     * @param gameID The gameID of the game save that needs to be deleted
      */
-    public ArrayList<File> getFiles() {
-        ArrayList<File> files = new ArrayList<>();
-        File dir = new File(mContext.getFilesDir().getPath() + File.separator);
-        File[] items = dir.listFiles();
-        if (items != null) {
-            for (File f : items) {
-                if (f.isFile()) files.add(f);
+    public void deleteSaveByGameID(int gameID) {
+        File dir = new File(mContext.getFilesDir().getPath());
+        for (File file : dir.listFiles()) {
+            if (file.getName().contains("ID_" + gameID)) {
+                file.delete();
+                break;
             }
         }
-        return files;
     }
 
-    /*
-    Get the names of all files stored in external storage
+    /**
+     * @param fileName The name of the game save that needs to be deleted
      */
-    public ArrayList<String> getFileList() {
-        ArrayList<String> files = new ArrayList<>();
-        for (File f : getFiles()) {
-            files.add(f.getName());
-        }
-        return files;
+    public void deleteSaveByName(String fileName) {
+        File file = new File(mContext.getFilesDir().getPath() + File.separator + fileName);
+        if (file.delete())
+            Toast.makeText(mContext, "Game Deleted", Toast.LENGTH_SHORT).show();
     }
 
     // /////////////////////////////////////////////////////////////////////////

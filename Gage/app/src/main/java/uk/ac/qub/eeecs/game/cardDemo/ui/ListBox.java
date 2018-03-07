@@ -82,7 +82,7 @@ public class ListBox extends GameObject {
         this.selectedIndex = -1;
         this.backColor = Color.WHITE;
         this.borderColor = Color.BLACK;
-        this.selectionColor = Color.BLUE;
+        this.selectionColor = Color.argb(200,255,160,122);
         this.textColor = Color.BLACK;
         loadAssets();
         btnPreviousPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y - mBound.halfHeight + ITEM_HEIGHT/2, 60,50, "upArrow","upArrowActive", gameScreen);
@@ -221,7 +221,6 @@ public class ListBox extends GameObject {
         Paint paint = mGameScreen.getGame().getPaint(); //Get the game's paint object
 
         //Draw the listbox itself
-        paint.reset();
         paint.setColorFilter(new LightingColorFilter(backColor, 0));
         graphics2D.drawBitmap(mBitmap, null, drawScreenRect, paint);
 

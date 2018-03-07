@@ -148,7 +148,7 @@ public class MatchEvent extends GameObject{
 
     private void selectPlayers(){
         Card playerCard = cardHolder1.getCard();
-        Card cpuCard = new Card(100f, 100f, 100f, mGameScreen, true, 80, 90 );
+        Card cpuCard = new Card(mGameScreen, true, 80, 90 );
 
         cardHolder2.setCard(cpuCard);
         playersChosen = true;

@@ -334,17 +334,17 @@ public class HorizontalCardScroller extends GameObject {
      */
     public void addTestData() {
         Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "1", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "2", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "3", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "4", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "5", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "6", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "7", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "8", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "9", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "10", 100));
-        addScrollerItem(new Card(position.x, position.y,dimensions.y * 2, mGameScreen, "11", 100));
+        addScrollerItem(new Card(mGameScreen, "1", 100));
+        addScrollerItem(new Card(mGameScreen,"2", 100));
+        addScrollerItem(new Card(mGameScreen,"3", 100));
+        addScrollerItem(new Card(mGameScreen,"4", 100));
+        addScrollerItem(new Card(mGameScreen,"5", 100));
+        addScrollerItem(new Card(mGameScreen,"6", 100));
+        addScrollerItem(new Card(mGameScreen,"7", 100));
+        addScrollerItem(new Card(mGameScreen,"8", 100));
+        addScrollerItem(new Card(mGameScreen,"9", 100));
+        addScrollerItem(new Card(mGameScreen,"10", 100));
+        addScrollerItem(new Card(mGameScreen,"11", 100));
     }
 
     /**
@@ -832,7 +832,7 @@ public class HorizontalCardScroller extends GameObject {
             return;
         }
 
-        cardScrollerItems.set(selectedItemIndex, new Card(position.x, position.y,maxItemDimensions.y * 2f, mGameScreen, cardScrollerItems.get(cardScrollerItems.size() - 1).getPlayerID(), 100));
+        cardScrollerItems.set(selectedItemIndex, new Card(mGameScreen, cardScrollerItems.get(cardScrollerItems.size() - 1).getPlayerID(), 100));
         cardScrollerItems.get(selectedItemIndex).position = new Vector2(movedCardOriginalPosition);
 
         // Set position of new card to that of the original position

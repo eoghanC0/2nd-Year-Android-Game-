@@ -19,6 +19,7 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
+import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 import uk.ac.qub.eeecs.gage.world.Sprite;
@@ -27,7 +28,7 @@ import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.DOUBLE_TAP;
 import static uk.ac.qub.eeecs.gage.engine.input.TouchEvent.TOUCH_DRAGGED;
 
 
-public class Card extends Sprite {
+public class Card extends GameObject {
     // ////////////////////////////////////////////////
     // Constants
     // /////////////////////////////////////////////////
@@ -118,9 +119,9 @@ public class Card extends Sprite {
     // /////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////
-    public Card(float startX, float startY, float height, GameScreen gameScreen, String playerID, int fitness) {
+    public Card(GameScreen gameScreen, String playerID, int fitness) {
         //The aspect ratio of the card is 225/355
-        super(startX, startY, height * 225/355, height, null, gameScreen);
+        super(100, 100, 225, 355, null, gameScreen);
         this.fitness = fitness;
         this.playerID = playerID;
         try {
@@ -130,9 +131,9 @@ public class Card extends Sprite {
         }
     }
 
-    public Card(float startX, float startY, float height, GameScreen gameScreen, boolean rare, int minRating, int maxRating) {
+    public Card(GameScreen gameScreen, boolean rare, int minRating, int maxRating) {
         //The aspect ratio of the card is 225/355
-        super(startX, startY, height * 225/355, height, null, gameScreen);
+        super(100, 100, 225, 355, null, gameScreen);
         try {
             JSONArray playersArray = getPlayersArray();
             ArrayList<String> relevantPlayerIDs = getRelevantPlayerIDs(rare, minRating, maxRating,null, playersArray);
@@ -260,10 +261,21 @@ public class Card extends Sprite {
         this.draggingEnabled = value;
     }
 
+    public void setGameScreen(GameScreen gameScreen) {
+        mGameScreen = gameScreen;
+    }
+
 
     // ///////////////////////////////////////////////////////////
     // Methods
     // ///////////////////////////////////////////////////////////
+
+    public JSONObject getSaveDetails() throws JSONException{
+        JSONObject card = new JSONObject();
+        card.put("playerID", playerID);
+        card.put("fitness", fitness);
+        return card;
+    }
 
     private JSONArray getPlayersArray() throws JSONException {
         JSONObject playerJson = new JSONObject(assetManager.readAsset("player_json/all_cards.json"));
@@ -277,9 +289,8 @@ public class Card extends Sprite {
             if (playersArray.getJSONObject(i).getBoolean("rare") == rare &&
                     playersArray.getJSONObject(i).getInt("rating") >= minRating &&
                     playersArray.getJSONObject(i).getInt("rating") <= maxRating) {
-                if (playerPosition == null || playerPosition.equals("")) {
-                    playerIDs.add(playersArray.getJSONObject(i).getString("id"));
-                } else if (playersArray.getJSONObject(i).getString("position").equals(playerPosition)) {
+                if ((playerPosition == null || playerPosition.equals(""))
+                        || playersArray.getJSONObject(i).getString("position").equals(playerPosition)) {
                     playerIDs.add(playersArray.getJSONObject(i).getString("id"));
                 }
             }
@@ -343,39 +354,51 @@ public class Card extends Sprite {
             switch (attribute.getString("name")) {
                 case "PAC":
                     pace = attribute.getInt("value");
+                    diving = pace/2;
                     break;
                 case "SHO":
                     shooting = attribute.getInt("value");
+                    handling = shooting/2;
                     break;
                 case "PAS":
                     passing = attribute.getInt("value");
+                    kicking = passing/2;
                     break;
                 case "DRI":
                     dribbling = attribute.getInt("value");
+                    reflexes = dribbling/2;
                     break;
                 case "DEF":
                     defending = attribute.getInt("value");
+                    speed = defending/2;
                     break;
                 case "HEA":
                     heading = attribute.getInt("value");
+                    positioning = heading/2;
                     break;
                 case "DIV":
                     diving = attribute.getInt("value");
+                    pace = diving/2;
                     break;
                 case "HAN":
                     handling = attribute.getInt("value");
+                    shooting = handling/2;
                     break;
                 case "KIC":
                     kicking = attribute.getInt("value");
+                    passing = kicking/2;
                     break;
                 case "REF":
                     reflexes = attribute.getInt("value");
+                    dribbling = reflexes/2;
                     break;
                 case "SPD":
                     speed = attribute.getInt("value");
+                    defending = speed/2;
                     break;
                 case "POS":
                     positioning = attribute.getInt("value");
+                    heading = positioning/2;
                     break;
             }
         }

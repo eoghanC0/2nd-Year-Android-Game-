@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,20 +79,6 @@ public class AssetStore {
     }
 
     /**
-     * @return an array of all files stores in external storage
-     */
-    public ArrayList<File> getFiles() {
-        return mFileIO.getFiles();
-    }
-
-    /**
-     * @return a list of all the names of the files stored in external storage
-     */
-    public ArrayList<String> getFileList() {
-        return mFileIO.getFileList();
-    }
-
-    /**
      * @param fileName filepath given to the file to be written
      * @param data the data to be written to the file
      */
@@ -104,16 +91,35 @@ public class AssetStore {
     }
 
     /**
-     * @param fileName filepath given to the file to be written
+     * @param saveSlot filepath given to the file to be written
      */
-    public String readFile(String fileName) {
+    public String readSave(int saveSlot) {
         try {
-            return mFileIO.readFile(fileName);
+            return mFileIO.readFile(saveSlot);
         } catch (IOException e) {
             Log.e("Error", "IOException", e);
             return "";
         }
     }
+
+    public ArrayList<String> getSaveFiles() {
+        return mFileIO.getSaveFileNames();
+    }
+
+    /**
+     * @param gameID The gameID of the game file which has to be deleted
+     */
+    public void deleteSave(int gameID) {
+        mFileIO.deleteSaveByGameID(gameID);
+    }
+
+    /**
+     * @param fileName The name of the game file which has to be deleted
+     */
+    public void deleteSave(String fileName) {
+        mFileIO.deleteSaveByName(fileName);
+    }
+
 
     /**
      * Add the specified bitmap asset to the store

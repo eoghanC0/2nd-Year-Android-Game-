@@ -378,12 +378,12 @@ Log.d("Debug", "Draw");
         int highestRating = 0;
         for (int i = 0; i < packSizes; i++) {
             int rndPlayerID = rnd.nextInt(629);
-            packPlayers[i] = new Card(960, 378, 540, this, String.valueOf(rndPlayerID), 100);
+            packPlayers[i] = new Card(mGame.getScreenManager().getCurrentScreen(), String.valueOf(rndPlayerID), 100);
             if (packPlayers[i].isRare()) noOfRares = noOfRares + 1;
             if (noOfRares > 3 && packPlayers[i].isRare()) {
                 while (packPlayers[i].isRare()) {
                     rndPlayerID = rnd.nextInt(629);
-                    packPlayers[i] = new Card(960, 378, 540, this, String.valueOf(rndPlayerID), 100);
+                    packPlayers[i] = new Card(mGame.getScreenManager().getCurrentScreen(),String.valueOf(rndPlayerID), 100);
                 }
             }
 
