@@ -2,6 +2,7 @@ package uk.ac.qub.eeecs.game.cardDemo.ui;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -71,10 +72,6 @@ public class popUpWindow extends GameObject {
         No.draw(elapsedTime, graphics2D);
     }
 
-    public  void clearPopUp(IGraphics2D graphics2D) {
-   message = "";
-    }
-
     public boolean getYesorNo() {
         return yesOrNo;
     }
@@ -86,5 +83,13 @@ public class popUpWindow extends GameObject {
     public void setYesorNo(boolean resetYesOrNo) {yesOrNo = resetYesOrNo; }
 
     public void setHasNoBeenPressed(boolean resethasNoBeenPressed) {hasNoBeenPressed = resethasNoBeenPressed; }
+
+    public void disableButton1() {Yes.setEnabled(false);}
+
+    public void disableButton2() {No.setEnabled(false);}
+
+    public void enableButton1() {Yes.setEnabled(true);}
+
+    public void enableButton2() {No.setEnabled(true);}
 
 }
