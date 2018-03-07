@@ -60,16 +60,13 @@ public class PackScreen extends FootballGameScreen {
     private  int newXP = 0;
 
     // Define the spacing that will be used to position the buttons
-    int spacingX = getGame().getScreenWidth() / 4;
-    int spacingY = getGame().getScreenHeight() / 8;
+    int screenWidth = getGame().getScreenWidth();
+    int screenHeight = getGame().getScreenHeight();
 
     private Card highestRatedCard;
 
-    private Bitmap baseBitmap;
-    private Bitmap backOfCard;
-
     private popUpWindow packPopUp;
-private popUpWindow notEnoughCoinsPopUp;
+    private popUpWindow notEnoughCoinsPopUp;
 
     private HorizontalCardScroller horizontalCardScroller;
 
@@ -93,53 +90,35 @@ private popUpWindow notEnoughCoinsPopUp;
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
 
-        assetManager.loadAndAddBitmap("Help", "img/Help.jpg");
-        assetManager.loadAndAddBitmap("OptionsIcon", "img/options.png");
-        assetManager.loadAndAddBitmap("musicIcon", "img/music.png");
         assetManager.loadAndAddBitmap("packsIcon", "img/ball2.jpg");
-        assetManager.loadAndAddBitmap("menuButtons", "img/MenuButton.png");
         assetManager.loadAndAddBitmap("LeftArrow", "img/LeftArrow.png");
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
         assetManager.loadAndAddBitmap("RightArrow", "img/RightArrow.png");
         assetManager.loadAndAddBitmap("RightArrowActive", "img/RightArrowActive.png");
-        assetManager.loadAndAddBitmap("packScreenBG", "img/packScreenBG.png");
-        background = assetManager.getBitmap("packScreenBG");
+        background = assetManager.getBitmap("MainBackground");
 
         // Create the trigger buttons
-        mMenuButton = new PushButton(
-                (spacingX / 2) * 0.8f, (spacingY / 2) * 15, spacingX / 2, spacingY, "LeftArrow", "LeftArrowActive", this);
-        mSquadsButton = new PushButton(
-                (spacingX / 2) * 7.2f, (spacingY / 2) * 15, spacingX / 2, spacingY, "RightArrow", "RightArrowActive", this);
-        m100PackButton = new PushButton(
-                spacingX / 2, (spacingY / 2) * 12, spacingX, spacingY * 2, "menuButtons", this);
-        m300PackButton = new PushButton(
-                (spacingX / 2) * 3, (spacingY / 2) * 12, spacingX, spacingY * 2, "menuButtons", this);
-        m500PackButton = new PushButton(
-                (spacingX / 2) * 5, (spacingY / 2) * 12, spacingX, spacingY * 2, "menuButtons", this);
-        m1000PackButton = new PushButton(
-                (spacingX / 2) * 7, (spacingY / 2) * 12, spacingX, spacingY * 2, "menuButtons", this);
+        mMenuButton = new PushButton(screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "ArrowBack", "ArrowBackPushed", this);
+        mSquadsButton = new PushButton(screenWidth * 0.925f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "ArrowForward", "ArrowForwardPushed", this);
+        m100PackButton = new PushButton(screenWidth * 0.14f, screenHeight * 0.75f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m300PackButton = new PushButton(screenWidth * 0.38f, screenHeight * 0.75f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m500PackButton = new PushButton(screenWidth * 0.62f, screenHeight * 0.75f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m1000PackButton = new PushButton(screenWidth * 0.86f, screenHeight * 0.75f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
 
-        m100PackButton.setButtonText("1 Player Pack  Cost:100xp", 32, Color.WHITE);
-        m300PackButton.setButtonText("3 Player Pack  Cost:300xp", 32, Color.WHITE);
-        m500PackButton.setButtonText("5 Player Pack  Cost:500xp", 32, Color.WHITE);
-        m1000PackButton.setButtonText("11 Player Pack  Cost:1000xp", 32, Color.WHITE);
+        m100PackButton.setButtonText("1 Player Pack | 100xp", 64, Color.WHITE);
+        m300PackButton.setButtonText("3 Player Pack  | 300xp", 64, Color.WHITE);
+        m500PackButton.setButtonText("5 Player Pack  | 500xp", 64, Color.WHITE);
+        m1000PackButton.setButtonText("11 Player Pack | 1000xp", 64, Color.WHITE);
 
         m500PackButton.setEnabled(true);
         m300PackButton.setEnabled(true);
 
-        horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this);
-        packPopUp = new popUpWindow(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this, "Are you sure you want to buy this pack?", "Yes", "No");
-        notEnoughCoinsPopUp = new popUpWindow(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this, "You dont have enough XP to buy this", "Cancel", "Menu");
-
-        assetManager.loadAndAddBitmap("BaseBitmap", "img/CardFront.png");
-        baseBitmap = assetManager.getBitmap("BaseBitmap");
-        if (baseBitmap == null)
-            Log.d("DEBUG", "HorizontalCardScroller: NO BASE BITMAP");
-        assetManager.loadAndAddBitmap("CardBack", "img/CardBack.png");
-        backOfCard = assetManager.getBitmap("CardBack");
+        horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() / 2,  screenHeight * 0.4f, mGame.getScreenWidth(), screenHeight * 0.6f, this);
+        packPopUp = new popUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "Are you sure you want to buy this pack?", "Yes", "No");
+        notEnoughCoinsPopUp = new popUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "You dont have enough XP to buy this", "Cancel", "Menu");
     }
 
-    public PackScreen(FootballGame game, Boolean isPack100Pressed, Boolean isPack300Pressed, Boolean isPack500Pressed, Boolean isPack1000Pressed) {
+    /*public PackScreen(FootballGame game, Boolean isPack100Pressed, Boolean isPack300Pressed, Boolean isPack500Pressed, Boolean isPack1000Pressed) {
         super("PackScreen", game);
         this.pack100Pressed = isPack100Pressed;
         this.pack300Pressed = isPack300Pressed;
@@ -184,7 +163,7 @@ private popUpWindow notEnoughCoinsPopUp;
         baseBitmap = assetManager.getBitmap("BaseBitmap");
         if (baseBitmap == null)
             Log.d("DEBUG", "HorizontalCardScroller: NO BASE BITMAP");
-    }
+    }*/
 
     // /////////////////////////////////////////////////////////////////////////
     // Methods
@@ -231,9 +210,7 @@ private popUpWindow notEnoughCoinsPopUp;
             else {
                 notEnoughCoins = true;
             }
-        //changeToScreen(new packScreenSplashScreen(mGame,highestRatedCard, pack100Pressed,pack300Pressed,pack500Pressed,pack1000Pressed));
         } else if (m300PackButton.isPushTriggered()) {
-            //changeToScreen(new SplashScreen1(mGame));
             pack100Pressed = false;
             pack300Pressed = true;
             pack500Pressed = false;
@@ -263,10 +240,7 @@ private popUpWindow notEnoughCoinsPopUp;
             else {
                 notEnoughCoins = true;
             }
-        //    horizontalCardScroller.setMultiMode(true, 80);
         } else if (m1000PackButton.isPushTriggered()) {
-            //changeToScreen(new SplashScreen1(mGame));
-// check if player has enough xp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             pack100Pressed = false;
             pack300Pressed = false;
             pack500Pressed = false;
@@ -297,9 +271,7 @@ private popUpWindow notEnoughCoinsPopUp;
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         // Clear the screen and draw the buttons
-        graphics2D.clear(Color.WHITE);
         Paint myPaint = mGame.getPaint();
-        myPaint.setAlpha(100);
         myPaint.setTextSize(72);
 
         graphics2D.drawBitmap(background, null, backGroundRectangle, myPaint);

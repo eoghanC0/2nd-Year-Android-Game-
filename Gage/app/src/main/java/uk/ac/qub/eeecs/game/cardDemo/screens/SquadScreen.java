@@ -3,14 +3,12 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.SquadSelectionPane;
 
 
@@ -32,7 +30,7 @@ public class SquadScreen extends FootballGameScreen {
     public SquadScreen(FootballGame game) {
         super("SquadScreen", game);
         AssetStore assetManager = mGame.getAssetManager();
-        assetManager.loadAndAddBitmap("SquadBackground", "img/help-background.jpg");
+        assetManager.loadAndAddBitmap("SquadBackground", "img/MainBackground.jpg");
         background = assetManager.getBitmap("SquadBackground");
         selectionPane = new SquadSelectionPane(this);
     }

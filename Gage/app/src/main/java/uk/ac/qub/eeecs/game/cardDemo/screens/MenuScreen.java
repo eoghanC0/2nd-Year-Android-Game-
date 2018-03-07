@@ -66,9 +66,6 @@ public class MenuScreen extends FootballGameScreen {
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
-
-        assetManager.loadAndAddBitmap("menuScreenBackground", "img/MainBackground.jpg");
-        background = assetManager.getBitmap("menuScreenBackground");
         assetManager.loadAndAddBitmap("HelpIcon", "img/HelpIcon.png");
         assetManager.loadAndAddBitmap("HelpIconPushed", "img/HelpIconPushed.png");
         assetManager.loadAndAddBitmap("OptionsIcon", "img/Button.png");
@@ -81,6 +78,10 @@ public class MenuScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("MenuButtonPushed", "img/MenuButtonPushed.png");
         assetManager.loadAndAddBitmap("ArrowBack", "img/ArrowBack.png");
         assetManager.loadAndAddBitmap("ArrowBackPushed", "img/ArrowBackPushed.png");
+        assetManager.loadAndAddBitmap("ArrowForward", "img/ArrowForward.png");
+        assetManager.loadAndAddBitmap("ArrowForwardPushed", "img/ArrowForwardPushed.png");
+
+        background = assetManager.getBitmap("MainBackground");
 
         // Define the spacing that will be used to position the buttons
         int screenWidth = game.getScreenWidth();

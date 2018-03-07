@@ -9,11 +9,13 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Vector;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
+import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
@@ -32,19 +34,25 @@ public class LoadGameScreen extends FootballGameScreen {
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
+    private Paint myPaint = mGame.getPaint();
+
+    private Bitmap title;
 
     //TODO: Erase button
 
     public LoadGameScreen(FootballGame game) {
         super("LoadGameScreen", game);
-        lbxGameSaves = new ListBox(mGame.getScreenWidth() * 0.2f,mGame.getScreenHeight() * 0.650f,600,300, this);
+        lbxGameSaves = new ListBox(mGame.getScreenWidth() * 0.5f,mGame.getScreenHeight() * 0.5f,1000,300, this);
+        lbxGameSaves.setSelectionColor(Color.CYAN);
         AssetStore assetManager = mGame.getAssetManager();
-        assetManager.loadAndAddBitmap("menuScreenBackground", "img/help-background.jpg");
-        background = assetManager.getBitmap("menuScreenBackground");
+        assetManager.loadAndAddBitmap("MainBackground", "img/MainBackground.jpg");
+        background = assetManager.getBitmap("MainBackground");
         assetManager.loadAndAddBitmap("NextButton", "img/PlayIcon.png");
         assetManager.loadAndAddBitmap("NextButtonActive", "img/PlayIconPushed.png");
         assetManager.loadAndAddBitmap("DeleteIcon", "img/DeleteIcon.png");
         assetManager.loadAndAddBitmap("DeleteIconPushed", "img/DeleteIconPushed.png");
+        assetManager.loadAndAddBitmap("Title", "img/Title.png");
+        title = assetManager.getBitmap("Title");
 
         //TODO: Remove below method
         createTestSaves();
@@ -56,7 +64,9 @@ public class LoadGameScreen extends FootballGameScreen {
         mNextButton = new PushButton(
                 width * 0.9f, height * 0.8f, height / 4.0f, height / 4.0f, "NextButton","NextButtonActive", this );
         mDeleteButton = new PushButton(
-                width * 0.9f, height * 0.5f, height / 4.0f, height / 4.0f, "DeleteIcon","DeleteIconPushed", this );
+                width * 0.1f, height * 0.8f, height / 4.0f, height / 4.0f, "DeleteIcon","DeleteIconPushed", this );
+
+
     }
 
     private void changeToScreen(FootballGameScreen screen) {
@@ -130,19 +140,23 @@ public class LoadGameScreen extends FootballGameScreen {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        Paint myPaint = mGame.getPaint();
         graphics2D.drawBitmap(background, null, backGroundRectangle,myPaint);
         lbxGameSaves.draw(elapsedTime, graphics2D);
         mNextButton.draw(elapsedTime, graphics2D,null,null);
         mDeleteButton.draw(elapsedTime, graphics2D,null,null);
 
-        //Title
-        myPaint.setTextSize(200.0f);
-        myPaint.setTextAlign(Paint.Align.CENTER);
-        graphics2D.drawText("Football Trumps", mGame.getScreenWidth() * 0.5f + 6.0f, mGame.getScreenHeight() * 0.2f + 4.0f, myPaint);
-        myPaint.setColor(Color.rgb(10,100,250));
-        myPaint.setFakeBoldText(true);
-        myPaint.setStyle(Paint.Style.FILL);
-        graphics2D.drawText("Football Trumps", mGame.getScreenWidth() * 0.5f, mGame.getScreenHeight() * 0.2f, myPaint);
+        graphics2D.drawBitmap(title, null, new Rect(5,50,mGame.getScreenWidth() - 5, (int) (mGame.getScreenHeight() * 0.2) - 5), myPaint);
+    }
+
+    /**
+     * Gets area occupied by block of text
+     * @param paint
+     * @param text
+     * @return area occupied
+     */
+    private Rect getTextBounds(Paint paint, String text) {
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        return bounds;
     }
 }
