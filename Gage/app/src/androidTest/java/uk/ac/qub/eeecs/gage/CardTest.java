@@ -22,6 +22,10 @@ import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by stephenmcveigh on 15/02/2018.
  */
@@ -45,7 +49,7 @@ public class CardTest {
 
         mockScreen = new HelpScreen(game);
 
-        testCard = new Card(500,500,355, mockScreen, "1", 100);
+        testCard = new Card(500,500,355, mockScreen, "0", 100);
     }
 
     //////////////////////////////////////////////////////
@@ -53,53 +57,53 @@ public class CardTest {
     //////////////////////////////////////////////////////
     @Test
     public void test_Constructor_1_width() {
-        assert(testCard.getBound().getWidth() == 225);
+        assertEquals(225, testCard.getBound().getWidth(), 0);
     }
 
     @Test
     public void test_Constructor_1_fitness() {
-        assert(testCard.fitness == 100);
+        assertEquals(100,testCard.fitness);
     }
 
     @Test
     public void test_Constructor_1_playerID() {
-        assert(testCard.playerID.equals("1"));
+        assertEquals("0", testCard.playerID);
     }
 
     @Test
     public void test_Copy_Constructor_positionX() {
         Card copyCard = new Card(testCard);
-        assert(testCard.position.x == copyCard.position.x);
+        assertEquals(testCard.position.x, copyCard.position.x, 0);
     }
 
     @Test
     public void test_Copy_Constructor_positionY() {
         Card copyCard = new Card(testCard);
-        assert(testCard.position.y == copyCard.position.y);
+        assertEquals(testCard.position.y, copyCard.position.y, 0);
     }
 
     @Test
     public void test_Copy_Constructor_width() {
         Card copyCard = new Card(testCard);
-        assert(testCard.getBound().getWidth() == copyCard.getBound().getWidth());
+        assertEquals(testCard.getBound().getWidth(), copyCard.getBound().getWidth(), 0);
     }
 
     @Test
     public void test_Copy_Constructor_height() {
         Card copyCard = new Card(testCard);
-        assert(testCard.getBound().getHeight() == copyCard.getBound().getHeight());
+        assertEquals(testCard.getBound().getHeight(), copyCard.getBound().getHeight(), 0);
     }
 
     @Test
     public void test_Copy_Constructor_fitness() {
         Card copyCard = new Card(testCard);
-        assert(testCard.fitness == copyCard.fitness);
+        assertEquals(testCard.fitness, copyCard.fitness, 0);
     }
 
     @Test
     public void test_Copy_Constructor_playerID() {
         Card copyCard = new Card(testCard);
-        assert(testCard.playerID.equals(copyCard.playerID));
+        assertEquals(testCard.playerID, copyCard.playerID);
     }
 
     // ///////////////////////////////////////////////////////////
@@ -108,93 +112,93 @@ public class CardTest {
 
     @Test
     public void test_getPlayerID() {
-        assert(testCard.playerID == testCard.getPlayerID());
+        assertEquals(testCard.playerID, testCard.getPlayerID());
     }
 
     @Test
     public void test_getDisplayName() {
-        assert(testCard.displayName == testCard.getDisplayName());
+        assertEquals(testCard.displayName, testCard.getDisplayName());
     }
 
     @Test
     public void test_getFirstName() {
-        assert(testCard.firstName == testCard.getFirstName());
+        assertEquals(testCard.firstName, testCard.getFirstName());
     }
     @Test
     public void test_getLastName() {
-        assert(testCard.lastName == testCard.getLastName());
+        assertEquals(testCard.lastName, testCard.getLastName());
     }
     @Test
     public void test_getClub() {
-        assert(testCard.club == testCard.getClub());
+        assertEquals(testCard.club, testCard.getClub());
     }
     @Test
     public void test_getNation() {
-        assert(testCard.nation == testCard.getNation());
+        assertEquals(testCard.nation, testCard.getNation());
     }
     @Test
     public void test_getPlayerPosition() {
-        assert(testCard.playerPosition == testCard.getPlayerPosition());
+        assertEquals(testCard.playerPosition, testCard.getPlayerPosition());
     }
     @Test
     public void test_getPace() {
-        assert(testCard.pace == testCard.getPace());
+        assertEquals(testCard.pace, testCard.getPace());
     }
     @Test
     public void test_getShooting() {
-        assert(testCard.shooting == testCard.getShooting());
+        assertEquals(testCard.shooting, testCard.getShooting());
     }
     @Test
     public void test_getPassing() {
-        assert(testCard.passing == testCard.getPassing());
+        assertEquals(testCard.passing, testCard.getPassing());
     }
     @Test
     public void test_getDribbling() {
-        assert(testCard.dribbling == testCard.getDribbling());
+        assertEquals(testCard.dribbling, testCard.getDribbling());
     }
     @Test
     public void test_getDefending() {
-        assert(testCard.defending == testCard.getDefending());
+        assertEquals(testCard.defending, testCard.getDefending());
     }
     @Test
     public void test_getHeading() {
-        assert(testCard.heading == testCard.getHeading());
+        assertEquals(testCard.heading, testCard.getHeading());
     }
     @Test
     public void test_getDiving() {
-        assert(testCard.diving == testCard.getDiving());
+        assertEquals(testCard.diving, testCard.getDiving());
     }
     @Test
     public void test_getHandling() {
-        assert(testCard.handling == testCard.getHandling());
+        assertEquals(testCard.handling, testCard.getHandling());
     }
     @Test
     public void test_getKicking() {
-        assert(testCard.kicking == testCard.getKicking());
+        assertEquals(testCard.kicking, testCard.getKicking());
     }
     @Test
     public void test_getReflexes() {
-        assert(testCard.reflexes == testCard.getReflexes());
+        assertEquals(testCard.reflexes, testCard.getReflexes());
     }
     @Test
     public void test_getSpeed() {
-        assert(testCard.speed == testCard.getSpeed());
+        assertEquals(testCard.speed, testCard.getSpeed());
     }
     @Test
     public void test_getPositioning() {
-        assert(testCard.positioning == testCard.getPositioning());
+        assertEquals(testCard.positioning, testCard.getPositioning());
     }
     @Test
     public void test_getRating() {
-        assert(testCard.rating == testCard.getRating());
+        assertEquals(testCard.rating, testCard.getRating());
     }
     @Test
     public void test_isRare() {
-        assert(testCard.rare == testCard.isRare());
+        assertEquals(testCard.rare, testCard.isRare());
     }
     @Test
     public void test_getFitness() {
-        assert(testCard.fitness == testCard.getFitness());
+        assertEquals(testCard.fitness, testCard.getFitness());
     }
 
     // ///////////////////////////////////////////////////////////
@@ -204,26 +208,26 @@ public class CardTest {
     @Test
     public void test_setFitness() {
         testCard.setFitness(80);
-        assert(testCard.fitness == 80);
+        assertEquals(80, testCard.fitness);
     }
 
     @Test
     public void test_setHeight_halfHeight() {
         testCard.setHeight(710);
-        assert(testCard.getBound().halfHeight == 355);
+        assertEquals(355, testCard.getBound().halfHeight, 0);
     }
 
     @Test
     public void test_setHeight_halfWidth() {
         testCard.setHeight(710);
-        assert(testCard.getBound().halfWidth == 112.5);
+        assertEquals(225, testCard.getBound().halfWidth, 0);
     }
 
     @Test
     public void test_setDraggingEnabled() {
         testCard.draggingEnabled = false;
         testCard.setDraggingEnabled(true);
-        assert(testCard.draggingEnabled);
+        assertTrue(testCard.draggingEnabled);
     }
 
     // ///////////////////////////////////////////////////////////
@@ -235,10 +239,10 @@ public class CardTest {
         JSONArray testArray;
         try {
             testArray = testCard.getPlayersArray();
-            assert (testArray != null);
+            assertNotNull(testArray);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -247,10 +251,10 @@ public class CardTest {
         JSONArray testArray;
         try {
             testArray = testCard.getPlayersArray();
-            assert (testArray.length() > 0);
+            assertTrue(testArray.length() > 0);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -260,15 +264,14 @@ public class CardTest {
         try {
             int minRating = rand.nextInt(75);
             int maxRating = rand.nextInt(100 - minRating) + minRating;
-            String[] positions = {"", "Forward", "Midfield", "Defence", "GoalKeeper"};
-            int position = rand.nextInt(5);
-            boolean rare = rand.nextBoolean();
+            String[] positions = {"Forward", "Midfield", "Defence", "GoalKeeper"};
+            int position = rand.nextInt(4);
             testPlayers = testCard.getPlayersArray();
             ArrayList<String> relevantPlayerIDs = testCard.getRelevantPlayerIDs(true, minRating, maxRating, positions[position], testPlayers);
-            assert (relevantPlayerIDs.size() > 0);
+            assertTrue(relevantPlayerIDs.size() > 0);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -278,17 +281,16 @@ public class CardTest {
         try {
             int minRating = rand.nextInt(75);
             int maxRating = rand.nextInt(100 - minRating) + minRating;
-            String[] positions = {"", "Forward", "Midfield", "Defence", "GoalKeeper"};
-            int position = rand.nextInt(5);
-            boolean rare = rand.nextBoolean();
+            String[] positions = {"Forward", "Midfield", "Defence", "GoalKeeper"};
+            int position = rand.nextInt(4);
             testPlayers = testCard.getPlayersArray();
             ArrayList<String> relevantPlayerIDs = testCard.getRelevantPlayerIDs(true, minRating, maxRating, positions[position], testPlayers);
             for (int i = 0; i < relevantPlayerIDs.size(); i++) {
-                assert (testPlayers.getJSONObject(Integer.parseInt(relevantPlayerIDs.get(i))).getInt("rating") >= minRating);
+                assertTrue(testPlayers.getJSONObject(Integer.parseInt(relevantPlayerIDs.get(i))).getInt("rating") >= minRating);
             }
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -298,17 +300,16 @@ public class CardTest {
         try {
             int minRating = rand.nextInt(75);
             int maxRating = rand.nextInt(100 - minRating) + minRating;
-            String[] positions = {"", "Forward", "Midfield", "Defence", "GoalKeeper"};
-            int position = rand.nextInt(5);
-            boolean rare = rand.nextBoolean();
+            String[] positions = {"Forward", "Midfield", "Defence", "GoalKeeper"};
+            int position = rand.nextInt(4);
             testPlayers = testCard.getPlayersArray();
             ArrayList<String> relevantPlayerIDs = testCard.getRelevantPlayerIDs(true, minRating, maxRating, positions[position], testPlayers);
             for (int i = 0; i < relevantPlayerIDs.size(); i++) {
-                assert (testPlayers.getJSONObject(Integer.parseInt(relevantPlayerIDs.get(i))).getInt("rating") <= maxRating);
+                assertTrue(testPlayers.getJSONObject(Integer.parseInt(relevantPlayerIDs.get(i))).getInt("rating") <= maxRating);
             }
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -318,17 +319,17 @@ public class CardTest {
         try {
             int minRating = rand.nextInt(75);
             int maxRating = rand.nextInt(100 - minRating) + minRating;
-            String[] positions = {"", "Forward", "Midfield", "Defence", "GoalKeeper"};
-            int position = rand.nextInt(5);
+            String[] positions = {"Forward", "Midfield", "Defence", "GoalKeeper"};
+            int position = rand.nextInt(4);
             boolean rare = rand.nextBoolean();
             testPlayers = testCard.getPlayersArray();
-            ArrayList<String> relevantPlayerIDs = testCard.getRelevantPlayerIDs(true, minRating, maxRating, positions[position], testPlayers);
+            ArrayList<String> relevantPlayerIDs = testCard.getRelevantPlayerIDs(rare, minRating, maxRating, positions[position], testPlayers);
             for (int i = 0; i < relevantPlayerIDs.size(); i++) {
-                assert (testPlayers.getJSONObject(Integer.parseInt(relevantPlayerIDs.get(i))).getBoolean("rare") == rare);
+                assertEquals(rare, testPlayers.getJSONObject(Integer.parseInt(relevantPlayerIDs.get(i))).getBoolean("rare"));
             }
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -338,17 +339,16 @@ public class CardTest {
         try {
             int minRating = rand.nextInt(75);
             int maxRating = rand.nextInt(100 - minRating) + minRating;
-            String[] positions = {"", "Forward", "Midfield", "Defence", "GoalKeeper"};
-            int position = rand.nextInt(5);
-            boolean rare = rand.nextBoolean();
+            String[] positions = {"Forward", "Midfield", "Defence", "GoalKeeper"};
+            int position = rand.nextInt(4);
             testPlayers = testCard.getPlayersArray();
             ArrayList<String> relevantPlayerIDs = testCard.getRelevantPlayerIDs(true, minRating, maxRating, positions[position], testPlayers);
             for (int i = 0; i < relevantPlayerIDs.size(); i++) {
-                assert (testPlayers.getJSONObject(Integer.parseInt(relevantPlayerIDs.get(i))).getString("position").equals(positions[position]));
+                assertEquals(positions[position], testPlayers.getJSONObject(Integer.parseInt(relevantPlayerIDs.get(i))).getString("position"));
             }
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -360,10 +360,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             String id = String.valueOf(rand.nextInt(629));
             player = testCard.getJSONPlayer(id,playersArray);
-            assert (player == playersArray.getJSONObject(Integer.parseInt(id)));
+            assertEquals(player, playersArray.getJSONObject(Integer.parseInt(id)));
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -373,12 +373,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateNames(player);
-            assert (testCard.playerID.equals("1"));
+            assertEquals("0", testCard.playerID);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -388,12 +388,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateNames(player);
-            assert (testCard.displayName.equals("Hazard"));
+            assertEquals("Hazard",testCard.displayName);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -403,12 +403,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateNames(player);
-            assert (testCard.firstName.equals("Eden"));
+            assertEquals("Eden", testCard.firstName);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -418,12 +418,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateNames(player);
-            assert (testCard.lastName.equals("Hazard"));
+            assertEquals("Hazard", testCard.lastName);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -435,10 +435,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("9",playersArray);
             testCard.populateNames(player);
-            assert (testCard.displayName.equals("David Silva"));
+            assertEquals("David Silva", testCard.displayName);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -450,10 +450,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("9",playersArray);
             testCard.populateNames(player);
-            assert (testCard.lastName.equals("Jimenez Silva"));
+            assertEquals("Jimenez Silva", testCard.lastName);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -463,12 +463,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateClubDetails(player);
-            assert (testCard.club.equals("Chelsea"));
+            assertEquals("Chelsea", testCard.club);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -478,12 +478,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateClubDetails(player);
-            assert (testCard.abbrClub.equals("Chelsea"));
+            assertEquals("Chelsea", testCard.abbrClub);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -493,12 +493,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateClubDetails(player);
-            assert (testCard.clubBadge != null);
+            assertNotNull(testCard.clubBadge);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -508,12 +508,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateNationDetails(player);
-            assert (testCard.nation.equals("Belgium"));
+            assertEquals("Belgium", testCard.nation);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -523,12 +523,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateNationDetails(player);
-            assert (testCard.abbrNation.equals("Belgium"));
+            assertEquals("Belgium", testCard.abbrNation);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -538,12 +538,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateNationDetails(player);
-            assert (testCard.nationFlag != null);
+            assertNotNull(testCard.nationFlag);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -553,12 +553,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populatePositionDetails(player);
-            assert (testCard.playerPosition.equals("Forward"));
+            assertEquals("Forward", testCard.playerPosition);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -568,12 +568,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populatePositionDetails(player);
-            assert (testCard.abbrPlayerPosition.equals("FWD"));
+            assertEquals("FWD",testCard.abbrPlayerPosition);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -585,10 +585,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("3",playersArray);
             testCard.populatePositionDetails(player);
-            assert (testCard.playerPosition.equals("Midfield"));
+            assertEquals("Midfield", testCard.playerPosition);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -600,10 +600,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("3",playersArray);
             testCard.populatePositionDetails(player);
-            assert (testCard.abbrPlayerPosition.equals("MID"));
+            assertEquals("MID", testCard.abbrPlayerPosition);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -615,10 +615,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("16",playersArray);
             testCard.populatePositionDetails(player);
-            assert (testCard.playerPosition.equals("Defence"));
+            assertEquals("Defence", testCard.playerPosition);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -630,10 +630,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("16",playersArray);
             testCard.populatePositionDetails(player);
-            assert (testCard.abbrPlayerPosition.equals("DEF"));
+            assertEquals("DEF", testCard.abbrPlayerPosition);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -645,10 +645,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("41",playersArray);
             testCard.populatePositionDetails(player);
-            assert (testCard.playerPosition.equals("GoalKeeper"));
+            assertEquals("GoalKeeper", testCard.playerPosition);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -660,10 +660,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("41",playersArray);
             testCard.populatePositionDetails(player);
-            assert (testCard.abbrPlayerPosition.equals("GK"));
+            assertEquals("GK", testCard.abbrPlayerPosition);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -673,12 +673,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.pace == 90);
+            assertEquals(90, testCard.pace);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -688,12 +688,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.shooting == 82);
+            assertEquals(82, testCard.shooting);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -703,12 +703,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.passing == 84);
+            assertEquals(84, testCard.passing);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -718,9 +718,9 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.dribbling == 92);
+            assertEquals(92, testCard.dribbling);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
             assert (false);
@@ -733,12 +733,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.defending == 32);
+            assertEquals(32, testCard.defending);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -748,12 +748,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.heading == 66);
+            assertEquals(66, testCard.heading);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -763,12 +763,12 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.rating == 90);
+            assertEquals(90, testCard.rating);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -780,10 +780,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("41",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.diving == 83);
+            assertEquals(83, testCard.diving);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -795,10 +795,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("41",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.handling == 82);
+            assertEquals(82, testCard.handling);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -810,10 +810,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("41",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.kicking == 82);
+            assertEquals(82, testCard.kicking);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -825,10 +825,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("41",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.reflexes == 86);
+            assertEquals(86, testCard.reflexes);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -840,10 +840,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("41",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.speed == 62);
+            assertEquals(62, testCard.speed);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -855,10 +855,10 @@ public class CardTest {
             playersArray = testCard.getPlayersArray();
             player = testCard.getJSONPlayer("41",playersArray);
             testCard.populateAttributeDetails(player);
-            assert (testCard.positioning == 80);
+            assertEquals(80, testCard.positioning);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -869,13 +869,13 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.headshot = null;
             testCard.populateHeadshot(player);
-            assert (testCard.headshot != null);
+            assertNotNull(testCard.headshot);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -885,13 +885,13 @@ public class CardTest {
         JSONObject player;
         try {
             playersArray = testCard.getPlayersArray();
-            player = testCard.getJSONPlayer("1",playersArray);
+            player = testCard.getJSONPlayer("0",playersArray);
             testCard.cardBackground = null;
             testCard.populateBackground(player);
-            assert (testCard.cardBackground != null);
+            assertNotNull(testCard.cardBackground);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -904,10 +904,10 @@ public class CardTest {
             player = testCard.getJSONPlayer("59",playersArray);
             testCard.cardBackground = null;
             testCard.populateBackground(player);
-            assert (testCard.cardBackground != null);
+            assertNotNull(testCard.cardBackground);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -920,10 +920,10 @@ public class CardTest {
             player = testCard.getJSONPlayer("61",playersArray);
             testCard.cardBackground = null;
             testCard.populateBackground(player);
-            assert (testCard.cardBackground != null);
+            assertNotNull(testCard.cardBackground);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -936,10 +936,10 @@ public class CardTest {
             player = testCard.getJSONPlayer("397",playersArray);
             testCard.cardBackground = null;
             testCard.populateBackground(player);
-            assert (testCard.cardBackground != null);
+            assertNotNull(testCard.cardBackground);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -952,10 +952,10 @@ public class CardTest {
             player = testCard.getJSONPlayer("615",playersArray);
             testCard.cardBackground = null;
             testCard.populateBackground(player);
-            assert (testCard.cardBackground != null);
+            assertNotNull(testCard.cardBackground);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 
@@ -968,10 +968,10 @@ public class CardTest {
             player = testCard.getJSONPlayer("628",playersArray);
             testCard.cardBackground = null;
             testCard.populateBackground(player);
-            assert (testCard.cardBackground != null);
+            assertNotNull(testCard.cardBackground);
         } catch (JSONException e) {
             Log.i("ERROR", "The JSON File could not be read");
-            assert (false);
+            assertTrue(false);
         }
     }
 

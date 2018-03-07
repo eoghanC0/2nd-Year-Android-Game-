@@ -9,14 +9,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
-import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
-import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.CardHolder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by stephenmcveigh on 16/02/2018.
@@ -53,7 +54,7 @@ public class CardHolderTest {
         testHolder.card = null;
         Card testCard = new Card(500,500,300, gameScreen, "1", 100);
         testHolder.setCard(testCard);
-        assert (testHolder.card != null);
+        assertNotNull(testHolder.card);
     }
 
     @Test
@@ -61,7 +62,7 @@ public class CardHolderTest {
         testHolder.card = null;
         Card testCard = new Card(500,500,300, gameScreen, "1", 100);
         testHolder.setCard(testCard);
-        assert (testHolder.card.getPlayerID().equals("1"));
+        assertEquals("1", testHolder.card.getPlayerID());
     }
 
     //////////////////////////////////////////////
@@ -72,14 +73,14 @@ public class CardHolderTest {
     public void test_getCard_notNull() {
         Card testCard = new Card(500,500,300, gameScreen, "1", 100);
         testHolder.card = testCard;
-        assert (testHolder.getCard() != null);
+        assertNotNull(testHolder.getCard());
     }
 
     @Test
     public void test_getCard_isExpectedCard() {
         Card testCard = new Card(500,500,300, gameScreen, "1", 100);
         testHolder.card = testCard;
-        assert (testHolder.getCard().getPlayerID().equals("1"));
+        assertEquals("1", testHolder.getCard().getPlayerID());
     }
 
     //////////////////////////////////////////////
@@ -89,13 +90,13 @@ public class CardHolderTest {
     @Test
     public void test_setHeight_halfHeight() {
         testHolder.setHeight(710);
-        assert(testHolder.getBound().halfHeight == 355);
+        assertEquals(355, testHolder.getBound().halfHeight, 0);
     }
 
     @Test
     public void test_setHeight_halfWidth() {
         testHolder.setHeight(710);
-        assert(testHolder.getBound().halfWidth == 112.5);
+        assertEquals(225, testHolder.getBound().halfWidth, 0);
     }
 
 }
