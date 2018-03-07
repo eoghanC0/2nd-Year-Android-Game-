@@ -44,7 +44,7 @@ public class Pack extends GameObject {
         assetManager.loadAndAddBitmap("packOpeningBackground", "img/Wembley.jpg");
         openingAnimationBackground = assetManager.getBitmap("packOpeningBackground");
         openingAnimationBackgroundRect = new Rect((int) mBound.getLeft(), (int) mBound.getBottom(), (int) mBound.getRight(), (int) mBound.getTop());
-        animationCardMaxHeight = (int) height/2;
+        animationCardMaxHeight = (int) (height/1.5f);
     }
 
     private Card getBestCard() {
@@ -52,7 +52,7 @@ public class Pack extends GameObject {
         Card bestCard = null;
         for (Card card : cards) {
             if (card.getRating() > highestRating);
-                bestCard = card;
+                bestCard = new Card(card);
         }
         return bestCard;
     }
