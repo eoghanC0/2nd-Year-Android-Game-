@@ -95,8 +95,10 @@ public class CardHolder extends GameObject {
         if (card == null) {
             Paint paint = mGameScreen.getGame().getPaint();
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(Color.RED);
-            paint.setStrokeWidth(5);
+            paint.setColor(Color.rgb(250, 250,250));
+            paint.setStrokeWidth(10);
+            graphics2D.drawRect(mBound.getLeft() + 3, mBound.getBottom() + 3, mBound.getRight() + 3, mBound.getTop() + 3, paint);
+            paint.setColor(Color.rgb(4, 46,84));
             graphics2D.drawRect(mBound.getLeft(), mBound.getBottom(), mBound.getRight(), mBound.getTop(), paint);
         } else {
             card.draw(elapsedTime, graphics2D);
