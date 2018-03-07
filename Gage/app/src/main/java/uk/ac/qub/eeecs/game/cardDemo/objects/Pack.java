@@ -51,8 +51,10 @@ public class Pack extends GameObject {
         int highestRating = 0;
         Card bestCard = null;
         for (Card card : cards) {
-            if (card.getRating() > highestRating);
+            if (card.getRating() > highestRating) {
+                highestRating = card.getRating();
                 bestCard = new Card(card);
+            }
         }
         return bestCard;
     }
