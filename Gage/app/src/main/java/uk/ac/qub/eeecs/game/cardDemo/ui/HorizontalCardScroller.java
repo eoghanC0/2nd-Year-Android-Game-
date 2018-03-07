@@ -308,14 +308,11 @@ public class HorizontalCardScroller extends GameObject {
 
         itemDistance = mBound.getWidth();
 
-        // Buttons occupy whole scroller
-        //pushButtonLeft = new PushButton((mBound.getLeft() + (mBound.getWidth() * 0.25f)), position.y, mBound.getWidth() / 2, mBound.getHeight(), "Empty", gameScreen);
-        //pushButtonRight = new PushButton((mBound.getRight() - (mBound.getWidth() * 0.25f)), position.y, mBound.getWidth() / 2, mBound.getHeight(), "Empty", gameScreen);
-
         // Buttons occupy 10% of scroller (5% each side)
         pushButtonLeft = new PushButton((mBound.getLeft() + (mBound.getWidth() * 0.05f)), position.y, mBound.getWidth() * 0.1f, mBound.getHeight(), "Empty", gameScreen);
         pushButtonRight = new PushButton((mBound.getRight() - (mBound.getWidth() * 0.05f)), position.y, mBound.getWidth() * 0.1f, mBound.getHeight(), "Empty", gameScreen);
 
+        // Set BoundingBox of card selection area
         selectBound = new BoundingBox();
         selectBound.x = position.x;
         selectBound.y = position.y;
@@ -361,7 +358,7 @@ public class HorizontalCardScroller extends GameObject {
 
     /**
      * Sets the value of selectMode
-     * @param value
+     * @param selectMode
      */
     public void setSelectMode(boolean selectMode) {
         this.selectMode = selectMode;
@@ -676,6 +673,10 @@ public class HorizontalCardScroller extends GameObject {
         }
     }
 
+    /**
+     * Executes the updating of a new card after a card has been moved from the scroller
+     * if newCardMoveAnimationTriggered is true and an item is selected
+     */
     private void checkAndPerformMoveNewCardAnimation() {
         if(!(newCardMoveAnimationTriggered)) return;
 
@@ -978,6 +979,10 @@ public class HorizontalCardScroller extends GameObject {
         else return null;
     }
 
+    /*
+     * Returns BoundingBox containing bound of removed card
+     * @return BoundingBox
+     */
     public BoundingBox getRemovedCardBound() {
         if (removedCardReady) return removedCardBound;
         return null;
@@ -1018,11 +1023,14 @@ public class HorizontalCardScroller extends GameObject {
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
 
+        // Toggles use of simulated touch events
         updateSimulatedTouchEvents();
 
+        // Updates PushButtons on scroller
         pushButtonLeft.update(elapsedTime);
         pushButtonRight.update(elapsedTime);
 
+        // Updates Cards on scroller
         for (Card card : cardScrollerItems)
             card.update(elapsedTime);
 
@@ -1175,7 +1183,6 @@ public class HorizontalCardScroller extends GameObject {
     public int getSelectedItemIndex() {
         return selectedItemIndex;
     }
-
 
     public BoundingBox getSelectBound() {
         return selectBound;
