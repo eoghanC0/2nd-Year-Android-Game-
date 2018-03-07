@@ -28,17 +28,13 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.ListBox;
 public class LoadGameScreen extends FootballGameScreen {
     private ListBox lbxGameSaves;
 
-    private PushButton mNextButton;
-    private PushButton mDeleteButton;
+    private PushButton nextButton;
+    private PushButton deleteButton;
 
     private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
-
-    private Paint myPaint = mGame.getPaint();
-
     private Bitmap title;
 
-    //TODO: Erase button
 
     public LoadGameScreen(FootballGame game) {
         super("LoadGameScreen", game);
@@ -55,15 +51,14 @@ public class LoadGameScreen extends FootballGameScreen {
         title = assetManager.getBitmap("Title");
 
         //TODO: Remove below method
-        createTestSaves();
-        setUpSaveData();
+        setupSavesListBox();
 
         //Buttons
         float width = mGame.getScreenWidth();
         float height = mGame.getScreenHeight();
-        mNextButton = new PushButton(
+        nextButton = new PushButton(
                 width * 0.9f, height * 0.8f, height / 4.0f, height / 4.0f, "NextButton","NextButtonActive", this );
-        mDeleteButton = new PushButton(
+        deleteButton = new PushButton(
                 width * 0.1f, height * 0.8f, height / 4.0f, height / 4.0f, "DeleteIcon","DeleteIconPushed", this );
 
 
@@ -76,74 +71,38 @@ public class LoadGameScreen extends FootballGameScreen {
 
     //Sets selected save to empty values
     private void deleteSave(){
-        mGame.setPlayerName("");
-        mGame.setClub(new ArrayList<Card>());
-        mGame.setWins(0);
-        mGame.setLosses(0);
-        mGame.setDraws(0);
-        mGame.setXp(0);
-        mGame.setDifficulty(0);
-        mGame.setGameLength(0);
-        mGame.setPitchBackGround("");
-        mGame.saveGame(lbxGameSaves.getSelectedIndex());
-        //refreshes list box
-        setUpSaveData();
-    }
 
-    //TODO: Delete when no longer needed
-    //Creates saves for testing
-    private void createTestSaves(){
-        Random rand;
-        for(int i = 0; i < mGame.getSaveSlotMax(); i++) {
-            rand = new Random();
-            int n = rand.nextInt(50) + 1;
-            mGame.setPlayerName("Test_Name" + i);
-            mGame.setClub(new ArrayList<Card>());
-            mGame.setWins(rand.nextInt(50) + 1);
-            mGame.setLosses(rand.nextInt(50) + 1);
-            mGame.setDraws(rand.nextInt(50) + 1);
-            mGame.setXp(rand.nextInt(5000) + 1);
-            mGame.setDifficulty(rand.nextInt(3) + 1);
-            mGame.setGameLength(rand.nextInt(90) + 1);
-            mGame.setPitchBackGround("BG" + i);
-            mGame.saveGame(i);
-        }
     }
 
     //gets save name, time/date etc and adds to list box for each save.
-    private void setUpSaveData(){
+    private void setupSavesListBox(){
         lbxGameSaves.clear();
-        String saveTitle;
-        for(int i = 0; i < mGame.getSaveSlotMax(); i++) {
-            mGame.loadGame(i);
-            if (mGame.getLastSaveDate() != null && !mGame.getPlayerName().equals(""))
-                saveTitle = String.format("Save: %d - %s - %s",(i+1), mGame.getPlayerName(), mGame.getLastSaveDate());
-            else saveTitle = String.format("Save: %d - Empty",(i+1));
-            lbxGameSaves.addItem(saveTitle);
-        }
+        mGame.setXp(20000);
     }
 
     @Override
     public void update(ElapsedTime elapsedTime) {
         lbxGameSaves.update(elapsedTime);
 
-        mNextButton.update(elapsedTime);
-        if (mNextButton.isPushTriggered() && lbxGameSaves.getSelectedIndex() != -1) {
+        nextButton.update(elapsedTime);
+        if (nextButton.isPushTriggered()) {
             mGame.loadGame(lbxGameSaves.getSelectedIndex());
             changeToScreen(new MenuScreen(mGame));
         }
-        mDeleteButton.update(elapsedTime);
-        if (mDeleteButton.isPushTriggered()&& lbxGameSaves.getSelectedIndex() != -1) {
+
+        deleteButton.update(elapsedTime);
+        if (deleteButton.isPushTriggered()&& lbxGameSaves.getSelectedIndex() != -1) {
             deleteSave();
         }
     }
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
+        Paint myPaint = mGame.getPaint();
         graphics2D.drawBitmap(background, null, backGroundRectangle,myPaint);
         lbxGameSaves.draw(elapsedTime, graphics2D);
-        mNextButton.draw(elapsedTime, graphics2D,null,null);
-        mDeleteButton.draw(elapsedTime, graphics2D,null,null);
+        nextButton.draw(elapsedTime, graphics2D,null,null);
+        deleteButton.draw(elapsedTime, graphics2D,null,null);
 
         graphics2D.drawBitmap(title, null, new Rect(5,50,mGame.getScreenWidth() - 5, (int) (mGame.getScreenHeight() * 0.2) - 5), myPaint);
     }
