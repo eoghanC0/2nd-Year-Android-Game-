@@ -24,7 +24,6 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 import uk.ac.qub.eeecs.game.cardDemo.ui.popUpWindow;
-import uk.ac.qub.eeecs.game.packScreenSplashScreen;
 
 /**
  * Created by stephenmcveigh on 07/12/2017.
