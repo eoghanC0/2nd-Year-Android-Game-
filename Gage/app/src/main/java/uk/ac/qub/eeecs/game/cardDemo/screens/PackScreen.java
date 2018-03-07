@@ -21,6 +21,7 @@ import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
+import uk.ac.qub.eeecs.game.cardDemo.objects.Pack;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 import uk.ac.qub.eeecs.game.cardDemo.ui.popUpWindow;
@@ -57,29 +58,18 @@ public class PackScreen extends FootballGameScreen {
     private boolean drawPopup = true;
     private boolean displayHorizontalScroller = false;
     private boolean notEnoughCoins;
-    private boolean packBoughtDisplaySplashScreen;
-    private boolean splashScreenDislpayed = false;
-    private boolean trackTime;
+
+    private Pack myPack = null;
 
     private int costOfPack = 0;
     private  int newXP = 0;
-    private float highestRatedCardX;
-    private float highestRatedCardY;
-
 
     // Define the spacing that will be used to position the buttons
     int spacingX = getGame().getScreenWidth() / 4;
     int spacingY = getGame().getScreenHeight() / 8;
 
-    private Card highestRatedCard;
-
-    private Bitmap baseBitmap;
-    private Bitmap backOfCard;
-
     private popUpWindow packPopUp;
     private popUpWindow notEnoughCoinsPopUp;
-
-    private HorizontalCardScroller horizontalCardScroller;
 
     //private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0, 0, this.getGame().getScreenWidth(), this.getGame().getScreenHeight());
@@ -137,16 +127,8 @@ public class PackScreen extends FootballGameScreen {
         m500PackButton.setEnabled(true);
         m300PackButton.setEnabled(true);
 
-        horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this);
         packPopUp = new popUpWindow(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this, "Are you sure you want to buy this pack?", "Yes", "No");
         notEnoughCoinsPopUp = new popUpWindow(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4, this, "You dont have enough XP to buy this", "Cancel", "Menu");
-
-        assetManager.loadAndAddBitmap("BaseBitmap", "img/CardFront.png");
-        baseBitmap = assetManager.getBitmap("BaseBitmap");
-        if (baseBitmap == null)
-            Log.d("DEBUG", "HorizontalCardScroller: NO BASE BITMAP");
-        assetManager.loadAndAddBitmap("CardBack", "img/CardBack.png");
-        backOfCard = assetManager.getBitmap("CardBack");
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -162,9 +144,9 @@ public class PackScreen extends FootballGameScreen {
     public void update(ElapsedTime elapsedTime) {
 
         infoBar.update(elapsedTime);
-        horizontalCardScroller.update(elapsedTime);
         packPopUp.update(elapsedTime);
         notEnoughCoinsPopUp.update(elapsedTime);
+        if (myPack != null )myPack.update(elapsedTime);
 
         // Update each button and transition if needed
         mSquadsButton.update(elapsedTime);
@@ -185,7 +167,6 @@ public class PackScreen extends FootballGameScreen {
             pack300Pressed = false;
             pack500Pressed = false;
             pack1000Pressed = false;
-            splashScreenDislpayed = false;
             if (mGame.getXp() >= 100) {
                 drawPopup = true;
                 selectPackPlayers(1);
@@ -200,7 +181,6 @@ public class PackScreen extends FootballGameScreen {
             pack300Pressed = true;
             pack500Pressed = false;
             pack1000Pressed = false;
-            splashScreenDislpayed = false;
 
             if (mGame.getXp() >= 300) {
                 drawPopup = true;
@@ -217,7 +197,6 @@ public class PackScreen extends FootballGameScreen {
             pack300Pressed = false;
             pack500Pressed = true;
             pack1000Pressed = false;
-            splashScreenDislpayed = false;
 
             if (mGame.getXp() >= 500) {
                 drawPopup = true;
@@ -234,7 +213,6 @@ public class PackScreen extends FootballGameScreen {
             pack300Pressed = false;
             pack500Pressed = false;
             pack1000Pressed = true;
-            splashScreenDislpayed = false;
 
             if (mGame.getXp() >= 1000) {
                 drawPopup = true;
@@ -245,7 +223,6 @@ public class PackScreen extends FootballGameScreen {
             else {
                 notEnoughCoins = true;
             }
-            horizontalCardScroller.setMultiMode(true, 80);
         }
     }
 
@@ -261,9 +238,6 @@ public class PackScreen extends FootballGameScreen {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-Log.d("Debug", "Draw");
-        if (elapsedTime.totalTime % 5 > 0 && elapsedTime.totalTime % 5 < 0.1) packBoughtDisplaySplashScreen = false;
-
         // Clear the screen and draw the buttons
         graphics2D.clear(Color.WHITE);
         Paint myPaint = mGame.getPaint();
@@ -287,7 +261,6 @@ Log.d("Debug", "Draw");
                 m300PackButton.setEnabled(false);
                 notEnoughCoinsPopUp.enableButton1();
                 notEnoughCoinsPopUp.enableButton2();
-                packBoughtDisplaySplashScreen = false;
                 if (notEnoughCoinsPopUp.getYesorNo()) {
                     drawPopup = false;
                     notEnoughCoins = false;
@@ -329,7 +302,6 @@ Log.d("Debug", "Draw");
                         packPopUp.disableButton1();
                         notEnoughCoinsPopUp.disableButton1();
                         notEnoughCoinsPopUp.disableButton2();
-                        packBoughtDisplaySplashScreen = true;
                     } else if (packPopUp.getHasNoBeenPressed()) {
                         drawPopup = false;
                         displayHorizontalScroller = false;
@@ -341,79 +313,17 @@ Log.d("Debug", "Draw");
                         packPopUp.disableButton1();
                         notEnoughCoinsPopUp.disableButton1();
                         notEnoughCoinsPopUp.disableButton2();
-                        packBoughtDisplaySplashScreen = false;
                     }
                 }
-
-                if (packBoughtDisplaySplashScreen) {
-                    splashScreen(elapsedTime,graphics2D);
-                    splashScreenDislpayed = true;
-                }
-
-                if (splashScreenDislpayed && packBoughtDisplaySplashScreen == false) {
-                    highestRatedCard.setPosition(highestRatedCardX,highestRatedCardY);
-                    if (displayHorizontalScroller) horizontalCardScroller.draw(elapsedTime, graphics2D);
-
-                    m100PackButton.setEnabled(true);
-                    m300PackButton.setEnabled(true);
-                    m500PackButton.setEnabled(true);
-                    m1000PackButton.setEnabled(true);
-                    mSquadsButton.setEnabled(true);
-                    mMenuButton.setEnabled(true);
+                    if (displayHorizontalScroller) {
+                        if (myPack != null) myPack.draw(elapsedTime, graphics2D);
+                    }
                 }
             }
         }
-
-    }
-
 
     public void selectPackPlayers(int packSizes) {
-
-        int noOfRares = 0;
-        Card packPlayers[] = new Card[packSizes];
-        Random rnd = new Random();
-        //Clear Scroller
-        horizontalCardScroller.clearScroller();
-        int highestRating = 0;
-        for (int i = 0; i < packSizes; i++) {
-            int rndPlayerID = rnd.nextInt(629);
-            packPlayers[i] = new Card(mGame.getScreenManager().getCurrentScreen(), String.valueOf(rndPlayerID), 100);
-            if (packPlayers[i].isRare()) noOfRares = noOfRares + 1;
-            if (noOfRares > 3 && packPlayers[i].isRare()) {
-                while (packPlayers[i].isRare()) {
-                    rndPlayerID = rnd.nextInt(629);
-                    packPlayers[i] = new Card(mGame.getScreenManager().getCurrentScreen(),String.valueOf(rndPlayerID), 100);
-                }
-            }
-
-            if (packPlayers[i].getRating() > highestRating) {
-                highestRating = packPlayers[i].getRating();
-                highestRatedCard = packPlayers[i];
-            }
-            horizontalCardScroller.addScrollerItem(packPlayers[i]);
-            mGame.getClub().add(packPlayers[i]);
-        }
-        highestRatedCardX = highestRatedCard.getBound().x;
-        highestRatedCardY = highestRatedCard.getBound().y;
-        Log.d("debug", String.valueOf(highestRatedCardX));
-        Log.d("debug", String.valueOf(highestRatedCardY));
-
-        horizontalCardScroller.setMultiMode(true, 80);
+    myPack = new Pack(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4,this ,packSizes);
     }
 
-    public void splashScreen(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-
-        Paint myPaint = mGame.getPaint();
-        myPaint.reset();
-        m100PackButton.setEnabled(false);
-        m300PackButton.setEnabled(false);
-        m500PackButton.setEnabled(false);
-        m1000PackButton.setEnabled(false);
-        mSquadsButton.setEnabled(false);
-        mMenuButton.setEnabled(false);
-        graphics2D.drawBitmap(splashScreenBackground, null, backGroundRectangle, myPaint);
-
-        highestRatedCard.setPosition(spacingX * 2, spacingY*4);
-        highestRatedCard.draw(elapsedTime, graphics2D);
-    }
 }
