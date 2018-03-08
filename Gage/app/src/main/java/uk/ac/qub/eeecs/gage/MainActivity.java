@@ -60,7 +60,9 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
         // If the fragment does not consume the back event then
         // trigger the default behaviour
-        if (!mGame.onBackPressed())
+        if (!mGame.onBackPressed()) {
             super.onBackPressed();
+            System.exit(0);
+        }
     }
 }

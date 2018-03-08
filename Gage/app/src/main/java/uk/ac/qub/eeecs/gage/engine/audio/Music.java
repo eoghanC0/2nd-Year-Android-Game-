@@ -117,7 +117,7 @@ public class Music implements OnCompletionListener {
      *
      * @param looping Boolean true to loop, false for play once.
      */
-    public void setLopping(boolean looping) {
+    public void setLooping(boolean looping) {
         mMediaPlayer.setLooping(looping);
     }
 

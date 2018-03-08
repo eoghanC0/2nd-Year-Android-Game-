@@ -3,6 +3,7 @@ package uk.ac.qub.eeecs.gage;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.ScreenManager;
+import uk.ac.qub.eeecs.gage.engine.audio.Music;
 import uk.ac.qub.eeecs.gage.engine.graphics.CanvasRenderSurface;
 import uk.ac.qub.eeecs.gage.engine.graphics.IRenderSurface;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
@@ -102,6 +103,11 @@ public abstract class Game extends Fragment {
     protected Paint mPaint;
 
     /**
+     * Paint
+     */
+    protected Music bgMusic;
+
+    /**
      * Shared Preferences
      */
     protected SharedPreferences mSharedPreferences;
@@ -121,6 +127,13 @@ public abstract class Game extends Fragment {
     public Paint getPaint() {
         mPaint.reset();
         return mPaint;
+    }
+
+    /**
+     * Get the games Paint
+     */
+    public Music getBGMusic() {
+        return bgMusic;
     }
 
     /**
@@ -299,6 +312,11 @@ public abstract class Game extends Fragment {
 
         //Create the paint
         mPaint = new Paint();
+
+        //Play Background Music
+        bgMusic = new Music(getResources().openRawResourceFd(R.raw.bgmusic));
+        bgMusic.setLooping(true);
+        bgMusic.play();
     }
 
     /*
