@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import uk.ac.qub.eeecs.gage.Game;
+import uk.ac.qub.eeecs.gage.R;
+import uk.ac.qub.eeecs.gage.engine.audio.Music;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.screens.LoadGameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
@@ -28,6 +30,8 @@ public class FootballGame extends Game {
     private int gameID, wins, losses, draws, xp;
     private ArrayList<Card> club, squad;
     private int pitchBackground, difficulty, gameLength;
+
+    private Music bgMusic;
 
     ///////////////////////////////////////////////////////////////////////////
     // Constructor
@@ -58,6 +62,11 @@ public class FootballGame extends Game {
 
         // Go with a default 30 UPS/FPS
         setTargetFramesPerSecond(30);
+
+        //Play Background Music
+        bgMusic = new Music(getResources().openRawResourceFd(R.raw.bgmusic));
+        bgMusic.setLooping(true);
+        bgMusic.play();
     }
 
     @Override
@@ -108,6 +117,10 @@ public class FootballGame extends Game {
     public int getDifficulty() {return difficulty;}
     public int getGameLength() {return gameLength;}
     public int getPitchBackground() {return pitchBackground;}
+
+    public Music getBGMusic() {
+        return bgMusic;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Setters
