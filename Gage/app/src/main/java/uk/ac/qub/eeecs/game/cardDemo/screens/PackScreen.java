@@ -33,7 +33,6 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.popUpWindow;
 public class PackScreen extends FootballGameScreen {
 
     private final Bitmap background;
-    private final Bitmap splashScreenBackground;
     //private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
     /**
@@ -91,19 +90,13 @@ public class PackScreen extends FootballGameScreen {
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
 
-        assetManager.loadAndAddBitmap("Help", "img/Help.jpg");
-        assetManager.loadAndAddBitmap("OptionsIcon", "img/options.png");
-        assetManager.loadAndAddBitmap("musicIcon", "img/music.png");
-        assetManager.loadAndAddBitmap("packsIcon", "img/ball2.jpg");
         assetManager.loadAndAddBitmap("menuButtons", "img/MenuButton.png");
         assetManager.loadAndAddBitmap("LeftArrow", "img/LeftArrow.png");
         assetManager.loadAndAddBitmap("LeftArrowActive", "img/LeftArrowActive.png");
         assetManager.loadAndAddBitmap("RightArrow", "img/RightArrow.png");
         assetManager.loadAndAddBitmap("RightArrowActive", "img/RightArrowActive.png");
         assetManager.loadAndAddBitmap("packScreenBG", "img/packScreenBG.png");
-        assetManager.loadAndAddBitmap("splashScreenBG", "img/falling-confetti-background_1048-6409.png");
         background = assetManager.getBitmap("packScreenBG");
-        splashScreenBackground = assetManager.getBitmap("splashScreenBG");
 
         // Create the trigger buttons
         mMenuButton = new PushButton(
