@@ -50,7 +50,7 @@ public class HelpScreen extends FootballGameScreen {
      * Allows user to scroll between help images
      */
     private HorizontalImageScroller horizontalImageScroller;
-
+    
     /**
      * Create a new game screen associated with the specified game instance
      *
@@ -59,7 +59,7 @@ public class HelpScreen extends FootballGameScreen {
     public HelpScreen(FootballGame game) {
         super("HelpScreen", game);
 
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "Test Player", "H E L P  S C R E E N", "");
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "XP | " + String.valueOf(mGame.getXp()), "H E L P  S C R E E N", mGame.getMatchStats());
 
         AssetStore assetManager = mGame.getAssetManager();
 

@@ -62,7 +62,7 @@ public class MenuScreen extends FootballGameScreen {
     public MenuScreen(FootballGame game) {
         super("MenuScreen", game);
 
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "XP :" + String.valueOf(mGame.getXp()), "M A I N  M E N U", mGame.getMatchStats());
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "XP | " + String.valueOf(mGame.getXp()), "M A I N  M E N U", mGame.getMatchStats());
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
