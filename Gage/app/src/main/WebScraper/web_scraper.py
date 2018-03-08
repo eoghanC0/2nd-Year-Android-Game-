@@ -97,9 +97,9 @@ while True:
                 output = open(os.path.join(nationFlagOutputDir, newPlayer["nation"]["logo"]), "wb")
                 output.write(nationFlagBitmap.read())
 
-            if not os.path.isfile(os.path.join(nationFlagOutputDir, newPlayer["nation"]["logo"])):
+            if not os.path.isfile(os.path.join(clubBadgeOutputDir, newPlayer["club"]["logo"])):
                 clubBadgeBitmap = urllib.request.urlopen(rawPlayer["club"]["imageUrls"]["dark"]["large"])
-                output = open(os.path.join(nationFlagOutputDir, newPlayer["nation"]["logo"]), "wb")
+                output = open(os.path.join(clubBadgeOutputDir, newPlayer["club"]["logo"]), "wb")
                 output.write(clubBadgeBitmap.read())
 
             with open(os.path.join(jsonOutputDir, "all_cards.json"), 'w+') as f:
