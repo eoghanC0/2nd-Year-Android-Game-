@@ -67,7 +67,7 @@ public class MatchEvent extends GameObject{
     public MatchEvent(GameScreen gameScreen, Match.GameState gameState, ArrayList<Card> AISquad){
         super(gameScreen);
         mGame = mGameScreen.getGame();
-        AITeam = AISquad;
+        this.AITeam = AISquad;
         generateSccenario(gameState);
         animationCounter = 0;
         height = mGame.getScreenHeight() * 0.5f;
@@ -153,23 +153,137 @@ public class MatchEvent extends GameObject{
 
     private void selectPlayers(){
         Card playerCard = cardHolder1.getCard();
-        Random rnd = new Random();
-        int randomNumber = rnd.nextInt(10);
+        Card cpuCard = null;
+        String[] scenario = chosenScenario.split(" ");
+        int playerStats = getStats(playerCard, scenario[0]);
+        boolean found = false;
+        int counter = 0;
+        if (scenario[1].equals("GK")){
+            while (!found){
+                if (AITeam.get(counter).getPlayerPosition().equals("GoalKeeper")) {
+                    cpuCard = AITeam.get(counter);
+                    found = true;
+                }
+            }
+        }else{
+            bubbleSort(scenario[1]);
 
-        Log.d("DEBUG", "selectPlayers: " + AITeam.size() + " " + randomNumber);
-        Card cpuCard = AITeam.get(randomNumber);
+            Random rnd = new Random();
+            int randomNumber = rnd.nextInt(100);
+            if (randomNumber < 40)
+                cpuCard = AITeam.get(10);
+            else if (randomNumber >= 40 && randomNumber < 55)
+                cpuCard = AITeam.get(9);
+            else if (randomNumber >= 55 && randomNumber < 65)
+                cpuCard = AITeam.get(8);
+            else if (randomNumber >= 65 && randomNumber < 72)
+                cpuCard = AITeam.get(7);
+            else if (randomNumber >= 72 && randomNumber < 79)
+                cpuCard = AITeam.get(6);
+            else if (randomNumber >= 79 && randomNumber < 85)
+                cpuCard = AITeam.get(5);
+            else if (randomNumber >= 85 && randomNumber < 90)
+                cpuCard = AITeam.get(4);
+            else if (randomNumber >= 90 && randomNumber < 93)
+                cpuCard = AITeam.get(3);
+            else if (randomNumber >= 93 && randomNumber < 95)
+                cpuCard = AITeam.get(2);
+            else if (randomNumber >= 95 && randomNumber < 97)
+                cpuCard = AITeam.get(1);
+            else if (randomNumber >= 97)
+                cpuCard = AITeam.get(0);
+        }
 
+        int cpuStats = getStats(cpuCard, scenario[1]);
+        scenarioWinner(playerStats, cpuStats);
         cardHolder2.setCard(cpuCard);
         playersChosen = true;
         drawCards = false;
-        getStats(playerCard, cpuCard);
-
-
     }
 
+    private int getStats(Card player, String scenario){
+        Card currentCard = player;
+        //use the players stamina as a percentage to modify their stats by
+        float stamina;
+        int stat = 0;
+        stamina = currentCard.getFitness() / 100;
+        switch (scenario) {
+                    case "DEF":
+                        stat = (int) stamina * currentCard.getDefending();
+                        break;
+                    case "PAS":
+                        stat = (int) stamina * currentCard.getPassing();
+                        break;
+                    case "PAC":
+                        stat = (int) stamina * currentCard.getPace();
+                        break;
+                    case "DRI":
+                        stat= (int) stamina * currentCard.getDribbling();
+                        break;
+                    case "SHO":
+                        stat = (int) stamina * currentCard.getShooting();
+                        break;
+                    case "HEA":
+                        stat = (int) stamina * currentCard.getHeading();
+                        break;
+                    case "GK":
+                        if (currentCard.getPlayerPosition().equals("GoalKeeper"))
+                            stat = (int) stamina * currentCard.getRating();
+                        else
+                            stat = (int)(stamina * currentCard.getRating())/2;
+                        break;
+                }
+
+                currentCard.setFitness(currentCard.getFitness() - 10);
+        return stat;
+    }
+
+    public void swap(int x) {//go through the array and sort from smallest to highest
+        Card temp = AITeam.get(x - 1);
+        AITeam.set(x - 1, AITeam.get(x));
+        AITeam.set(x, temp);
+    }
+
+    public  void bubbleSort(String scenario) {
+
+        int n = AITeam.size();
+        int temp = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 1; j < (n - i); j++) {
+
+                switch (scenario) {
+                    case "DEF":
+                        if (AITeam.get(j - 1).getDefending() > AITeam.get(j).getDefending())
+                            swap(j);
+                        break;
+                    case "PAS":
+                        if (AITeam.get(j - 1).getPassing() > AITeam.get(j).getPassing())
+                            swap(j);
+                        break;
+                    case "PAC":
+                        if (AITeam.get(j - 1).getPace() > AITeam.get(j).getPace())
+                            swap(j);
+                        break;
+                    case "DRI":
+                        if (AITeam.get(j - 1).getDribbling() > AITeam.get(j).getDribbling())
+                            swap(j);
+                        break;
+                    case "SHO":
+                        if (AITeam.get(j - 1).getShooting() > AITeam.get(j).getShooting())
+                            swap(j);
+                        break;
+                    case "HEA":
+                        if (AITeam.get(j - 1).getHeading() > AITeam.get(j).getHeading())
+                            swap(j);
+                        break;
+                }
+            }
+        }
+    }
+ /*
     private void getStats(Card player, Card cpu){
         int[] stats = new int[2];
-        String[] scenario = chosenScenario.split(" ");
         Card currentCard = player;
         //use the players stamina as a percentage to modify their stats by
         float stamina;
@@ -208,12 +322,13 @@ public class MatchEvent extends GameObject{
                        break;
                }
            }
+           currentCard.setFitness(currentCard.getFitness() - 10);
 
 
        }
-
-        scenarioWinner(stats[0], stats[1]);
+       scenarioWinner(stats[0], stats[1]);
     }
+    */
 
     //method to determine which player wins the scenario
     private void scenarioWinner(int playerStat, int cpuStat){
@@ -222,27 +337,31 @@ public class MatchEvent extends GameObject{
         //give the smaller stat a better chance of winning
         int maxDifference = 70;
         //difference between both stats
-        int difference = 0;
         String smallestStat = "Player";
         if (playerStat > cpuStat)
             smallestStat = "CPU";
-        difference = Math.abs(playerStat - cpuStat);
+        int difference = Math.abs(playerStat - cpuStat);
+
         /*determine the probability of the smaller stat winning.
         Both stats will get a base probability of 0.5. The smaller stats probability
         will be lowered depending on the difference between the two stats.
          */
-        double probability = 0.5 * (1 - (difference / maxDifference));
+        double probability;
+        if (difference >=  maxDifference)
+            probability = 0;
+        else
+            probability = 0.5 * (1 - (difference / maxDifference));
         //generate random number. If number is less than probability then smaller stat wins
         //else larger stat wins
-
-        if (probability < Math.random()){
+        double randomNumber = Math.random();
+        if (randomNumber < probability){
             //smaller stat wins
             if (smallestStat.equals("CPU"))winner = "CPU";
         } else{
             //larger stat wins
             if (smallestStat.equals("Player"))winner = "CPU";
         }
-       clearCounter = animationCounter;
+        clearCounter = animationCounter;
 
     }
 
@@ -438,6 +557,7 @@ public class MatchEvent extends GameObject{
         Paint paint = mGame.getPaint();
 
         if (!clearScenario){
+            /*
             paint.reset();
             paint.setColor(Color.BLACK);
             paint.setStyle(Paint.Style.STROKE);
@@ -447,7 +567,7 @@ public class MatchEvent extends GameObject{
             paint.reset();
             paint.setColor(Color.GRAY);
             graphics2D.drawRect((int)(mGame.getScreenWidth() * 0.1f), (int)(mGame.getScreenHeight() * 0.15f),(int)(mGame.getScreenWidth() * 0.9f), (int)(mGame.getScreenHeight() * 0.9f), paint);
-
+*/
             paint.reset();
             paint.setColor(Color.BLACK);
             paint.setTextSize(size);
