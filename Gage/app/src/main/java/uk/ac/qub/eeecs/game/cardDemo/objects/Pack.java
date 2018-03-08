@@ -32,7 +32,7 @@ public class Pack extends GameObject {
         super(x, y, width, height,null, gameScreen);
         cardScroller = new HorizontalCardScroller(x,y,width,height,gameScreen);
         for (int i = 0; i < numberOfCards; i++) {
-            cards.add(new Card(gameScreen, false, 0, 100));
+            cards.add(new Card(gameScreen, false,null, 0, 100));
             cardScroller.addScrollerItem(cards.get(i));
         }
         cardScroller.setMultiMode(true, 80);

@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import java.util.ArrayList;
+
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
@@ -13,6 +15,7 @@ import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.LayerViewport;
 import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
@@ -27,7 +30,7 @@ public class PlayScreen extends FootballGameScreen {
     // /////////////////////////////////////////////////////////////////////////
     public final Bitmap background;
     private final Rect backgroundRectangle;
-    private final int totalGameTimeLength;
+    //private final int totalGameTimeLength;
     private double currentGameTime;
     private int playerScore, CPUScore;
     private PushButton mScenarioButton;
@@ -35,6 +38,8 @@ public class PlayScreen extends FootballGameScreen {
     public Match currentMatch;
 
     private InfoBar infoBar;
+
+    public ArrayList<Card> AITeam;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -48,11 +53,12 @@ public class PlayScreen extends FootballGameScreen {
         background = assetManager.getBitmap("PlayScreenBackground");
         backgroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
+
         mScenarioButton = new PushButton(100f, 100f, 100, 100,
                 "PlayScreenBackground", this );
 
 
-        totalGameTimeLength = mGame.getIntPreference("GameLength");
+//        totalGameTimeLength = mGame.getIntPreference("GameLength");
         currentGameTime = 0.0;
 
         playerScore = currentMatch.getPlayerAScore();
@@ -72,8 +78,10 @@ public class PlayScreen extends FootballGameScreen {
     private void updateInfoBar() {
         infoBar.setAreaOneText(String.format("Player %1$d | %2$d CPU", playerScore, CPUScore));
         infoBar.setAreaTwoText(currentMatch.getGameState().name().replace("_", " ").replace("PLAYER A", "PLAYER").replace("PLAYER B", "CPU"));
-        infoBar.setAreaThreeText(String.format("%2.2f", currentGameTime / totalGameTimeLength * 90));
+        //infoBar.setAreaThreeText(String.format("%2.2f", currentGameTime / totalGameTimeLength * 90));
     }
+
+
 
 
 
@@ -111,4 +119,5 @@ public class PlayScreen extends FootballGameScreen {
        currentMatch.draw(elapsedTime, graphics2D);
 
     }
+
 }

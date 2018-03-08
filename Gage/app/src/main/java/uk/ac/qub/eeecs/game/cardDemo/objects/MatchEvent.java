@@ -61,11 +61,13 @@ public class MatchEvent extends GameObject{
     private Vector2 draggedCardOriginalPosition = new Vector2();
 
     private String winner;
+    private ArrayList<Card> AITeam;
 
 
-    public MatchEvent(GameScreen gameScreen, Match.GameState gameState){
+    public MatchEvent(GameScreen gameScreen, Match.GameState gameState, ArrayList<Card> AISquad){
         super(gameScreen);
         mGame = mGameScreen.getGame();
+        AITeam = AISquad;
         generateSccenario(gameState);
         animationCounter = 0;
         height = mGame.getScreenHeight() * 0.5f;
@@ -76,7 +78,10 @@ public class MatchEvent extends GameObject{
         cardHolder2 = new CardHolder(mGame.getScreenHeight()/6, rightHolderPosition, (int)(mGame.getScreenHeight() * 0.35), gameScreen);
 
         horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() * 0.5f, (mGame.getScreenHeight() * 0.5f) + (mGame.getScreenHeight()), mGame.getScreenWidth(), mGame.getScreenHeight() * 0.4f, mGameScreen);
-        horizontalCardScroller.addTestData();
+
+        for (int i = 0; i < AITeam.size(); i++) {
+            horizontalCardScroller.addScrollerItem(AITeam.get(i));
+        }
         horizontalCardScroller.setMultiMode(true, 100);
         horizontalCardScroller.setSelectMode(true);
 
@@ -148,7 +153,11 @@ public class MatchEvent extends GameObject{
 
     private void selectPlayers(){
         Card playerCard = cardHolder1.getCard();
-        Card cpuCard = new Card(mGameScreen, true, 80, 90 );
+        Random rnd = new Random();
+        int randomNumber = rnd.nextInt(10);
+
+        Log.d("DEBUG", "selectPlayers: " + AITeam.size() + " " + randomNumber);
+        Card cpuCard = AITeam.get(randomNumber);
 
         cardHolder2.setCard(cpuCard);
         playersChosen = true;
@@ -169,33 +178,37 @@ public class MatchEvent extends GameObject{
                currentCard = cpu;
            }
            stamina = currentCard.getFitness() / 100;
-           switch (scenario[i]) {
-               case "DEF":
-                   stats[i] = (int)stamina * currentCard.getDefending();
-                   break;
-               case "PAS":
-                   stats[i] = (int)stamina * currentCard.getPassing();
-                   break;
-               case "PAC":
-                   stats[i] = (int)stamina * currentCard.getPace();
-                   break;
-               case "DRI":
-                   stats[i] = (int)stamina * currentCard.getDribbling();
-                   break;
-               case "SHO":
-                   stats[i] = (int)stamina *  currentCard.getShooting();
-                   break;
-               case "HEA":
-                   stats[i] = (int)stamina * currentCard.getHeading();
-                   break;
-               case "GK":
-                   stats[i] = 0;
-                   if (currentCard.getPlayerPosition().equals("GoalKeeper"))
-                       stats[i] = (int)stamina * currentCard.getRating();
-                   break;
-             }
-           if (currentCard.getPlayerPosition().equals("GoalKeeper") && !(scenario[i].equals("GK")))
+           if (currentCard.getPlayerPosition().equals("GoalKeeper") && !(scenario[i].equals("GK"))){
                stats[i] = 0;
+           }else {
+
+               switch (scenario[i]) {
+                   case "DEF":
+                       stats[i] = (int) stamina * currentCard.getDefending();
+                       break;
+                   case "PAS":
+                       stats[i] = (int) stamina * currentCard.getPassing();
+                       break;
+                   case "PAC":
+                       stats[i] = (int) stamina * currentCard.getPace();
+                       break;
+                   case "DRI":
+                       stats[i] = (int) stamina * currentCard.getDribbling();
+                       break;
+                   case "SHO":
+                       stats[i] = (int) stamina * currentCard.getShooting();
+                       break;
+                   case "HEA":
+                       stats[i] = (int) stamina * currentCard.getHeading();
+                       break;
+                   case "GK":
+                       stats[i] = 0;
+                       if (currentCard.getPlayerPosition().equals("GoalKeeper"))
+                           stats[i] = (int) stamina * currentCard.getRating();
+                       break;
+               }
+           }
+
 
        }
 
