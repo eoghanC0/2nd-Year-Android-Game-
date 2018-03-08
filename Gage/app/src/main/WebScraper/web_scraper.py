@@ -15,7 +15,7 @@ def delete_files_in_dir(folder):
 
 urlString = "https://www.easports.com/fifa/ultimate-team/api/fut/item?page="
 
-jsonOutputFile = "../assets/player_json/all_cards.json"
+jsonOutputDir = "../assets/player_json"
 headshotOutputDir = "../assets/img/playerBitmaps"
 nationFlagOutputDir = "../assets/img/nationBitmaps"
 clubBadgeOutputDir = "../assets/img/clubBadgeBitmaps"
@@ -23,6 +23,8 @@ clubBadgeOutputDir = "../assets/img/clubBadgeBitmaps"
 delete_files_in_dir(headshotOutputDir)
 delete_files_in_dir(nationFlagOutputDir)
 delete_files_in_dir(clubBadgeOutputDir)
+delete_files_in_dir(jsonOutputDir)
+
 
 pageNumber = 0
 derivedData = {"players": []}
@@ -100,7 +102,7 @@ while True:
                 output = open(os.path.join(nationFlagOutputDir, newPlayer["nation"]["logo"]), "wb")
                 output.write(clubBadgeBitmap.read())
 
-            with open(jsonOutputFile, 'w+') as f:
+            with open(os.path.join(jsonOutputDir, "all_cards.json"), 'w+') as f:
                 out = json.dumps(derivedData)
                 f.write(out)
 
