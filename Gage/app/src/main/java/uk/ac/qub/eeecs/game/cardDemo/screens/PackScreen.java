@@ -142,18 +142,15 @@ public class PackScreen extends FootballGameScreen {
         if (myPack != null )myPack.update(elapsedTime);
 
         // Update each button and transition if needed
-        mSquadsButton.update(elapsedTime);
         mMenuButton.update(elapsedTime);
         m100PackButton.update(elapsedTime);
         m300PackButton.update(elapsedTime);
         m500PackButton.update(elapsedTime);
         m1000PackButton.update(elapsedTime);
 
-        infoBar.setAreaThreeText("XP : " + String.valueOf(mGame.getXp()));
+        infoBar.setAreaOneText("XP | " + String.valueOf(mGame.getXp()));
 
-        if (mSquadsButton.isPushTriggered())
-            changeToScreen(new SquadScreen(mGame));
-        else if (mMenuButton.isPushTriggered())
+        if (mMenuButton.isPushTriggered())
             changeToScreen(new MenuScreen(mGame));
         else if (m100PackButton.isPushTriggered()) {
             pack100Pressed = true;
@@ -238,7 +235,6 @@ public class PackScreen extends FootballGameScreen {
         graphics2D.drawBitmap(background, null, backGroundRectangle, myPaint);
         infoBar.draw(elapsedTime, graphics2D);
 
-        mSquadsButton.draw(elapsedTime, graphics2D, null, null);
         mMenuButton.draw(elapsedTime, graphics2D, null, null);
         m100PackButton.draw(elapsedTime, graphics2D, null, null);
         m300PackButton.draw(elapsedTime, graphics2D, null, null);
