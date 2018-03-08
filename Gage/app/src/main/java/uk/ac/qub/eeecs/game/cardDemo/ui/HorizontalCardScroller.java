@@ -832,7 +832,9 @@ public class HorizontalCardScroller extends GameObject {
             return;
         }
 
-        cardScrollerItems.set(selectedItemIndex, new Card(mGameScreen, cardScrollerItems.get(cardScrollerItems.size() - 1).getPlayerID(), 100));
+        Card temp = new Card(mGameScreen, cardScrollerItems.get(cardScrollerItems.size() - 1).getPlayerID(), 100);
+        temp.setHeight((int) maxItemDimensions.y * 2);
+        cardScrollerItems.set(selectedItemIndex, temp);
         cardScrollerItems.get(selectedItemIndex).position = new Vector2(movedCardOriginalPosition);
 
         // Set position of new card to that of the original position
@@ -916,7 +918,7 @@ public class HorizontalCardScroller extends GameObject {
                     // Check if the touch location is within the bounds of any displayed cards
                     for (int i = 0; i < breaker; i++) {
                         if(checkIfTouchInArea(new Vector2(t.x, t.y), cardScrollerItems.get(currentItemIndex + i).getBound())) {
-                            selectedItemIndex = i;
+                            selectedItemIndex = currentItemIndex + i;
                             touchDown = true;
                             draggedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, cardScrollerItems.get(selectedItemIndex).position.y);
                             itemSelected = true;
