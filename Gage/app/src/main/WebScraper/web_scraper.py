@@ -2,23 +2,47 @@ import urllib.request
 import json
 import os.path
 
+
+def delete_files_in_dir(folder):
+    for the_file in os.listdir(folder):
+        file_path = os.path.join(folder, the_file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(e)
+
+
 urlString = "https://www.easports.com/fifa/ultimate-team/api/fut/item?page="
-outputFile = "../res/player_json/all_cards.json"
+
+jsonOutputFile = "../assets/player_json/all_cards.json"
+headshotOutputDir = "../assets/img/playerBitmaps"
+nationFlagOutputDir = "../assets/img/nationBitmaps"
+clubBadgeOutputDir = "../assets/img/clubBadgeBitmaps"
+
+delete_files_in_dir(headshotOutputDir)
+delete_files_in_dir(nationFlagOutputDir)
+delete_files_in_dir(clubBadgeOutputDir)
+
 pageNumber = 0
 derivedData = {"players": []}
+retrievedHeadShotUrls = []
 
 while True:
     pageNumber += 1
-    print(str(pageNumber) + "/666")
+    print(str(pageNumber) + "/777")
     with urllib.request.urlopen(urlString + str(pageNumber)) as url:
         rawData = json.loads(url.read().decode())
 
     for counter in range(0, len(rawData["items"])):
         rawPlayer = rawData["items"][counter]
-        if rawPlayer["league"]["abbrName"] == "ENG 1" and \
+        if (rawPlayer["league"]["abbrName"] == "ENG 1" or rawPlayer["league"]["abbrName"] == "ESP 1" or
+                    rawPlayer["league"]["abbrName"] == "FRA 1" or rawPlayer["league"]["abbrName"] == "ENG 2") and \
+                        rawPlayer["headshotImgUrl"] not in retrievedHeadShotUrls and\
                 (rawPlayer["color"] == "gold" or rawPlayer["color"] == "rare_gold" or
                     rawPlayer["color"] == "silver" or rawPlayer["color"] == "rare_silver" or
                     rawPlayer["color"] == "bronze" or rawPlayer["color"] == "rare_bronze"):
+            print(rawPlayer["color"] + " " + rawPlayer["lastName"] + " " + str(rawPlayer["rating"]))
 
             newID = str(len(derivedData["players"]))
 
@@ -62,20 +86,21 @@ while True:
             derivedData["players"].append(newPlayer)
 
             headshotBitmap = urllib.request.urlopen(rawPlayer["headshotImgUrl"])
-            output = open("../assets/img/playerBitmaps/" + newPlayer["headshotBitmap"], "wb")
+            retrievedHeadShotUrls.append(rawPlayer["headshotImgUrl"])
+            output = open(os.path.join(headshotOutputDir, newPlayer["headshotBitmap"]), "wb")
             output.write(headshotBitmap.read())
 
-            if not os.path.isfile("../assets/img/nationBitmaps/" + newPlayer["nation"]["logo"]):
+            if not os.path.isfile(os.path.join(nationFlagOutputDir, newPlayer["nation"]["logo"])):
                 nationFlagBitmap = urllib.request.urlopen(rawPlayer["nation"]["imageUrls"]["large"])
-                output = open("../assets/img/nationBitmaps/" + newPlayer["nation"]["logo"], "wb")
+                output = open(os.path.join(nationFlagOutputDir, newPlayer["nation"]["logo"]), "wb")
                 output.write(nationFlagBitmap.read())
 
-            if not os.path.isfile("../assets/img/clubBadgeBitmaps/" + newPlayer["club"]["logo"]):
+            if not os.path.isfile(os.path.join(nationFlagOutputDir, newPlayer["nation"]["logo"])):
                 clubBadgeBitmap = urllib.request.urlopen(rawPlayer["club"]["imageUrls"]["dark"]["large"])
-                output = open("../assets/img/clubBadgeBitmaps/" + newPlayer["club"]["logo"], "wb")
+                output = open(os.path.join(nationFlagOutputDir, newPlayer["nation"]["logo"]), "wb")
                 output.write(clubBadgeBitmap.read())
 
-            with open(outputFile, 'w+') as f:
+            with open(jsonOutputFile, 'w+') as f:
                 out = json.dumps(derivedData)
                 f.write(out)
 
