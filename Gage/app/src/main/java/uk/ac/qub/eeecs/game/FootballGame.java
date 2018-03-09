@@ -145,15 +145,11 @@ public class FootballGame extends Game {
         return array;
     }
 
-    private ArrayList<Card> getCardCollectionAsArrayList(JSONArray collection) {
+    private ArrayList<Card> getCardCollectionAsArrayList(JSONArray collection) throws JSONException{
         ArrayList<Card> array = new ArrayList<>();
-        try {
-            for (int i = 0; i < collection.length(); i++) {
-                Card card = new Card(getScreenManager().getCurrentScreen(), collection.getJSONObject(i).getString("playerID"), collection.getJSONObject(i).getInt("fitness"));
-                array.add(card);
-            }
-        } catch (JSONException e) {
-            Log.d("JSON", "Load fail : " + e.getMessage());
+        for (int i = 0; i < collection.length(); i++) {
+            Card card = new Card(getScreenManager().getCurrentScreen(), collection.getJSONObject(i).getString("playerID"), collection.getJSONObject(i).getInt("fitness"));
+            array.add(card);
         }
         return array;
     }
