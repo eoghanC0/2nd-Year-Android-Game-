@@ -1057,7 +1057,7 @@ public class HorizontalCardScroller extends GameObject {
     /**
      * Calculates positions of page icons
      */
-    private void calculateCurrentPageIndex() {
+    public void calculateCurrentPageIndex() {
         if(!multiMode) return;
         if(cardScrollerItems.size() == 0 || maxDisplayedItems <= 0) pageIconPositions.clear();
 
@@ -1163,7 +1163,7 @@ public class HorizontalCardScroller extends GameObject {
                     paint.setColor(Color.rgb(4, 46, 84));
                     graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
                 } else {
-                    paint.setColor(Color.rgb(133, 193, 250));
+                    paint.setColor(Color.rgb(250, 250, 250));
                     graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
                 }
             }
@@ -1333,5 +1333,21 @@ public class HorizontalCardScroller extends GameObject {
         } else {
             this.useSimulatedTouchEvents = false;
         }
+
+        for (Card card : cardScrollerItems) {
+            card.setUseSimulatedTouchEvents(useSimulatedTouchEvents);
+        }
+    }
+
+    public ArrayList<RectF> getPageIconPositions() {
+        return pageIconPositions;
+    }
+
+    public int getCurrentPageIndex() {
+        return currentPageIndex;
+    }
+
+    public void setPageScroll(boolean pageScroll) {
+        this.pageScroll = pageScroll;
     }
 }
