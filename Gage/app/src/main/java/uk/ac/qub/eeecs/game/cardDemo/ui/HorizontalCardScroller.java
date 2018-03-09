@@ -1,6 +1,9 @@
 package uk.ac.qub.eeecs.game.cardDemo.ui;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -264,6 +267,35 @@ public class HorizontalCardScroller extends GameObject {
     private BoundingBox removedCardBound = null;
 
     /**
+     * PAGE ICON VARIABLES
+     */
+
+    /**
+     * Locations of page icons
+     */
+    private ArrayList<RectF> pageIconPositions = new ArrayList<RectF>();
+
+    /**
+     * Index of current page in pageIconPositions ArrayList
+     */
+    private int currentPageIndex = 0;
+
+    /**
+     * Flag for when a page check is required
+     */
+    private boolean checkPageChange = false;
+
+    /**
+     * Additional flag for when a scroller triggers a page change
+     */
+    private boolean pageScroll = false;
+
+    /**
+     * Used to draw icons
+     */
+    private Paint paint = new Paint();
+
+    /**
      * TESTING VARIABLES
      */
 
@@ -323,6 +355,9 @@ public class HorizontalCardScroller extends GameObject {
         baseBitmap = assetManager.getBitmap("BaseBitmap");
         if(baseBitmap == null)
             Log.d("DEBUG", "HorizontalCardScroller: NO BASE BITMAP");
+
+        paint.setStrokeWidth(5);
+        paint.setColor(Color.CYAN);
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -408,6 +443,9 @@ public class HorizontalCardScroller extends GameObject {
                 cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (relativePosition * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
             } else
                 cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(position);
+
+            // Trigger flag to check page icons
+            checkPageChange = true;
         }
     }
 
@@ -646,6 +684,10 @@ public class HorizontalCardScroller extends GameObject {
             currentItemIndex = nextItemIndex;
             // Reset distance moved
             distanceMoved = 0;
+
+            // Trigger flag for page icon changed
+            checkPageChange = true;
+            pageScroll = true;
         }
     }
 
@@ -870,6 +912,7 @@ public class HorizontalCardScroller extends GameObject {
         pushButtonRight.position.add(x, y);
         selectBound.x += x;
         selectBound.y += y;
+        getBound();
     }
 
     /**
@@ -944,6 +987,9 @@ public class HorizontalCardScroller extends GameObject {
                 boolean inDestination = false;
                 for (BoundingBox selectDestination : selectDestinations) {
                     if(checkIfTouchInArea(cardScrollerItems.get(selectedItemIndex).position, selectDestination) && !cardMoveAnimationTriggered) {
+                        // Trigger flag to check page icons
+                        checkPageChange = true;
+
                         currentSelectDestination = selectDestination;
                         cardMoveAnimationTriggered = true;
                         movedCardOriginalPosition = draggedCardOriginalPosition;
@@ -996,6 +1042,50 @@ public class HorizontalCardScroller extends GameObject {
     public void clearScroller() {
         cardScrollerItems.clear();
     }
+
+    /**
+     * Checks if the current page icon should be changed
+     */
+    private void checkChangeCurrentPage() {
+        // Page icon should be changed
+        if(checkPageChange) {
+            calculateCurrentPageIndex();
+            checkPageChange = false;
+        }
+    }
+
+    /**
+     * Calculates positions of page icons
+     */
+    private void calculateCurrentPageIndex() {
+        if(!multiMode) return;
+        if(cardScrollerItems.size() == 0 || maxDisplayedItems <= 0) pageIconPositions.clear();
+
+        // Calculate number of pages needed
+        int pages = (int) Math.ceil((double) cardScrollerItems.size() / maxDisplayedItems);
+
+        // Change current page index if a page scroll was triggered
+        if(pageScroll) {
+            int moveDirection = scrollDirection ? -1 : 1;
+            currentPageIndex = (currentPageIndex + moveDirection) % pages;
+            currentPageIndex = currentPageIndex < 0 ? pages - 1 : currentPageIndex;
+            pageScroll = false;
+        }
+
+        // If there has been no changes in the number of changes return
+        if(pages == pageIconPositions.size()) return;
+
+        // Calculate position of each icon starting with the first as a basis
+        pageIconPositions.clear();
+        Vector2 firstIconPos = new Vector2((getBound().getWidth() - (pages * getBound().getHeight() * 0.05f) - ((pages - 1) * getBound().getHeight() * 0.1f)) / 2, position.y + getBound().halfHeight * 0.8f);
+        pageIconPositions.add(new RectF(firstIconPos.x, firstIconPos.y, firstIconPos.x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
+
+        for (int i = 1; i < pages; i++) {
+            float x = firstIconPos.x + (i * (getBound().getHeight() * 0.15f));
+            pageIconPositions.add(new RectF(x, firstIconPos.y, x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
+        }
+    }
+
 
     /**
      * * * * * * * * * * *
@@ -1054,6 +1144,9 @@ public class HorizontalCardScroller extends GameObject {
 
         // Checks if move new card animation has been triggered and performs animation if so
         checkAndPerformMoveNewCardAnimation();
+
+        // Checks if the current page icon should be changed
+        checkChangeCurrentPage();
     }
 
     @Override
@@ -1063,6 +1156,17 @@ public class HorizontalCardScroller extends GameObject {
         if(multiMode) {
             // If a current item exists, draw any current items else return
             if(currentItemIndex == -1) return;
+
+            // Draw page icons
+            for (int i = 0; i < pageIconPositions.size(); i++) {
+                if(i == currentPageIndex) {
+                    paint.setColor(Color.rgb(4, 46, 84));
+                    graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
+                } else {
+                    paint.setColor(Color.rgb(133, 193, 250));
+                    graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
+                }
+            }
 
             // Determine how many current items to draw, then draw
             int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;

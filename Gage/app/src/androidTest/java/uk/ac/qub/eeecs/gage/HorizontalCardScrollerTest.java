@@ -104,27 +104,27 @@ public class HorizontalCardScrollerTest {
 
     @Test
     public void test_addScrollerItem_OneItem_CheckItemCount() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         assertEquals(scroller.getItemCount(), 1);
     }
 
     @Test
     public void test_addScrollerItem_OneItem_CheckCurrentItemIndex() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         assertEquals(scroller.getCurrentItemIndex(), 0);
     }
 
     @Test
     public void test_addScrollerItem_TwoItems_CheckItemCount() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "2", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "2", 100));
         assertEquals(scroller.getItemCount(), 2);
     }
 
     @Test
     public void test_addScrollerItem_TwoItems_CheckCurrentItemIndex() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "2", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "2", 100));
         assertEquals(scroller.getCurrentItemIndex(), 0);
     }
 
@@ -161,11 +161,11 @@ public class HorizontalCardScrollerTest {
 
         touchEvents.add(touchEvent);
 
+        // Simulates pushing the left side of the scroller
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
         scroller.setUseSimulatedTouchEvents(true);
         scroller.setSimulatedTouchEvents(touchEvents);
-
-        // Simulates pushing the left side of the scroller
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
 
         scroller.update(new ElapsedTime());
         assertEquals(scroller.isScrollAnimationTriggered(), false);
@@ -181,11 +181,11 @@ public class HorizontalCardScrollerTest {
 
         touchEvents.add(touchEvent);
 
+        // Simulates pushing the left side of the scroller
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
         scroller.setUseSimulatedTouchEvents(true);
         scroller.setSimulatedTouchEvents(touchEvents);
-
-        // Simulates pushing the left side of the scroller
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
 
         scroller.update(new ElapsedTime());
         assertEquals(scroller.isScrollAnimationTriggered(), false);
@@ -351,7 +351,7 @@ public class HorizontalCardScrollerTest {
 
     @Test
     public void test_setMultiMode_True_1ItemInScroller() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.setMultiMode(true, 100);
         assertEquals(scroller.getMultiMode(), true);
     }
@@ -366,7 +366,7 @@ public class HorizontalCardScrollerTest {
 
     @Test
     public void test_setMultiMode_True_False_1ItemInScroller_CheckPosition() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.setMultiMode(true, 100);
         scroller.setMultiMode(false, 100);
         assertEquals(scroller.getCardScrollerItems().get(0).position.x, scroller.position.x);
@@ -384,7 +384,7 @@ public class HorizontalCardScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_1ItemInScroller() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
         assertEquals(scroller.getNextItemIndex(), -1);
@@ -474,8 +474,8 @@ public class HorizontalCardScrollerTest {
 
     @Test
     public void test_clearScroller_MultipleItems() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "2", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "2", 100));
         scroller.clearScroller();
         assertEquals(scroller.getCardScrollerItems().size(), 0);
     }
@@ -493,8 +493,8 @@ public class HorizontalCardScrollerTest {
 
     @Test
     public void test_isAnimating_ScrollerAnimating() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "2", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "2", 100));
 
         scroller.setUseSimulatedTouchEvents(true);
         scroller.setPushButtonLeftPush(true);
@@ -534,8 +534,8 @@ public class HorizontalCardScrollerTest {
 
     @Test
     public void test_adjustPosition_CardPositionsChanged() {
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "1", 100));
-        scroller.addScrollerItem(new Card(500, 500,100, gameScreen, "2", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "2", 100));
 
         Vector2[] originalPositions = new Vector2[scroller.getCardScrollerItems().size()];
         for (int i = 0; i < scroller.getCardScrollerItems().size(); i++) {
@@ -568,5 +568,212 @@ public class HorizontalCardScrollerTest {
         assertEquals(scroller.checkIfTouchInArea(touchLocation, selectDestination), false);
     }
 
+    @Test
+    public void test_checkFor1PageIcon() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 100);
+
+        scroller.update(new ElapsedTime());
+
+        assertEquals(1, scroller.getPageIconPositions().size());
+    }
+
+    @Test
+    public void test_checkFor2PageIcons() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 80);
+
+        scroller.update(new ElapsedTime());
+
+        assertEquals(2, scroller.getPageIconPositions().size());
+    }
+
+    @Test
+    public void test_checkForCorrectCurrentIndex_1Page() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 100);
+
+        scroller.update(new ElapsedTime());
+
+        assertEquals(0, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkForCorrectCurrentIndex_2Pages() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 80);
+
+        scroller.update(new ElapsedTime());
+
+        assertEquals(0, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkChangeToNextPageOnRightSideClick() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        // Create a fake input event and touch event array
+        TouchEvent touchEvent = new TouchEvent();
+        touchEvent.type = TouchEvent.TOUCH_UP;
+        touchEvent.x = scroller.getBound().getRight();
+        touchEvent.y = scroller.getBound().getHeight() / 2;
+
+        touchEvents.add(touchEvent);
+
+        // Simulates pushing the left side of the scroller
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 80);
+
+        scroller.update(new ElapsedTime());
+
+        scroller.setPageScroll(true);
+        scroller.calculateCurrentPageIndex();
+
+        assertEquals(1, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkChangeToNextPageOnLeftSideClick() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        // Create a fake input event and touch event array
+        TouchEvent touchEvent = new TouchEvent();
+        touchEvent.type = TouchEvent.TOUCH_UP;
+        touchEvent.x = scroller.getBound().getLeft();
+        touchEvent.y = scroller.getBound().getHeight() / 2;
+
+        touchEvents.add(touchEvent);
+
+        // Simulates pushing the left side of the scroller
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 80);
+
+        scroller.update(new ElapsedTime());
+
+        scroller.setPageScroll(true);
+        scroller.calculateCurrentPageIndex();
+
+        assertEquals(1, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkChangeToNextPageOnRightSideClickTwice() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        // Create a fake input event and touch event array
+        TouchEvent touchEvent = new TouchEvent();
+        touchEvent.type = TouchEvent.TOUCH_UP;
+        touchEvent.x = scroller.getBound().getRight();
+        touchEvent.y = scroller.getBound().getHeight() / 2;
+
+        touchEvents.add(touchEvent);
+
+        // Simulates pushing the left side of the scroller
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 80);
+
+        scroller.update(new ElapsedTime());
+
+        scroller.setPageScroll(true);
+        scroller.calculateCurrentPageIndex();
+
+        scroller.update(new ElapsedTime());
+
+        scroller.setPageScroll(true);
+        scroller.calculateCurrentPageIndex();
+
+        assertEquals(0, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkChangeToNextPageOnLeftSideClickTwice() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        // Create a fake input event and touch event array
+        TouchEvent touchEvent = new TouchEvent();
+        touchEvent.type = TouchEvent.TOUCH_UP;
+        touchEvent.x = scroller.getBound().getLeft();
+        touchEvent.y = scroller.getBound().getHeight() / 2;
+
+        touchEvents.add(touchEvent);
+
+        // Simulates pushing the left side of the scroller
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 80);
+
+        scroller.update(new ElapsedTime());
+
+        scroller.setPageScroll(true);
+        scroller.calculateCurrentPageIndex();
+
+        scroller.update(new ElapsedTime());
+
+        scroller.setPageScroll(true);
+        scroller.calculateCurrentPageIndex();
+
+        assertEquals(0, scroller.getCurrentPageIndex());
+    }
 }
 
