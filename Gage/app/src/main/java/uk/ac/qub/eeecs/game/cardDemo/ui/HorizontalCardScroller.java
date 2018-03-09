@@ -1066,8 +1066,9 @@ public class HorizontalCardScroller extends GameObject {
 
         // Change current page index if a page scroll was triggered
         if(pageScroll) {
-            int moveDirection = scrollDirection ? 1 : -1;
-            currentPageIndex = Math.abs((currentPageIndex + moveDirection) % pages);
+            int moveDirection = scrollDirection ? -1 : 1;
+            currentPageIndex = (currentPageIndex + moveDirection) % pages;
+            currentPageIndex = currentPageIndex < 0 ? pages - 1 : currentPageIndex;
             pageScroll = false;
         }
 
@@ -1080,7 +1081,7 @@ public class HorizontalCardScroller extends GameObject {
         pageIconPositions.add(new RectF(firstIconPos.x, firstIconPos.y, firstIconPos.x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
 
         for (int i = 1; i < pages; i++) {
-            float x = firstIconPos.x + (pages * (getBound().getHeight() * 0.15f));
+            float x = firstIconPos.x + (i * (getBound().getHeight() * 0.15f));
             pageIconPositions.add(new RectF(x, firstIconPos.y, x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
         }
     }
