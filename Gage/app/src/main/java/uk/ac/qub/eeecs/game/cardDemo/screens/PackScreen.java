@@ -24,7 +24,7 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Pack;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
-import uk.ac.qub.eeecs.game.cardDemo.ui.popUpWindow;
+import uk.ac.qub.eeecs.game.cardDemo.ui.PopUpWindow;
 
 /**
  * Created by stephenmcveigh on 07/12/2017.
@@ -68,8 +68,8 @@ public class PackScreen extends FootballGameScreen {
     int screenWidth = getGame().getScreenWidth();
     int screenHeight = getGame().getScreenHeight();
 
-    private popUpWindow packPopUp;
-    private popUpWindow notEnoughCoinsPopUp;
+    private PopUpWindow packPopUp;
+    private PopUpWindow notEnoughCoinsPopUp;
 
     //private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0, 0, this.getGame().getScreenWidth(), this.getGame().getScreenHeight());
@@ -120,8 +120,8 @@ public class PackScreen extends FootballGameScreen {
         m500PackButton.setEnabled(true);
         m300PackButton.setEnabled(true);
 
-        packPopUp = new popUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "Are you sure you want to buy this pack?", "Yes", "No");
-        notEnoughCoinsPopUp = new popUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "You dont have enough XP to buy this", "Cancel", "Menu");
+        packPopUp = new PopUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "Are you sure you want to buy this pack?", "Yes", "No");
+        notEnoughCoinsPopUp = new PopUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "You dont have enough XP to buy this", "Cancel", "Menu");
     }
 
     // /////////////////////////////////////////////////////////////////////////
