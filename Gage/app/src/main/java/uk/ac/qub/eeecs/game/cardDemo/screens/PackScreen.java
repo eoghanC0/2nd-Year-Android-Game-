@@ -316,7 +316,7 @@ public class PackScreen extends FootballGameScreen {
         }
 
     public void selectPackPlayers(int packSizes) {
-    //myPack = new Pack(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4,this ,packSizes);
+    myPack = new Pack(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4,this ,packSizes);
     }
 
 }

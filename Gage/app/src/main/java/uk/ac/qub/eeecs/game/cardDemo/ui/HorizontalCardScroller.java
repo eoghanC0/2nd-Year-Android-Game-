@@ -870,7 +870,6 @@ public class HorizontalCardScroller extends GameObject {
         pushButtonRight.position.add(x, y);
         selectBound.x += x;
         selectBound.y += y;
-        getBound();
     }
 
     /**
