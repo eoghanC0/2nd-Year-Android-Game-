@@ -21,21 +21,21 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 //This class stores the details of each match
 public class Match extends GameObject {
 
-    private int playerAScore;
-    private int playerBScore;
-    private int timeElapsed;
-    private int totalTime;
-    private GameState gameState;
-    private Game mGame;
-    private MatchEvent newEvent;
-    private ArrayList<Card> AITeam, playerTeam;
-    private int difficulty;
-    private InfoBar infoBar;
+    public int playerAScore;
+    public int playerBScore;
+    public int timeElapsed;
+    public int totalTime;
+    public GameState gameState;
+    public Game mGame;
+    public MatchEvent newEvent;
+    public ArrayList<Card> AITeam, playerTeam;
+    public int difficulty;
+    public InfoBar infoBar;
 
-    private final int totalGameTimeLength;
-    private double currentGameTime, displayTime, timeSinceLastScenario;
+    public final int totalGameTimeLength;
+    public double currentGameTime, displayTime, timeSinceLastScenario;
 
-    private boolean winnerDecided, scenarioActive, gameOver;
+    public boolean winnerDecided, scenarioActive, gameOver;
     public enum GameState{MIDFIELD, PLAYER_A_DANGEROUS_ATTACK, PLAYER_A_ATTACK, PLAYER_B_ATTACK, PLAYER_B_DANGEROUS_ATTACK };
 
     public Match(GameScreen gameScreen, int difficulty, int gameLength, ArrayList<Card> playerTeam){
@@ -80,7 +80,7 @@ public class Match extends GameObject {
 
     public GameState getGameState() {return gameState;}
 
-    private void populateAITeam() {
+    public void populateAITeam() {
         int minRating = 0, maxRating = 0;
         switch (difficulty) {
             case 0:
@@ -118,7 +118,7 @@ public class Match extends GameObject {
         }
 
     }
-    private boolean checkIfCardIsntDupe(Card newPlayer){
+    public boolean checkIfCardIsntDupe(Card newPlayer){
         for (int i = 0; i < AITeam.size(); i++) {
             if (newPlayer.getPlayerID().equals(AITeam.get(i).getPlayerID()))
                 return false;
@@ -126,13 +126,13 @@ public class Match extends GameObject {
         return true;
     }
 
-    private void makeScenario(){
+    public void makeScenario(){
         scenarioActive = true;
         newEvent = new MatchEvent(mGameScreen, gameState, AITeam);
         winnerDecided = false;
     }
 
-    private void displayWinner(){
+    public void displayWinner(){
         String winner = newEvent.getWinner();
          if (winner != null){
 
@@ -181,7 +181,7 @@ public class Match extends GameObject {
         }
     }
 
-    private void checkForWinner(){
+    public void checkForWinner(){
         if (newEvent != null)
             if (newEvent.getWinner() != null){
                 displayWinner();
@@ -191,14 +191,14 @@ public class Match extends GameObject {
 
     }
 
-    private void checkIfGameOver(){
+    public void checkIfGameOver(){
       if (currentGameTime >= totalGameTimeLength)
             gameOver = true;
     }
     /**
      * Updates properties of the InfoBar
      */
-    private void updateInfoBar() {
+    public void updateInfoBar() {
         displayTime = currentGameTime / totalGameTimeLength * 90;
         if (gameOver)
             displayTime = 90.00;
@@ -207,7 +207,7 @@ public class Match extends GameObject {
         infoBar.setAreaThreeText(String.format("%2.2f", displayTime ));
     }
 
-    private void checkForScenario(){
+    public void checkForScenario(){
         if (timeSinceLastScenario > 5){
             makeScenario();
             timeSinceLastScenario = 0;
