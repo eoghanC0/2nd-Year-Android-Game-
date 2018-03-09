@@ -282,7 +282,6 @@ public class HorizontalCardScroller extends GameObject {
 
     /**
      * Flag for when a page check is required
-     * Triggerd by scroll method
      */
     private boolean checkPageChange = false;
 
@@ -1157,6 +1156,17 @@ public class HorizontalCardScroller extends GameObject {
             // If a current item exists, draw any current items else return
             if(currentItemIndex == -1) return;
 
+            // Draw page icons
+            for (int i = 0; i < pageIconPositions.size(); i++) {
+                if(i == currentPageIndex) {
+                    paint.setColor(Color.rgb(4, 46, 84));
+                    graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
+                } else {
+                    paint.setColor(Color.rgb(133, 193, 250));
+                    graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
+                }
+            }
+
             // Determine how many current items to draw, then draw
             int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
             for (int i = 0; i < breaker; i++) {
@@ -1167,17 +1177,6 @@ public class HorizontalCardScroller extends GameObject {
             // Draw selectedItem so that it renders above all other cards
             if(touchDown && selectedItemIndex >= 0)
                 cardScrollerItems.get(selectedItemIndex).draw(elapsedTime, graphics2D);
-
-            // Draw page icons
-            for (int i = 0; i < pageIconPositions.size(); i++) {
-                if(i == currentPageIndex) {
-                    paint.setColor(Color.rgb(4, 46, 84));
-                    graphics2D.drawArc(pageIconPositions.get(i), 0,360, false, paint);
-                } else {
-                    paint.setColor(Color.rgb(133, 193, 250));
-                    graphics2D.drawArc(pageIconPositions.get(i), 0,360, false, paint);
-                }
-            }
 
             // Continue if scroll animation has been triggered else return
             if(!scrollAnimationTriggered) return;
