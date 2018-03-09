@@ -82,7 +82,7 @@ public class OptionsScreen extends FootballGameScreen {
         super("OptionsScreen", game);
 
         // Instantiate InfoBar
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "XP | " + String.valueOf(mGame.getXp()), "O P T I O N S", mGame.getMatchStats());
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "", "O P T I O N S", mGame.getMatchStats());
 
         // Create the screen viewport
         mScreenViewport = new ScreenViewport(0, 0, game.getScreenWidth(),

@@ -86,11 +86,11 @@ public class LoadGameScreen extends FootballGameScreen {
         nextButton.update(elapsedTime);
         if (nextButton.isPushTriggered()) {
             mGame.loadGame(lbxGameSaves.getSelectedIndex());
-            changeToScreen(new MenuScreen(mGame));
+            changeToScreen(new StarterPackScreen(mGame));
         }
 
         deleteButton.update(elapsedTime);
-        if (deleteButton.isPushTriggered()) {
+        if (deleteButton.isPushTriggered()&& lbxGameSaves.getSelectedIndex() != -1) {
             deleteSave();
         }
     }
@@ -100,10 +100,21 @@ public class LoadGameScreen extends FootballGameScreen {
         Paint myPaint = mGame.getPaint();
         graphics2D.drawBitmap(background, null, backGroundRectangle,myPaint);
         lbxGameSaves.draw(elapsedTime, graphics2D);
-
         nextButton.draw(elapsedTime, graphics2D,null,null);
         deleteButton.draw(elapsedTime, graphics2D,null,null);
 
         graphics2D.drawBitmap(title, null, new Rect(5,50,mGame.getScreenWidth() - 5, (int) (mGame.getScreenHeight() * 0.2) - 5), myPaint);
+    }
+
+    /**
+     * Gets area occupied by block of text
+     * @param paint
+     * @param text
+     * @return area occupied
+     */
+    private Rect getTextBounds(Paint paint, String text) {
+        Rect bounds = new Rect();
+        paint.getTextBounds(text, 0, text.length(), bounds);
+        return bounds;
     }
 }

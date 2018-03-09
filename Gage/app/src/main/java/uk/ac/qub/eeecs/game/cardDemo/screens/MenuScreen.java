@@ -40,13 +40,15 @@ public class MenuScreen extends FootballGameScreen {
     private PushButton mHelpButton;
     private PushButton mOptionsButton;
     private PushButton mSquadsButton;
-    private PushButton mMusicButton;
+    private PushButton musicButton;
     private PushButton mPacksButton;
+
+    private Music myMusic;
 
     private final Bitmap background;
     private final Rect backgroundRect = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
-    private boolean musicMuteState = false;
+    private boolean musicButtonState = false;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -95,7 +97,7 @@ public class MenuScreen extends FootballGameScreen {
         mSquadsButton = new PushButton(
                 screenWidth * 0.375f, screenHeight * 0.5f, screenWidth * 0.4f, screenHeight* 0.45f, "MenuButton", "MenuButtonPushed", this);
         mSquadsButton.setButtonText("SQUADS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
-        mMusicButton = new PushButton(
+        musicButton = new PushButton(
                 screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "MusicIcon", "MusicIconPushed", this);
         mPacksButton = new PushButton(
                 screenWidth * 0.725f, screenHeight * 0.625f, screenWidth * 0.2f, screenHeight * 0.2f, "MenuButton", "MenuButtonPushed", this);
@@ -130,7 +132,7 @@ public class MenuScreen extends FootballGameScreen {
             mHelpButton.update(elapsedTime);
             mOptionsButton.update(elapsedTime);
             mSquadsButton.update(elapsedTime);
-            mMusicButton.update(elapsedTime);
+            musicButton.update(elapsedTime);
             mPacksButton.update(elapsedTime);
 
             if (mOptionsButton.isPushTriggered())
@@ -141,17 +143,17 @@ public class MenuScreen extends FootballGameScreen {
                 changeToScreen(new HelpScreen(mGame));
             else if (mPacksButton.isPushTriggered())
                 changeToScreen(new PackScreen(mGame));
-            else if (mMusicButton.isPushTriggered()) {
-                if(musicMuteState) {
-                    mMusicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
-                    mMusicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMutePushed"));
-                    mGame.getBGMusic().setVolume(1.0f);
+            else if (musicButton.isPushTriggered()) {
+                if(musicButtonState) {
+                    musicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
+                    musicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMutePushed"));
+                    musicButtonState = !musicButtonState;
                 } else {
-                    mMusicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIcon"));
-                    mMusicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
-                    mGame.getBGMusic().setVolume(0);
+                    musicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIcon"));
+                    musicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
+                    musicButtonState = !musicButtonState;
                 }
-                musicMuteState = !musicMuteState;
+
             }
         }
     }
@@ -186,11 +188,11 @@ public class MenuScreen extends FootballGameScreen {
         mHelpButton.draw(elapsedTime, graphics2D, null, null);
         mOptionsButton.draw(elapsedTime, graphics2D, null, null);
         mSquadsButton.draw(elapsedTime, graphics2D, null, null);
-        mMusicButton.draw(elapsedTime, graphics2D, null, null);
+        musicButton.draw(elapsedTime, graphics2D, null, null);
         mPacksButton.draw(elapsedTime, graphics2D, null, null);
 
         myPaint.reset();
         myPaint.setTextSize(100);
-        graphics2D.drawText("FOOTBALL TRUMPS", mGame.getScreenWidth() * 0.5f,mGame.getScreenWidth() * 0.9f, myPaint);
+        graphics2D.drawText("FOOTBALL TRUMPS", mGame.getScreenWidth() * 0.5f,mGame.getScreenWidth() * 0.9f,myPaint);
     }
 }
