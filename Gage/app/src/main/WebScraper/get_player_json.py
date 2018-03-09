@@ -1,6 +1,7 @@
 import urllib.request
 import json
 import os.path
+import get_league_clubs as leagueGetter
 
 
 def delete_files_in_dir(folder):
@@ -29,22 +30,21 @@ delete_files_in_dir(jsonOutputDir)
 pageNumber = 0
 derivedData = {"players": []}
 retrievedHeadShotUrls = []
+leagueJson = leagueGetter.getJsonObject()
 
+print("started scraping player json")
 while True:
     pageNumber += 1
-    print(str(pageNumber) + "/777")
     with urllib.request.urlopen(urlString + str(pageNumber)) as url:
         rawData = json.loads(url.read().decode())
-
+    print(str(pageNumber) + "/777")
     for counter in range(0, len(rawData["items"])):
         rawPlayer = rawData["items"][counter]
-        if (rawPlayer["league"]["abbrName"] == "ENG 1" or rawPlayer["league"]["abbrName"] == "ESP 1" or
-                    rawPlayer["league"]["abbrName"] == "FRA 1" or rawPlayer["league"]["abbrName"] == "ENG 2") and \
-                        rawPlayer["headshotImgUrl"] not in retrievedHeadShotUrls and\
+        if (leagueGetter.club_in_league(rawPlayer["club"]["abbrName"],leagueJson["ENG 1"]) or leagueGetter.club_in_league(rawPlayer["club"]["abbrName"],leagueJson["ENG 2"])) and \
+                        rawPlayer["headshotImgUrl"] not in retrievedHeadShotUrls and \
                 (rawPlayer["color"] == "gold" or rawPlayer["color"] == "rare_gold" or
                     rawPlayer["color"] == "silver" or rawPlayer["color"] == "rare_silver" or
                     rawPlayer["color"] == "bronze" or rawPlayer["color"] == "rare_bronze"):
-            print(rawPlayer["color"] + " " + rawPlayer["lastName"] + " " + str(rawPlayer["rating"]))
 
             newID = str(len(derivedData["players"]))
 
@@ -106,7 +106,7 @@ while True:
                 out = json.dumps(derivedData)
                 f.write(out)
 
-    if rawData["totalPages"] == pageNumber:  # 666
+    if rawData["totalPages"] == pageNumber:  # 777
         break
 
 
