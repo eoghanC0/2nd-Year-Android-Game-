@@ -113,9 +113,9 @@ public class SquadSelectionPane extends GameObject {
                 mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f) * (TOGGLE_BITMAP_ASPECT_RATIO),
                 "ToggleButton_Off", "ToggleButton_On", gameScreen);
         previousAreaButton = new PushButton(mBound.getRight() - mBound.getWidth() * (SIDE_BAR_COVERAGE/2), mBound.getBottom() + mBound.getHeight()*9/12,
-                mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), "UpArrow", "UpArrow_Pushed", gameScreen);
+                mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), "ArrowUp", "ArrowUpPushed", gameScreen);
         nextAreaButton = new PushButton(mBound.getRight() - mBound.getWidth() * (SIDE_BAR_COVERAGE/2), mBound.getBottom() + mBound.getHeight()*11/12,
-                mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), "DownArrow", "DownArrow_Pushed", gameScreen);
+                mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), "ArrowDown", "ArrowDownPushed", gameScreen);
         openListBoxPositionY = position.y + mBound.getHeight()*3/12;
         formationsListBox = new ListBox(position.x, openListBoxPositionY, mBound.getWidth()/1.5f, mBound.getHeight()/2, gameScreen);
         setUpFormationsListBox();
@@ -164,10 +164,10 @@ public class SquadSelectionPane extends GameObject {
         assetManager.loadAndAddBitmap("Pitch_Goal", "img/pitch_goal.png");
         assetManager.loadAndAddBitmap("ToggleButton_Off", "img/Toggles_Off.png");
         assetManager.loadAndAddBitmap("ToggleButton_On", "img/Toggles_On.png");
-        assetManager.loadAndAddBitmap("UpArrow", "img/UpArrow.png");
-        assetManager.loadAndAddBitmap("UpArrow_Pushed", "img/UpArrowActive.png");
-        assetManager.loadAndAddBitmap("DownArrow", "img/DownArrow.png");
-        assetManager.loadAndAddBitmap("DownArrow_Pushed", "img/DownArrowActive.png");
+        assetManager.loadAndAddBitmap("ArrowUp", "img/ArrowUp.png");
+        assetManager.loadAndAddBitmap("ArrowUpPushed", "img/ArrowUpPushed.png");
+        assetManager.loadAndAddBitmap("ArrowDown", "img/ArrowDown.png");
+        assetManager.loadAndAddBitmap("ArrowDownPushed", "img/ArrowDownPushed.png");
     }
 
     /**
@@ -501,7 +501,7 @@ public class SquadSelectionPane extends GameObject {
         //Draw the side bar with buttons and toggle
         paint.reset();
         paint.setColor(Color.argb(125, 0,242,255));
-        graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE, position.y, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
+        //graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE, position.y, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
         if (currentSelectionArea < 3) nextAreaButton.draw(elapsedTime, graphics2D);
         if (currentSelectionArea > 0) previousAreaButton.draw(elapsedTime, graphics2D);
         paint.reset();
