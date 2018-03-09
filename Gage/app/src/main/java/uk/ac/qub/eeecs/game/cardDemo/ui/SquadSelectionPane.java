@@ -402,7 +402,6 @@ public class SquadSelectionPane extends GameObject {
      * If so, the position the card was dropped is cross referenced with the displayed
      * holders to determine it's position
      */
-    //TODO : Move this to the scroller class
     private void getCardFromScroller() {
         if (cardScroller.isRemovedCardReady()) {
             Card removedCard = cardScroller.getRemovedCard();
