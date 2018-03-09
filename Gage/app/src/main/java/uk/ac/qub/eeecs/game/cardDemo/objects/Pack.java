@@ -67,7 +67,7 @@ public class Pack extends GameObject {
     public void update(ElapsedTime elapsedTime) {
         if (openingAnimationCounter < ANIMATION_LENGTH) {
             openingAnimationCounter++;
-            bestCard.setHeight(getCardHeightThisFrame(openingAnimationCounter, ANIMATION_LENGTH, (int) (mBound.getHeight()/1.5f)));
+            bestCard.setHeight(getCardHeightThisFrame(openingAnimationCounter, ANIMATION_LENGTH, animationCardMaxHeight));
         } else {
             cardScroller.update(elapsedTime);
         }
