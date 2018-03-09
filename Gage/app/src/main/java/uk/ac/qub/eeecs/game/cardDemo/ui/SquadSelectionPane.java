@@ -500,8 +500,7 @@ public class SquadSelectionPane extends GameObject {
 
         //Draw the side bar with buttons and toggle
         paint.reset();
-        paint.setColor(Color.GRAY);
-        paint.setAlpha(175);
+        paint.setColor(Color.argb(125, 0,242,255));
         graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE, position.y, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
         if (currentSelectionArea < 3) nextAreaButton.draw(elapsedTime, graphics2D);
         if (currentSelectionArea > 0) previousAreaButton.draw(elapsedTime, graphics2D);
@@ -512,6 +511,7 @@ public class SquadSelectionPane extends GameObject {
         showFormationsToggle.draw(elapsedTime, graphics2D);
 
         cardScroller.draw(elapsedTime, graphics2D);
+
 
         formationsListBox.draw(elapsedTime, graphics2D);
 
