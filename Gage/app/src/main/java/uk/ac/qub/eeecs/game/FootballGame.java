@@ -27,6 +27,7 @@ import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
  */
 
 public class FootballGame extends Game {
+    public final int MAX_SAVE_SLOTS = 3;
     private int gameID, wins, losses, draws, xp;
     private ArrayList<Card> club, squad;
     private int pitchBackground, difficulty, gameLength;
@@ -173,7 +174,6 @@ public class FootballGame extends Game {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm");
             mAssetManager.deleteSave(gameID);
             mAssetManager.writeFile("ID_" + gameID + "_" + sdf.format(GregorianCalendar.getInstance().getTime()) + ".json", gameSavesObj.toString());
-            Log.i("WRITE", "file written");
         } catch(JSONException e){
             Log.d("JSON", "Save fail : " + e.getMessage());
         }
@@ -208,5 +208,6 @@ public class FootballGame extends Game {
         difficulty = 1;
         gameLength = 300;
         pitchBackground = 0;
+        saveGame();
     }
 }

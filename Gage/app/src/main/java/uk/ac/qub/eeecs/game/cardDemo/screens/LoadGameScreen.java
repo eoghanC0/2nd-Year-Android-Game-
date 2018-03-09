@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
@@ -35,12 +36,12 @@ public class LoadGameScreen extends FootballGameScreen {
     private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
     private Bitmap title;
 
+    private AssetStore assetManager = mGame.getAssetManager();
+
 
     public LoadGameScreen(FootballGame game) {
         super("LoadGameScreen", game);
         lbxGameSaves = new ListBox(mGame.getScreenWidth() * 0.5f,mGame.getScreenHeight() * 0.5f,1000,300, this);
-        lbxGameSaves.setSelectionColor(Color.CYAN);
-        AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("MainBackground", "img/MainBackground.jpg");
         background = assetManager.getBitmap("MainBackground");
         assetManager.loadAndAddBitmap("NextButton", "img/PlayIcon.png");
@@ -50,7 +51,6 @@ public class LoadGameScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("Title", "img/Title.png");
         title = assetManager.getBitmap("Title");
 
-        //TODO: Remove below method
         setupSavesListBox();
 
         //Buttons
@@ -69,14 +69,20 @@ public class LoadGameScreen extends FootballGameScreen {
 
     //Sets selected save to empty values
     private void deleteSave(){
-
+        assetManager.deleteSave(lbxGameSaves.getSelectedIndex());
+        setupSavesListBox();
     }
 
     //gets save name, time/date etc and adds to list box for each save.
     private void setupSavesListBox(){
         lbxGameSaves.clear();
-        mGame.initialiseNewGame(1);
-        mGame.setXp(20000);
+        for(int i = 0; i < mGame.MAX_SAVE_SLOTS; i++) {
+            lbxGameSaves.addItem("Save Slot " + Character.toString((char)(65 + i)) + ": New Game");
+        }
+        for(String saveFile : assetManager.getSaveFiles()) {
+            int index = Integer.parseInt(saveFile.split("_")[1]);
+            lbxGameSaves.getItems().set(index, lbxGameSaves.getItems().get(index).split(":")[0] + ": " + saveFile.split("_")[2].split("\\.")[0]);
+        }
     }
 
     @Override
@@ -85,12 +91,17 @@ public class LoadGameScreen extends FootballGameScreen {
 
         nextButton.update(elapsedTime);
         if (nextButton.isPushTriggered()) {
-            mGame.loadGame(lbxGameSaves.getSelectedIndex());
-            changeToScreen(new StarterPackScreen(mGame));
+            if (!lbxGameSaves.getSelectedItem().contains("New Game")) {
+                mGame.loadGame(lbxGameSaves.getSelectedIndex());
+                changeToScreen(new MenuScreen(mGame));
+            } else {
+                mGame.initialiseNewGame(lbxGameSaves.getSelectedIndex());
+                changeToScreen(new StarterPackScreen(mGame));
+            }
         }
 
         deleteButton.update(elapsedTime);
-        if (deleteButton.isPushTriggered()&& lbxGameSaves.getSelectedIndex() != -1) {
+        if (deleteButton.isPushTriggered() && !lbxGameSaves.getSelectedItem().contains("New Game")) {
             deleteSave();
         }
     }
@@ -100,21 +111,13 @@ public class LoadGameScreen extends FootballGameScreen {
         Paint myPaint = mGame.getPaint();
         graphics2D.drawBitmap(background, null, backGroundRectangle,myPaint);
         lbxGameSaves.draw(elapsedTime, graphics2D);
-        nextButton.draw(elapsedTime, graphics2D,null,null);
-        deleteButton.draw(elapsedTime, graphics2D,null,null);
+
+        if (lbxGameSaves.getSelectedIndex() > -1)
+            nextButton.draw(elapsedTime, graphics2D,null,null);
+
+        if (lbxGameSaves.getSelectedIndex() > -1 && !lbxGameSaves.getSelectedItem().contains("New Game"))
+            deleteButton.draw(elapsedTime, graphics2D,null,null);
 
         graphics2D.drawBitmap(title, null, new Rect(5,50,mGame.getScreenWidth() - 5, (int) (mGame.getScreenHeight() * 0.2) - 5), myPaint);
-    }
-
-    /**
-     * Gets area occupied by block of text
-     * @param paint
-     * @param text
-     * @return area occupied
-     */
-    private Rect getTextBounds(Paint paint, String text) {
-        Rect bounds = new Rect();
-        paint.getTextBounds(text, 0, text.length(), bounds);
-        return bounds;
     }
 }

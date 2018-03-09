@@ -425,8 +425,6 @@ public class HorizontalCardScroller extends GameObject {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
 
-            card.setDraggingEnabled(false);
-
             if(multiMode) {
                 card.setHeight((int) maxItemDimensions.y * 2);
             } else {
