@@ -5,13 +5,14 @@ import get_league_clubs as leagueGetter
 
 
 def delete_files_in_dir(folder):
-    for the_file in os.listdir(folder):
-        file_path = os.path.join(folder, the_file)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print(e)
+    if os.path.exists(folder):
+        for the_file in os.listdir(folder):
+            file_path = os.path.join(folder, the_file)
+            try:
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+            except Exception as e:
+                print(e)
 
 
 urlString = "https://www.easports.com/fifa/ultimate-team/api/fut/item?page="
@@ -86,6 +87,15 @@ while True:
                          "rare": rare
                          }
             derivedData["players"].append(newPlayer)
+
+            if not os.path.exists(headshotOutputDir):
+                os.makedirs(headshotOutputDir)
+            if not os.path.exists(nationFlagOutputDir):
+                os.makedirs(nationFlagOutputDir)
+            if not os.path.exists(clubBadgeOutputDir):
+                os.makedirs(clubBadgeOutputDir)
+            if not os.path.exists(jsonOutputDir):
+                os.makedirs(jsonOutputDir)
 
             headshotBitmap = urllib.request.urlopen(rawPlayer["headshotImgUrl"])
             retrievedHeadShotUrls.append(rawPlayer["headshotImgUrl"])

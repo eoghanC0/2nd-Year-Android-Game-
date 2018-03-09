@@ -86,7 +86,7 @@ public class LoadGameScreen extends FootballGameScreen {
         nextButton.update(elapsedTime);
         if (nextButton.isPushTriggered()) {
             mGame.loadGame(lbxGameSaves.getSelectedIndex());
-            changeToScreen(new MenuScreen(mGame));
+            changeToScreen(new StarterPackScreen(mGame));
         }
 
         deleteButton.update(elapsedTime);

@@ -15,7 +15,7 @@ public class StarterPackScreen extends FootballGameScreen {
 
     public StarterPackScreen(FootballGame game) {
         super("StarterPackScreen", game);
-        starterPack = new Pack(getGame().getScreenWidth()/2,getGame().getScreenHeight()/2, getGame().getScreenWidth(), getGame().getScreenHeight(), this, 11);
+        starterPack = new Pack(this, 11, 5, 0,80);
     }
 
     @Override
