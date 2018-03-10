@@ -10,10 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.R;
@@ -27,6 +27,7 @@ import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
  */
 
 public class FootballGame extends Game {
+    public final int MAX_SAVE_SLOTS = 3;
     private int gameID, wins, losses, draws, xp;
     private ArrayList<Card> club, squad;
     private int pitchBackground, difficulty, gameLength;
@@ -63,10 +64,7 @@ public class FootballGame extends Game {
         // Go with a default 30 UPS/FPS
         setTargetFramesPerSecond(30);
 
-        //Play Background Music
-        bgMusic = new Music(getResources().openRawResourceFd(R.raw.bgmusic));
-        bgMusic.setLooping(true);
-        bgMusic.play();
+        playBackgroundMusic();
     }
 
     @Override
@@ -144,15 +142,11 @@ public class FootballGame extends Game {
         return array;
     }
 
-    private ArrayList<Card> getCardCollectionAsArrayList(JSONArray collection) {
+    private ArrayList<Card> getCardCollectionAsArrayList(JSONArray collection) throws JSONException{
         ArrayList<Card> array = new ArrayList<>();
-        try {
-            for (int i = 0; i < collection.length(); i++) {
-                Card card = new Card(getScreenManager().getCurrentScreen(), collection.getJSONObject(i).getString("playerID"), collection.getJSONObject(i).getInt("fitness"));
-                array.add(card);
-            }
-        } catch (JSONException e) {
-            Log.d("JSON", "Load fail : " + e.getMessage());
+        for (int i = 0; i < collection.length(); i++) {
+            Card card = new Card(getScreenManager().getCurrentScreen(), collection.getJSONObject(i).getString("playerID"), collection.getJSONObject(i).getInt("fitness"));
+            array.add(card);
         }
         return array;
     }
@@ -173,7 +167,6 @@ public class FootballGame extends Game {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm");
             mAssetManager.deleteSave(gameID);
             mAssetManager.writeFile("ID_" + gameID + "_" + sdf.format(GregorianCalendar.getInstance().getTime()) + ".json", gameSavesObj.toString());
-            Log.i("WRITE", "file written");
         } catch(JSONException e){
             Log.d("JSON", "Save fail : " + e.getMessage());
         }
@@ -208,5 +201,23 @@ public class FootballGame extends Game {
         difficulty = 1;
         gameLength = 300;
         pitchBackground = 0;
+        saveGame();
+    }
+
+    private void playBackgroundMusic(){
+        Random rand = new Random(System.currentTimeMillis());
+        switch (rand.nextInt(3)){
+            case 0:
+                bgMusic = new Music(getResources().openRawResourceFd(R.raw.allstar));
+                break;
+            case 1:
+                bgMusic = new Music(getResources().openRawResourceFd(R.raw.usesomebody));
+                break;
+            case 2:
+                bgMusic = new Music(getResources().openRawResourceFd(R.raw.clubfoot));
+            break;
+        }
+        bgMusic.setLooping(true);
+        bgMusic.play();
     }
 }

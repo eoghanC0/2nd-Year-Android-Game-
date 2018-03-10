@@ -5,14 +5,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
-
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
@@ -36,20 +32,12 @@ public class Pack extends GameObject {
 
     public Pack(GameScreen gameScreen, int numberOfCards, int numberOfRares, int minRating, int maxRating) {
         super(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight()/2, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight(),null, gameScreen);
-        cardScroller = new HorizontalCardScroller(position.x - mBound.getWidth(),mBound.getHeight()/3,mBound.getWidth(),2*mBound.getHeight()/3,gameScreen);
-        for (int i = 0; i < numberOfCards - numberOfRares; i++) {
-            cardScroller.addScrollerItem(new Card(gameScreen, false,null, minRating, maxRating));
-        }
-        for (int i = 0; i < numberOfRares; i++) {
-            cardScroller.addScrollerItem(new Card(gameScreen, true,null, minRating, maxRating));
-        }
-        Collections.shuffle(cardScroller.getCardScrollerItems());
+        cardScroller = new HorizontalCardScroller(position.x - mBound.getWidth(),(mBound.getHeight()/3) * 1.08f,mBound.getWidth(),2*mBound.getHeight()/3,gameScreen);
+        createPack(numberOfCards, numberOfRares, minRating, maxRating);
         cardScroller.setMultiMode(true, 80);
         openingAnimationCounter = 0;
         scrollerAnimationCounter = 0;
         bestCard = getBestCard();
-        bestCard.setPosition(position.x,position.y);
-        bestCard.setHeight(0);
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("packOpeningBackground", "img/Wembley.jpg");
         openingAnimationBackground = assetManager.getBitmap("packOpeningBackground");
@@ -57,10 +45,20 @@ public class Pack extends GameObject {
         openingAnimationCardMaxHeight = (int) (mBound.getHeight()/1.5f);
     }
 
+    private void createCards(int numberOfCards, boolean rare, int minRating, int maxRating) {
+        for (int i = 0; i < numberOfCards; i++) {
+            cardScroller.addScrollerItem(new Card(mGameScreen, rare,null, minRating, maxRating));
+        }
+    }
+
+    private void createPack(int numberOfCards, int numberOfRares, int minRating, int maxRating) {
+        createCards(numberOfCards - numberOfRares, false, minRating, maxRating);
+        createCards(numberOfRares, true, minRating, maxRating);
+        Collections.shuffle(cardScroller.getCardScrollerItems());
+    }
+
     public boolean packOpened() {
-        if (scrollerAnimationCounter == SCROLLER_ANIMATION_LENGTH)
-            return true;
-        return false;
+        return scrollerAnimationCounter == SCROLLER_ANIMATION_LENGTH;
     }
 
     private Card getBestCard() {
@@ -70,6 +68,8 @@ public class Pack extends GameObject {
             if (card.getRating() > highestRating) {
                 highestRating = card.getRating();
                 bestCard = new Card(card);
+                bestCard.setPosition(position.x,position.y);
+                bestCard.setHeight(0);
             }
         }
         return bestCard;
@@ -79,14 +79,22 @@ public class Pack extends GameObject {
         return (int) ((-4*max*x*(x-upperXIntercept))/(Math.pow(upperXIntercept,2)));
     }
 
+    private void animateBestCard() {
+        openingAnimationCounter++;
+        bestCard.setHeight(getValueFromQuadraticCurve(openingAnimationCounter, OPENING_ANIMATION_LENGTH, openingAnimationCardMaxHeight));
+    }
+
+    private void animateCardScroller() {
+        scrollerAnimationCounter++;
+        cardScroller.adjustPosition(cardScroller.getBound().getWidth()/(float)SCROLLER_ANIMATION_LENGTH,0);
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         if (openingAnimationCounter < OPENING_ANIMATION_LENGTH) {
-            openingAnimationCounter++;
-            bestCard.setHeight(getValueFromQuadraticCurve(openingAnimationCounter, OPENING_ANIMATION_LENGTH, openingAnimationCardMaxHeight));
-        } else if(scrollerAnimationCounter < SCROLLER_ANIMATION_LENGTH) {
-            scrollerAnimationCounter++;
-            cardScroller.adjustPosition(cardScroller.getBound().getWidth()/(float)SCROLLER_ANIMATION_LENGTH,0);
+            animateBestCard();
+        }else if(scrollerAnimationCounter < SCROLLER_ANIMATION_LENGTH) {
+            animateCardScroller();
         }else {
             cardScroller.update(elapsedTime);
         }
@@ -103,8 +111,7 @@ public class Pack extends GameObject {
             graphics2D.drawBitmap(openingAnimationBackground, null, openingAnimationBackgroundRect, paint);
             bestCard.draw(elapsedTime,graphics2D);
         } else {
-
+            cardScroller.draw(elapsedTime, graphics2D);
         }
-        cardScroller.draw(elapsedTime, graphics2D);
     }
 }

@@ -1,30 +1,19 @@
 package uk.ac.qub.eeecs.game.cardDemo.screens;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
-import android.view.Menu;
-
-import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Pack;
-import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
-import uk.ac.qub.eeecs.game.cardDemo.ui.popUpWindow;
+import uk.ac.qub.eeecs.game.cardDemo.ui.PopUpWindow;
 
 /**
  * Created by stephenmcveigh on 07/12/2017.
@@ -33,7 +22,6 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.popUpWindow;
 public class PackScreen extends FootballGameScreen {
 
     private final Bitmap background;
-    private final Bitmap splashScreenBackground;
     //private final Rect backGroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
     /**
@@ -68,8 +56,8 @@ public class PackScreen extends FootballGameScreen {
     int screenWidth = getGame().getScreenWidth();
     int screenHeight = getGame().getScreenHeight();
 
-    private popUpWindow packPopUp;
-    private popUpWindow notEnoughCoinsPopUp;
+    private PopUpWindow packPopUp;
+    private PopUpWindow notEnoughCoinsPopUp;
 
     //private final Bitmap background;
     private final Rect backGroundRectangle = new Rect(0, 0, this.getGame().getScreenWidth(), this.getGame().getScreenHeight());
@@ -85,6 +73,8 @@ public class PackScreen extends FootballGameScreen {
      */
     public PackScreen(FootballGame game) {
         super("PackScreen", game);
+
+        mGame.setXp(200000);
 
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "XP | " + String.valueOf(mGame.getXp()), "P A C K  S C R E E N", mGame.getMatchStats());
 
@@ -102,15 +92,14 @@ public class PackScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("RightArrowActive", "img/RightArrowActive.png");
         assetManager.loadAndAddBitmap("splashScreenBG", "img/falling-confetti-background_1048-6409.png");
         background = assetManager.getBitmap("MainBackground");
-        splashScreenBackground = assetManager.getBitmap("splashScreenBG");
 
         // Create the trigger buttons
         // Create the trigger buttons
-        mMenuButton = new PushButton(screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "ArrowBack", "ArrowBackPushed", this);
-        m100PackButton = new PushButton(screenWidth * 0.14f, screenHeight * 0.7f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
-        m300PackButton = new PushButton(screenWidth * 0.38f, screenHeight * 0.7f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
-        m500PackButton = new PushButton(screenWidth * 0.62f, screenHeight * 0.7f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
-        m1000PackButton = new PushButton(screenWidth * 0.86f, screenHeight * 0.7f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        mMenuButton = new PushButton(screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.09f, screenWidth * 0.09f, "ArrowBack", "ArrowBackPushed", this);
+        m100PackButton = new PushButton(screenWidth * 0.14f, screenHeight * 0.74f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m300PackButton = new PushButton(screenWidth * 0.38f, screenHeight * 0.74f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m500PackButton = new PushButton(screenWidth * 0.62f, screenHeight * 0.74f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m1000PackButton = new PushButton(screenWidth * 0.86f, screenHeight * 0.74f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
 
         m100PackButton.setButtonText("1 Player Pack | 100xp", 64, Color.WHITE);
         m300PackButton.setButtonText("3 Player Pack  | 300xp", 64, Color.WHITE);
@@ -120,8 +109,8 @@ public class PackScreen extends FootballGameScreen {
         m500PackButton.setEnabled(true);
         m300PackButton.setEnabled(true);
 
-        packPopUp = new popUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "Are you sure you want to buy this pack?", "Yes", "No");
-        notEnoughCoinsPopUp = new popUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "You dont have enough XP to buy this", "Cancel", "Menu");
+        packPopUp = new PopUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "Are you sure you want to buy this pack?", "Yes", "No");
+        notEnoughCoinsPopUp = new PopUpWindow(screenWidth * 0.5f, screenHeight * 0.5f, mGame.getScreenWidth(), screenHeight * 0.5f, this, "You dont have enough XP to buy this", "Cancel", "Menu");
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -167,6 +156,7 @@ public class PackScreen extends FootballGameScreen {
                 notEnoughCoins = true;
             }
         } else if (m300PackButton.isPushTriggered()) {
+
             pack100Pressed = false;
             pack300Pressed = true;
             pack500Pressed = false;
@@ -304,13 +294,38 @@ public class PackScreen extends FootballGameScreen {
                 }
                     if (displayHorizontalScroller) {
                         if (myPack != null) myPack.draw(elapsedTime, graphics2D);
+                        }
                     }
                 }
             }
-        }
+
 
     public void selectPackPlayers(int packSizes) {
-        //myPack = new Pack(mGame.getScreenWidth() / 2, spacingY * 2.8f, mGame.getScreenWidth(), spacingY * 4,this ,packSizes);
+        int noOfRares, minRating, maxRating;
+
+        switch (packSizes) {
+            case 1: noOfRares = 0;
+                    minRating = 0;
+                    maxRating = 99;
+            break;
+            case 3: noOfRares = 1;
+                    minRating = 0;
+                    maxRating = 99;
+            break;
+            case 5: noOfRares = 2;
+                    minRating = 0;
+                    maxRating = 99;
+            break;
+            case 11: noOfRares = 5;
+                    minRating = 0;
+                    maxRating = 99;
+            break;
+            default: noOfRares = 0;
+                    minRating = 0;
+                    maxRating = 0;
+            break;
+        }
+        myPack = new Pack(this, packSizes, noOfRares,minRating, maxRating);
     }
 
 }

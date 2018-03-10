@@ -276,6 +276,16 @@ public class HorizontalCardScroller extends GameObject {
     private ArrayList<RectF> pageIconPositions = new ArrayList<RectF>();
 
     /**
+     * Locations of page shadow icons
+     */
+    private ArrayList<RectF> pageIconShadowPositions = new ArrayList<RectF>();
+
+    /**
+     * Offset of shadow icons
+     */
+    private int pageIconShadowOffset = 2;
+
+    /**
      * Index of current page in pageIconPositions ArrayList
      */
     private int currentPageIndex = 0;
@@ -424,8 +434,6 @@ public class HorizontalCardScroller extends GameObject {
         if(card != null && cardScrollerItems.size() <= maxScrollerItems && !isAnimating()) {
             if(cardScrollerItems.size() == 0) currentItemIndex = 0;
             else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
-
-            card.setDraggingEnabled(false);
 
             if(multiMode) {
                 card.setHeight((int) maxItemDimensions.y * 2);
@@ -1057,7 +1065,7 @@ public class HorizontalCardScroller extends GameObject {
     /**
      * Calculates positions of page icons
      */
-    private void calculateCurrentPageIndex() {
+    public void calculateCurrentPageIndex() {
         if(!multiMode) return;
         if(cardScrollerItems.size() == 0 || maxDisplayedItems <= 0) pageIconPositions.clear();
 
@@ -1077,12 +1085,15 @@ public class HorizontalCardScroller extends GameObject {
 
         // Calculate position of each icon starting with the first as a basis
         pageIconPositions.clear();
+        pageIconShadowPositions.clear();
         Vector2 firstIconPos = new Vector2((getBound().getWidth() - (pages * getBound().getHeight() * 0.05f) - ((pages - 1) * getBound().getHeight() * 0.1f)) / 2, position.y + getBound().halfHeight * 0.8f);
         pageIconPositions.add(new RectF(firstIconPos.x, firstIconPos.y, firstIconPos.x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
+        pageIconShadowPositions.add(new RectF(firstIconPos.x + pageIconShadowOffset, firstIconPos.y + pageIconShadowOffset, firstIconPos.x + getBound().getHeight() * 0.05f + pageIconShadowOffset, firstIconPos.y + getBound().getHeight() * 0.05f + pageIconShadowOffset));
 
         for (int i = 1; i < pages; i++) {
             float x = firstIconPos.x + (i * (getBound().getHeight() * 0.15f));
             pageIconPositions.add(new RectF(x, firstIconPos.y, x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
+            pageIconShadowPositions.add(new RectF(x + pageIconShadowOffset, firstIconPos.y + pageIconShadowOffset, x + getBound().getHeight() * 0.05f + pageIconShadowOffset, firstIconPos.y + getBound().getHeight() * 0.05f + pageIconShadowOffset));
         }
     }
 
@@ -1159,11 +1170,13 @@ public class HorizontalCardScroller extends GameObject {
 
             // Draw page icons
             for (int i = 0; i < pageIconPositions.size(); i++) {
+                paint.setColor(Color.rgb(1, 32, 61));
+                graphics2D.drawArc(pageIconShadowPositions.get(i), 0,360, true, paint);
                 if(i == currentPageIndex) {
                     paint.setColor(Color.rgb(4, 46, 84));
                     graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
                 } else {
-                    paint.setColor(Color.rgb(133, 193, 250));
+                    paint.setColor(Color.rgb(250, 250, 250));
                     graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
                 }
             }
@@ -1333,5 +1346,21 @@ public class HorizontalCardScroller extends GameObject {
         } else {
             this.useSimulatedTouchEvents = false;
         }
+
+        for (Card card : cardScrollerItems) {
+            card.setUseSimulatedTouchEvents(useSimulatedTouchEvents);
+        }
+    }
+
+    public ArrayList<RectF> getPageIconPositions() {
+        return pageIconPositions;
+    }
+
+    public int getCurrentPageIndex() {
+        return currentPageIndex;
+    }
+
+    public void setPageScroll(boolean pageScroll) {
+        this.pageScroll = pageScroll;
     }
 }

@@ -90,7 +90,7 @@ public class Card extends GameObject {
     private Bitmap cardBackground;
     private String displayName, firstName, lastName;
     private String club, nation;
-    private String abbrClub, abbrNation;
+    private String abbrClub, abbrNation, league;
     private String playerPosition;
     private String abbrPlayerPosition;
     private int pace = 0;
@@ -113,8 +113,6 @@ public class Card extends GameObject {
     private AssetStore assetManager = mGameScreen.getGame().getAssetManager();
 
     private boolean showingStats = true;
-
-    private boolean draggingEnabled = false;
 
     // /////////////////////////////////////////////////////
     // Constructor
@@ -257,14 +255,6 @@ public class Card extends GameObject {
         mBound.halfWidth = height * 225/355/2f;
     }
 
-    public void setDraggingEnabled(boolean value) {
-        this.draggingEnabled = value;
-    }
-
-    public void setGameScreen(GameScreen gameScreen) {
-        mGameScreen = gameScreen;
-    }
-
 
     // ///////////////////////////////////////////////////////////
     // Methods
@@ -315,6 +305,7 @@ public class Card extends GameObject {
         JSONObject clubDetails = thisPlayer.getJSONObject("club");
         club = clubDetails.getString("name");
         abbrClub = clubDetails.getString("abbrName");
+        league = thisPlayer.getJSONObject("league").getString("name");
         if (assetManager.getBitmap("club_" + clubDetails.getString("name")) == null)
             assetManager.loadAndAddBitmap("club_" + clubDetails.getString("name"), "img/clubBadgeBitmaps/" + clubDetails.getString("logo"));
         clubBadge = assetManager.getBitmap("club_" + clubDetails.getString("name"));
@@ -480,10 +471,6 @@ public class Card extends GameObject {
             if (getBound().contains(touchEvent.x, touchEvent.y)) {
                 if (touchEvent.type == DOUBLE_TAP)
                     showingStats = !showingStats;
-                if (draggingEnabled && (touchEvent.type == TOUCH_DRAGGED)) {
-                    position.x = touchEvent.x;
-                    position.y = touchEvent.y;
-                }
             }
         }
     }
@@ -560,8 +547,8 @@ public class Card extends GameObject {
             //Overlay the player's details
             paint.setFakeBoldText(false);
             graphics2D.drawText(firstName, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
-            graphics2D.drawText(lastName, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight(), paint);
-            graphics2D.drawText(abbrClub, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight() * 2, paint);
+            graphics2D.drawText(abbrClub, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight(), paint);
+            graphics2D.drawText(league, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight() * 2, paint);
             graphics2D.drawText(abbrNation, position.x - mBound.halfWidth  + DETAILS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + DETAILS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight() + DETAILS_SPACING_RATIO * mBound.getHeight() * 3, paint);
         }
 

@@ -392,9 +392,9 @@ public class InfoBar extends GameObject {
         drawScreenRect.set(0,0,mGameScreen.getGame().getScreenWidth(),(int) (mGameScreen.getGame().getScreenHeight() * 0.1));
         graphics2D.drawBitmap(mBitmap, null, drawScreenRect, null);
 
-        areaOneVector = getAreaTextVector(textPaint, areaOneText, getBound().getWidth(), getBound().getHeight(), 0.06f, 0.313f, 0);
-        areaTwoVector = getAreaTextVector(textPaint, areaTwoText, getBound().getWidth(), getBound().getHeight(), 0.373f, 0.313f, 1);
-        areaThreeVector = getAreaTextVector(textPaint, areaThreeText, getBound().getWidth(), getBound().getHeight(), 0.686f, 0.313f, 2);
+        areaOneVector = getAreaTextVector(textPaint, areaOneText, getBound().getWidth(), getBound().getHeight(), 0.01f, 0.313f, 0);
+        areaTwoVector = getAreaTextVector(textPaint, areaTwoText, getBound().getWidth(), getBound().getHeight(), 0.368f, 0.313f, 1);
+        areaThreeVector = getAreaTextVector(textPaint, areaThreeText, getBound().getWidth(), getBound().getHeight(), 0.681f, 0.313f, 2);
 
         graphics2D.drawText(areaOneText, areaOneVector.x, areaOneVector.y, textPaint);
         graphics2D.drawText(areaTwoText, areaTwoVector.x, areaTwoVector.y, textPaint);

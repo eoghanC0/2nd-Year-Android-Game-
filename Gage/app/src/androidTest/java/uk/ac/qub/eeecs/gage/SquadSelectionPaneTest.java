@@ -255,7 +255,7 @@ public class SquadSelectionPaneTest {
         testSelectionPane.selectedItemIndex = 0;
         //TouchEvent touch = new TouchEvent();
         touch.x = touch.y = 500;
-        testSelectionPane.squadSelectionHolders[0].setCard(new Card(100,100,100, mockScreen,"1", 100));
+        testSelectionPane.squadSelectionHolders[0].setCard(new Card(mockScreen,"1", 100));
         testSelectionPane.squadSelectionHolders[0].setPosition(100,100);
         testSelectionPane.checkSelectedItemAndPerformDrag(touch);
         assertEquals(500, testSelectionPane.squadSelectionHolders[0].position.x, 0);
@@ -275,7 +275,7 @@ public class SquadSelectionPaneTest {
         testSelectionPane.selectedItemIndex = 0;
         TouchEvent touch = new TouchEvent();
         touch.x = touch.y = 500;
-        testSelectionPane.squadSelectionHolders[0].setCard(new Card(100,100,100, mockScreen,"1", 100));
+        testSelectionPane.squadSelectionHolders[0].setCard(new Card(mockScreen,"1", 100));
         testSelectionPane.squadSelectionHolders[0].setPosition(100,100);
         testSelectionPane.checkSelectedItemAndPerformDrag(touch);
         assertEquals(500, testSelectionPane.squadSelectionHolders[0].position.x, 0);
@@ -286,7 +286,7 @@ public class SquadSelectionPaneTest {
         testSelectionPane.selectedItemIndex = 0;
         TouchEvent touch = new TouchEvent();
         touch.x = touch.y = 500;
-        testSelectionPane.squadSelectionHolders[0].setCard(new Card(100,100,100, mockScreen,"1", 100));
+        testSelectionPane.squadSelectionHolders[0].setCard(new Card(mockScreen,"1", 100));
         testSelectionPane.squadSelectionHolders[0].setPosition(100,100);
         testSelectionPane.checkSelectedItemAndPerformDrag(touch);
         assertEquals(500, testSelectionPane.squadSelectionHolders[0].position.y, 0);
@@ -298,7 +298,7 @@ public class SquadSelectionPaneTest {
         testSelectionPane.cardScroller.getBound().halfHeight = 200;
         testSelectionPane.cardScroller.getBound().halfWidth = 500;
         testSelectionPane.selectedItemIndex = 0;
-        testSelectionPane.squadSelectionHolders[0].setCard(new Card(100,100, 100, mockScreen, "1", 100));
+        testSelectionPane.squadSelectionHolders[0].setCard(new Card(mockScreen, "1", 100));
         testSelectionPane.squadSelectionHolders[0].position.x = testSelectionPane.squadSelectionHolders[0].position.y = 500;
         int expectedNumOfCards = testSelectionPane.cardScroller.getItemCount() + 1;
         testSelectionPane.dropIntoScroller();
@@ -311,7 +311,7 @@ public class SquadSelectionPaneTest {
         testSelectionPane.cardScroller.getBound().halfHeight = 200;
         testSelectionPane.cardScroller.getBound().halfWidth = 500;
         testSelectionPane.selectedItemIndex = 0;
-        testSelectionPane.squadSelectionHolders[0].setCard(new Card(100,100, 100, mockScreen, "1", 100));
+        testSelectionPane.squadSelectionHolders[0].setCard(new Card(mockScreen, "1", 100));
         testSelectionPane.squadSelectionHolders[0].position.x = testSelectionPane.squadSelectionHolders[0].position.y = 500;
         testSelectionPane.dropIntoScroller();
         assertEquals(null, testSelectionPane.squadSelectionHolders[0].getCard());
@@ -334,7 +334,7 @@ public class SquadSelectionPaneTest {
         testSelectionPane.squadSelectionHolders[0].getBound().halfWidth = 200;
         testSelectionPane.squadSelectionHolders[0].setCard(null);
         testSelectionPane.selectedItemIndex = 1;
-        Card expectedCard = new Card(100,100, 100, mockScreen, "1", 100);
+        Card expectedCard = new Card(mockScreen, "1", 100);
         testSelectionPane.squadSelectionHolders[1].setCard(expectedCard);
         testSelectionPane.squadSelectionHolders[1].position.x = testSelectionPane.squadSelectionHolders[1].position.y = 500;
         testSelectionPane.dropIntoHolder(testSelectionPane.squadSelectionHolders[0].getBound());
@@ -348,7 +348,7 @@ public class SquadSelectionPaneTest {
         testSelectionPane.squadSelectionHolders[0].getBound().halfWidth = 200;
         testSelectionPane.squadSelectionHolders[0].setCard(null);
         testSelectionPane.selectedItemIndex = 1;
-        Card expectedCard = new Card(100,100, 100, mockScreen, "1", 100);
+        Card expectedCard = new Card(mockScreen, "1", 100);
         testSelectionPane.squadSelectionHolders[1].setCard(expectedCard);
         testSelectionPane.squadSelectionHolders[1].position.x = testSelectionPane.squadSelectionHolders[1].position.y = 500;
         testSelectionPane.dropIntoHolder(testSelectionPane.squadSelectionHolders[0].getBound());
@@ -362,7 +362,7 @@ public class SquadSelectionPaneTest {
         testSelectionPane.squadSelectionHolders[0].getBound().halfWidth = 200;
         testSelectionPane.squadSelectionHolders[0].setCard(null);
         testSelectionPane.selectedItemIndex = 1;
-        Card expectedCard = new Card(100,100, 100, mockScreen, "1", 100);
+        Card expectedCard = new Card(mockScreen, "1", 100);
         testSelectionPane.squadSelectionHolders[1].setCard(expectedCard);
         testSelectionPane.squadSelectionHolders[1].position.x = testSelectionPane.squadSelectionHolders[0].position.y = 2000;
         assertFalse(testSelectionPane.dropIntoHolder(testSelectionPane.squadSelectionHolders[1].getBound()));
@@ -435,7 +435,7 @@ public class SquadSelectionPaneTest {
     @Test
     public void test_squadIsFull_yes() {
         for (CardHolder holder : testSelectionPane.squadSelectionHolders)
-            holder.setCard(new Card(100,100,100, mockScreen, true, 30,100));
+            holder.setCard(new Card(mockScreen,true,null, 30,100));
         assertTrue(testSelectionPane.squadIsFull());
     }
 
@@ -492,7 +492,7 @@ public class SquadSelectionPaneTest {
         for (int i = 0; i < testSelectionPane.squadSelectionHolders.length; i++) {
             testSelectionPane.squadSelectionHolders[i].setCard(null);
         }
-        Card testCard = new Card(100,100,100,mockScreen, "1",100);
+        Card testCard = new Card(mockScreen, "1",100);
         testSelectionPane.shownPlaceholdersStartIndex = 2;
         testSelectionPane.shownPlaceholdersEndIndex = 5;
         testSelectionPane.squadSelectionHolders[3].setCard(testCard);

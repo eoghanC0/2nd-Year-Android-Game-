@@ -82,11 +82,11 @@ public class ListBox extends GameObject {
         this.selectedIndex = -1;
         this.backColor = Color.WHITE;
         this.borderColor = Color.BLACK;
-        this.selectionColor = Color.argb(200,255,160,122);
+        this.selectionColor = Color.CYAN;
         this.textColor = Color.BLACK;
         loadAssets();
-        btnPreviousPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y - mBound.halfHeight + ITEM_HEIGHT/2, 60,50, "upArrow","upArrowActive", gameScreen);
-        btnNextPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y + mBound.halfHeight - ITEM_HEIGHT/2,60, 50,"downArrow","downArrowActive",  gameScreen);
+        btnPreviousPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y - mBound.halfHeight + ITEM_HEIGHT/2, 60,50, "ArrowUp","ArrowUpPushed", gameScreen);
+        btnNextPage = new PushButton(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, position.y + mBound.halfHeight - ITEM_HEIGHT/2,60, 50,"ArrowDown","ArrowDownPushed",  gameScreen);
     }
 
     //////////////////////////////////////////////////////
@@ -178,14 +178,14 @@ public class ListBox extends GameObject {
         AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         if (assetManager.getBitmap("boxBackground") == null)
             assetManager.loadAndAddBitmap("boxBackground", "img/white.png");
-        if (assetManager.getBitmap("downArrow") == null)
-            assetManager.loadAndAddBitmap("downArrow", "img/DownArrow.png");
-        if (assetManager.getBitmap("upArrow") == null)
-            assetManager.loadAndAddBitmap("upArrow", "img/UpArrow.png");
-        if (assetManager.getBitmap("downArrowActive") == null)
-            assetManager.loadAndAddBitmap("downArrowActive", "img/DownArrowActive.png");
-        if (assetManager.getBitmap("upArrowActive") == null)
-            assetManager.loadAndAddBitmap("upArrowActive", "img/UpArrowActive.png");
+        if (assetManager.getBitmap("ArrowDown") == null)
+            assetManager.loadAndAddBitmap("ArrowDown", "img/ArrowDown.png");
+        if (assetManager.getBitmap("ArrowUp") == null)
+            assetManager.loadAndAddBitmap("ArrowUp", "img/ArrowUp.png");
+        if (assetManager.getBitmap("ArrowDownPushed") == null)
+            assetManager.loadAndAddBitmap("ArrowDownPushed", "img/ArrowDownPushed.png");
+        if (assetManager.getBitmap("ArrowUpPushed") == null)
+            assetManager.loadAndAddBitmap("ArrowUpPushed", "img/ArrowUpPushed.png");
         mBitmap = assetManager.getBitmap("boxBackground");
     }
 
@@ -250,8 +250,7 @@ public class ListBox extends GameObject {
         //draw the buttons
         paint.reset();
         if (isNextButtonEnabled() || showingPageNum > 0) {
-            paint.setColor(Color.GRAY);
-            paint.setAlpha(200);
+            paint.setColor(Color.argb(175, 0,176,186));
             graphics2D.drawRect(position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE, position.y - mBound.halfHeight, position.x + mBound.halfWidth, position.y + mBound.halfHeight, paint);
             if (isNextButtonEnabled()) {
                 btnNextPage.draw(elapsedTime, graphics2D);
