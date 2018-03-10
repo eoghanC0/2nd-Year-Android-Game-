@@ -10,10 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.R;
@@ -204,8 +204,19 @@ public class FootballGame extends Game {
         saveGame();
     }
 
-    public void playBackgroundMusic(){
-        bgMusic = new Music(getResources().openRawResourceFd(R.raw.uprising));
+    private void playBackgroundMusic(){
+        Random rand = new Random(System.currentTimeMillis());
+        switch (rand.nextInt(3)){
+            case 0:
+                bgMusic = new Music(getResources().openRawResourceFd(R.raw.allstar));
+                break;
+            case 1:
+                bgMusic = new Music(getResources().openRawResourceFd(R.raw.usesomebody));
+                break;
+            case 2:
+                bgMusic = new Music(getResources().openRawResourceFd(R.raw.clubfoot));
+            break;
+        }
         bgMusic.setLooping(true);
         bgMusic.play();
     }
