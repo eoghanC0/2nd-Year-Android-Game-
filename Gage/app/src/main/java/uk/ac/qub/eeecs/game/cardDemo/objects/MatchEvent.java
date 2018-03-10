@@ -57,7 +57,6 @@ public class MatchEvent extends GameObject{
      * Properties for drag and drop
      */
     private boolean touchDown = false;
-    private int selectedItemIndex = 0;
     private Vector2 draggedCardOriginalPosition = new Vector2();
 
     private String winner;
@@ -238,17 +237,15 @@ public class MatchEvent extends GameObject{
         return stat;
     }
 
-    public void swap(int x) {//go through the array and sort from smallest to highest
+    private void swap(int x) {//go through the array and sort from smallest to highest
         Card temp = AITeam.get(x - 1);
         AITeam.set(x - 1, AITeam.get(x));
         AITeam.set(x, temp);
     }
 
-    public  void bubbleSort(String scenario) {
+    private  void bubbleSort(String scenario) {
 
         int n = AITeam.size();
-        int temp = 0;
-
         for (int i = 0; i < n; i++) {
             for (int j = 1; j < (n - i); j++) {
 
@@ -281,54 +278,7 @@ public class MatchEvent extends GameObject{
             }
         }
     }
- /*
-    private void getStats(Card player, Card cpu){
-        int[] stats = new int[2];
-        Card currentCard = player;
-        //use the players stamina as a percentage to modify their stats by
-        float stamina;
-       for (int i = 0; i < 2; i++) {
-           if (i == 1){
-               currentCard = cpu;
-           }
-           stamina = currentCard.getFitness() / 100;
-           if (currentCard.getPlayerPosition().equals("GoalKeeper") && !(scenario[i].equals("GK"))){
-               stats[i] = 0;
-           }else {
 
-               switch (scenario[i]) {
-                   case "DEF":
-                       stats[i] = (int) stamina * currentCard.getDefending();
-                       break;
-                   case "PAS":
-                       stats[i] = (int) stamina * currentCard.getPassing();
-                       break;
-                   case "PAC":
-                       stats[i] = (int) stamina * currentCard.getPace();
-                       break;
-                   case "DRI":
-                       stats[i] = (int) stamina * currentCard.getDribbling();
-                       break;
-                   case "SHO":
-                       stats[i] = (int) stamina * currentCard.getShooting();
-                       break;
-                   case "HEA":
-                       stats[i] = (int) stamina * currentCard.getHeading();
-                       break;
-                   case "GK":
-                       stats[i] = 0;
-                       if (currentCard.getPlayerPosition().equals("GoalKeeper"))
-                           stats[i] = (int) stamina * currentCard.getRating();
-                       break;
-               }
-           }
-           currentCard.setFitness(currentCard.getFitness() - 10);
-
-
-       }
-       scenarioWinner(stats[0], stats[1]);
-    }
-    */
 
     //method to determine which player wins the scenario
     private void scenarioWinner(int playerStat, int cpuStat){
@@ -557,17 +507,6 @@ public class MatchEvent extends GameObject{
         Paint paint = mGame.getPaint();
 
         if (!clearScenario){
-            /*
-            paint.reset();
-            paint.setColor(Color.BLACK);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(20);
-            graphics2D.drawRect((int)(mGame.getScreenWidth() * 0.1f), (int)(mGame.getScreenHeight() * 0.15f),(int)(mGame.getScreenWidth() * 0.9f), (int)(mGame.getScreenHeight() * 0.9f), paint);
-
-            paint.reset();
-            paint.setColor(Color.GRAY);
-            graphics2D.drawRect((int)(mGame.getScreenWidth() * 0.1f), (int)(mGame.getScreenHeight() * 0.15f),(int)(mGame.getScreenWidth() * 0.9f), (int)(mGame.getScreenHeight() * 0.9f), paint);
-*/
             paint.reset();
             paint.setColor(Color.BLACK);
             paint.setTextSize(size);
