@@ -31,7 +31,7 @@ public class StarterPackScreen extends FootballGameScreen {
 
         mGame.getAssetManager().loadAndAddBitmap("MenuButton", "img/MenuButton.png");
         mGame.getAssetManager().loadAndAddBitmap("MenuButtonPushed", "img/MenuButtonPushed.png");
-        menuScreenButton = new PushButton(mGame.getScreenWidth() * 0.5f, mGame.getScreenHeight() * 0.8f, mGame.getScreenWidth() * 0.4f, mGame.getScreenWidth() * 0.15f, "MenuButton", "MenuButtonPushed", this);
+        menuScreenButton = new PushButton(mGame.getScreenWidth() * 0.5f, mGame.getScreenHeight() * 0.82f, mGame.getScreenWidth() * 0.4f, mGame.getScreenWidth() * 0.15f, "MenuButton", "MenuButtonPushed", this);
         menuScreenButton.setButtonText("S T A R T  G A M E", 200, Color.rgb(250,250,250));
         background = mGame.getAssetManager().getBitmap("MainBackground");
         paint = game.getPaint();

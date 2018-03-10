@@ -1,15 +1,9 @@
 package uk.ac.qub.eeecs.game.cardDemo.screens;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
-import android.view.Menu;
-
-import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -101,11 +95,11 @@ public class PackScreen extends FootballGameScreen {
 
         // Create the trigger buttons
         // Create the trigger buttons
-        mMenuButton = new PushButton(screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "ArrowBack", "ArrowBackPushed", this);
-        m100PackButton = new PushButton(screenWidth * 0.14f, screenHeight * 0.7f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
-        m300PackButton = new PushButton(screenWidth * 0.38f, screenHeight * 0.7f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
-        m500PackButton = new PushButton(screenWidth * 0.62f, screenHeight * 0.7f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
-        m1000PackButton = new PushButton(screenWidth * 0.86f, screenHeight * 0.7f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        mMenuButton = new PushButton(screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.09f, screenWidth * 0.09f, "ArrowBack", "ArrowBackPushed", this);
+        m100PackButton = new PushButton(screenWidth * 0.14f, screenHeight * 0.74f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m300PackButton = new PushButton(screenWidth * 0.38f, screenHeight * 0.74f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m500PackButton = new PushButton(screenWidth * 0.62f, screenHeight * 0.74f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
+        m1000PackButton = new PushButton(screenWidth * 0.86f, screenHeight * 0.74f, screenWidth * 0.2f, 150, "MenuButton", "MenuButtonPushed", this);
 
         m100PackButton.setButtonText("1 Player Pack | 100xp", 64, Color.WHITE);
         m300PackButton.setButtonText("3 Player Pack  | 300xp", 64, Color.WHITE);
@@ -307,8 +301,6 @@ public class PackScreen extends FootballGameScreen {
 
 
     public void selectPackPlayers(int packSizes) {
-        Log.d("Debug", "selectPackPlayers : " + packSizes);
-
         int noOfRares, minRating, maxRating;
 
         switch (packSizes) {
