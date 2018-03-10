@@ -3,6 +3,8 @@ package uk.ac.qub.eeecs.game.cardDemo.objects;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
+
 import java.util.Collections;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -30,7 +32,7 @@ public class Pack extends GameObject {
 
     public Pack(GameScreen gameScreen, int numberOfCards, int numberOfRares, int minRating, int maxRating) {
         super(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight()/2, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight(),null, gameScreen);
-        cardScroller = new HorizontalCardScroller(position.x - mBound.getWidth(),mBound.getHeight()/3,mBound.getWidth(),2*mBound.getHeight()/3,gameScreen);
+        cardScroller = new HorizontalCardScroller(position.x - mBound.getWidth(),(mBound.getHeight()/3) * 1.08f,mBound.getWidth(),2*mBound.getHeight()/3,gameScreen);
         createPack(numberOfCards, numberOfRares, minRating, maxRating);
         cardScroller.setMultiMode(true, 80);
         openingAnimationCounter = 0;

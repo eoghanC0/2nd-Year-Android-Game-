@@ -23,8 +23,6 @@ public class Match extends GameObject {
 
     private int playerAScore;
     private int playerBScore;
-    private int timeElapsed;
-    private int totalTime;
     private GameState gameState;
     private Game mGame;
     private MatchEvent newEvent;
@@ -60,15 +58,13 @@ public class Match extends GameObject {
 
     }
 
-    public void setPlayerAScore(int score){
-        this.playerAScore = score;
-    }
+    private void setPlayerAScore(int score){this.playerAScore = score;}
 
-    public void setPlayerBScore(int score){
-        this.playerBScore = score;
-    }
+    private void setPlayerBScore(int score){this.playerBScore = score;}
 
-    public void setGameState(GameState gameState) {this.gameState = gameState;}
+    private void setGameState(GameState gameState) {this.gameState = gameState;}
+
+    private GameState getGameState(){return gameState;}
 
     public int getPlayerBScore() {
         return playerBScore;
@@ -78,12 +74,11 @@ public class Match extends GameObject {
         return playerAScore;
     }
 
-    public GameState getGameState() {return gameState;}
-
     private void populateAITeam() {
         int minRating = 0, maxRating = 0;
         switch (difficulty) {
             case 0:
+                minRating = 0;
                 maxRating = 65;
                 break;
             case 1:
@@ -102,9 +97,9 @@ public class Match extends GameObject {
 
             if (i == 0){
                 position = "GoalKeeper";
-            } else if (i < 4){
+            } else if (i < 5){
                 position = "Defence";
-            } else if (i < 7){
+            } else if (i < 8){
                 position = "Midfield";
             } else {
                 position = "Forward";
