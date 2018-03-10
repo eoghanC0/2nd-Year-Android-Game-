@@ -64,10 +64,7 @@ public class FootballGame extends Game {
         // Go with a default 30 UPS/FPS
         setTargetFramesPerSecond(30);
 
-        //Play Background Music
-        bgMusic = new Music(getResources().openRawResourceFd(R.raw.bgmusic));
-        bgMusic.setLooping(true);
-        bgMusic.play();
+        playBackgroundMusic();
     }
 
     @Override
@@ -205,5 +202,11 @@ public class FootballGame extends Game {
         gameLength = 300;
         pitchBackground = 0;
         saveGame();
+    }
+
+    public void playBackgroundMusic(){
+        bgMusic = new Music(getResources().openRawResourceFd(R.raw.uprising));
+        bgMusic.setLooping(true);
+        bgMusic.play();
     }
 }
