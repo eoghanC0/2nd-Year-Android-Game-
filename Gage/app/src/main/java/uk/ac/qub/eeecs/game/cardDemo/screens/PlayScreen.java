@@ -28,16 +28,14 @@ public class PlayScreen extends FootballGameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
-    public final Bitmap background;
+    private final Bitmap background;
     private final Rect backgroundRectangle;
-    private int playerScore, CPUScore;
     private int difficulty, gameLength;
 
-    public Match currentMatch;
+    private Match currentMatch;
 
-    private InfoBar infoBar;
 
-    public ArrayList<Card> playerTeam;
+    private ArrayList<Card> playerTeam;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -54,10 +52,6 @@ public class PlayScreen extends FootballGameScreen {
         background = assetManager.getBitmap("PlayScreenBackground");
         backgroundRectangle = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
-        playerScore = currentMatch.getPlayerAScore();
-        CPUScore = currentMatch.getPlayerBScore();
-
-
     }
 
 
@@ -68,8 +62,6 @@ public class PlayScreen extends FootballGameScreen {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-        playerScore = currentMatch.getPlayerAScore();
-        CPUScore = currentMatch.getPlayerBScore();
         Paint paint = mGame.getPaint();
         paint.setAlpha(100);
         graphics2D.drawBitmap(background,null, backgroundRectangle, paint);
