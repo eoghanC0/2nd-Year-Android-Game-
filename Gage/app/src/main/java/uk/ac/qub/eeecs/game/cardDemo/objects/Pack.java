@@ -79,6 +79,10 @@ public class Pack extends GameObject {
         return (int) ((-4*max*x*(x-upperXIntercept))/(Math.pow(upperXIntercept,2)));
     }
 
+    public ArrayList<Card> getPlayers() {
+        return cardScroller.getCardScrollerItems();
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         if (openingAnimationCounter < OPENING_ANIMATION_LENGTH) {

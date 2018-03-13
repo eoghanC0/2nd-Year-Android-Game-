@@ -598,4 +598,9 @@ public class Card extends GameObject {
         paint.setTextSize((int) (FITNESS_SIZE_TO_CARD_HEIGHT_RATIO * mBound.getHeight()));
         graphics2D.drawText("FIT", position.x - mBound.halfWidth + FITNESS_RELATIVE_POSITION_LEFT_RATIO * mBound.getHeight(), position.y - mBound.halfHeight + FITNESS_RELATIVE_POSITION_TOP_RATIO * mBound.getHeight(), paint);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Card { ID: %1$s | Display Name: %2$s | Club: %3$s | Rating: %4$d | Fitness: %5$d}", playerID, displayName, club, rating, fitness);
+    }
 }
