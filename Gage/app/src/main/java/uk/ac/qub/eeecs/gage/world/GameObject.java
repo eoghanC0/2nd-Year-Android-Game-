@@ -146,6 +146,11 @@ public class GameObject {
         mBound.y = position.y = y;
     }
 
+    public void setScaledHeight(int height) {
+        mBound.halfHeight = height / 2f;
+        mBound.halfWidth = height * 225/355/2f;
+    }
+
     /**
      * Update the game object
      *

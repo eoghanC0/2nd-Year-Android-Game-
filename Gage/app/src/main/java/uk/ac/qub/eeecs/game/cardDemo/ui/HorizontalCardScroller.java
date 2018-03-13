@@ -1,8 +1,6 @@
 package uk.ac.qub.eeecs.game.cardDemo.ui;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
 
@@ -13,7 +11,6 @@ import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
-import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameObject;
@@ -47,124 +44,13 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
  * - multiMode = false
  * - selectMode = false
  *
- * TODO: Create tests.
- * TODO: Animations not configured properly using frames, elapsedTime etc. Fix this.
  * TODO: Only draw cards within the bounds of the scroller
  */
-public class HorizontalCardScroller extends GameObject {
+public class HorizontalCardScroller extends Scroller<Card> {
 
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
-
-    /**
-     * ArrayList containing all the scroller's items
-     */
-    private ArrayList<Card> cardScrollerItems = new ArrayList<Card>();
-
-    /**
-     * Base bitmap used to determine dimensions of cards
-     * Uses img/CardFront.png
-     */
-    private Bitmap baseBitmap;
-
-    /**
-     * Index of currently displayed item
-     */
-    private int currentItemIndex = -1;
-
-    /**
-     * Index of next item to be displayed
-     */
-    private int nextItemIndex = -1;
-
-    /**
-     * Vector position of current item
-     */
-    private Vector2 currentItemPosition;
-
-    /**
-     * Vector position of current item
-     */
-    private Vector2 nextItemPosition;
-
-    /**
-     * Distance between moving batches of items. Used to calculate how far to move
-     */
-    private float itemDistance = 0;
-
-    /**
-     * Distance moved by items
-     */
-    private float distanceMoved = 0;
-
-    /**
-     * Determines whether a scroll animation is occuring
-     */
-    private boolean scrollAnimationTriggered = false;
-
-    /**
-     * Direction of scroller movement
-     * false = left
-     * true = right
-     */
-    private boolean scrollDirection = false;
-
-    /**
-     * Push buttons to activate scroller
-     */
-    private PushButton pushButtonLeft;
-    private PushButton pushButtonRight;
-
-    /**
-     * Booleans used for artificial trigger of push buttons
-     */
-    private boolean pushButtonLeftPush = false;
-    private boolean pushButtonRightPush = false;
-
-    /**
-     * MULTI MODE VARIABLES
-     */
-
-    /**
-     * Toggle to set multi bitmap mode
-     * at a time
-     * = = = = = = = = = = = = =
-     *  * *  W A R N I N G  * *
-     * = = = = = = = = = = = = =
-     * This should only be used if the bitmaps all have the same dimensions
-     */
-    private boolean multiMode = false;
-
-    /**
-     * Maximum bitmaps that can be displayed
-     */
-    private int maxDisplayedItems = 0;
-
-    /**
-     * Spacing between bitmaps
-     */
-    private int maxItemSpacing = 0;
-
-    /**
-     * Absolute maximum number of bitmaps that can be displayed at a time
-     */
-    private final int MAX_DISPLAYED_ITEMS_ALLOWED = 15;
-
-    /**
-     * User defined maximum number of items allowed in scroller
-     */
-    private int maxScrollerItems = 25;
-
-    /**
-     * Dimensions of bitmaps
-     */
-    private Vector2 maxItemDimensions = new Vector2();
-
-    /**
-     * Positions of currently displayed bitmaps
-     */
-    private Vector2[] currentItemPositions = new Vector2[MAX_DISPLAYED_ITEMS_ALLOWED];
 
     /**
      * INTERACTIVITY VARIABLES
@@ -230,18 +116,6 @@ public class HorizontalCardScroller extends GameObject {
     private boolean skipMoveNewCardAnimation = false;
 
     /**
-     * Determines whether to reduce the current index
-     * Used by new card move
-     */
-    private boolean reduceCurrentIndexAfterMoveNewCard = false;
-
-    /**
-     * Determines whether to automatically move scroller
-     * Used by new card move
-     */
-    private boolean autoScroll = false;
-
-    /**
      * Used for the card drag methods
      */
     private boolean touchDown = false;
@@ -266,59 +140,6 @@ public class HorizontalCardScroller extends GameObject {
      */
     private BoundingBox removedCardBound = null;
 
-    /**
-     * PAGE ICON VARIABLES
-     */
-
-    /**
-     * Locations of page icons
-     */
-    private ArrayList<RectF> pageIconPositions = new ArrayList<RectF>();
-
-    /**
-     * Locations of page shadow icons
-     */
-    private ArrayList<RectF> pageIconShadowPositions = new ArrayList<RectF>();
-
-    /**
-     * Offset of shadow icons
-     */
-    private int pageIconShadowOffset = 2;
-
-    /**
-     * Index of current page in pageIconPositions ArrayList
-     */
-    private int currentPageIndex = 0;
-
-    /**
-     * Flag for when a page check is required
-     */
-    private boolean checkPageChange = false;
-
-    /**
-     * Additional flag for when a scroller triggers a page change
-     */
-    private boolean pageScroll = false;
-
-    /**
-     * Used to draw icons
-     */
-    private Paint paint = new Paint();
-
-    /**
-     * TESTING VARIABLES
-     */
-
-    /**
-     * Determines whether to use simulated touch events or touch events from device
-     */
-    private boolean useSimulatedTouchEvents = false;
-
-    /**
-     * Contains the simulated touch events
-     */
-    private List<TouchEvent> simulatedTouchEvents = new ArrayList<TouchEvent>();
-
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
@@ -332,27 +153,7 @@ public class HorizontalCardScroller extends GameObject {
      * @param gameScreen
      */
     public HorizontalCardScroller(float x, float y, float width, float height, GameScreen gameScreen) {
-        super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
-        if(width < 0) width = 100;
-        if(height < 0) height = 100;
-        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("Empty", "img/empty.png");
-        assetManager.loadAndAddBitmap("Test","img/help-image-test.png");
-        mBitmap = assetManager.getBitmap("Empty");
-
-        drawScreenRect.set((int) (position.x - mBound.halfWidth),
-                (int) (position.y - mBound.halfHeight),
-                (int) (position.x + mBound.halfWidth),
-                (int) (position.y + mBound.halfHeight));
-
-        currentItemPosition = new Vector2(position.x,position.y);
-        calculateNextSingleVector();
-
-        itemDistance = mBound.getWidth();
-
-        // Buttons occupy 10% of scroller (5% each side)
-        pushButtonLeft = new PushButton((mBound.getLeft() + (mBound.getWidth() * 0.05f)), position.y, mBound.getWidth() * 0.1f, mBound.getHeight(), "Empty", gameScreen);
-        pushButtonRight = new PushButton((mBound.getRight() - (mBound.getWidth() * 0.05f)), position.y, mBound.getWidth() * 0.1f, mBound.getHeight(), "Empty", gameScreen);
+        super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, gameScreen);
 
         // Set BoundingBox of card selection area
         selectBound = new BoundingBox();
@@ -361,13 +162,15 @@ public class HorizontalCardScroller extends GameObject {
         selectBound.halfWidth = mBound.getWidth() * 0.4f;
         selectBound.halfHeight = mBound.getHeight();
 
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
         assetManager.loadAndAddBitmap("BaseBitmap", "img/CardFront.png");
         baseBitmap = assetManager.getBitmap("BaseBitmap");
-        if(baseBitmap == null)
-            Log.d("DEBUG", "HorizontalCardScroller: NO BASE BITMAP");
+        if(baseBitmap == null) {
+            Log.d("ERROR", "HorizontalCardScroller: BASE BITMAP NOT FOUND> THIS IS A PROBLEM.");
+            baseBitmap = assetManager.getBitmap("Empty");
+        }
 
-        paint.setStrokeWidth(5);
-        paint.setColor(Color.CYAN);
+        scrollerItems = new ArrayList<Card>();
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -392,13 +195,42 @@ public class HorizontalCardScroller extends GameObject {
         addScrollerItem(new Card(mGameScreen,"11", 100));
     }
 
+    @Override
+    public void addScrollerItem(GameObject gameObject) {
+        if(gameObject instanceof Card) {
+            addScrollerItem((Card) gameObject);
+        }
+    }
+
     /**
-     * Sets the background bitmap of the scroller
-     * @param bitmap
+     * Adds item to scroller
+     * @param card
      */
-    public void setBackground(Bitmap bitmap) {
-        if(bitmap == null) return;
-        mBitmap = bitmap;
+    public void addScrollerItem(Card card) {
+        if(card != null && scrollerItems.size() <= maxScrollerItems && !isAnimating()) {
+            if(scrollerItems.size() == 0) currentItemIndex = 0;
+            else if(scrollerItems.size() == 1) nextItemIndex = 1;
+
+            if(multiMode) {
+                card.setHeight((int) maxItemDimensions.y * 2);
+            } else {
+                Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
+                card.setHeight((int) dimensions.y * 2);
+            }
+
+            scrollerItems.add(card);
+
+            // Check if card should be displayed immediately
+            int relativePosition = currentItemIndex + maxDisplayedItems >= scrollerItems.size() ? scrollerItems.size() - currentItemIndex - 1: -1;
+            if(multiMode && relativePosition != -1) {
+                calculateCurrentMultiVectors();
+                scrollerItems.get(scrollerItems.size() - 1).position = new Vector2(scrollerItems.get(currentItemIndex).position.x + (relativePosition * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
+            } else
+                scrollerItems.get(scrollerItems.size() - 1).position = new Vector2(position);
+
+            // Trigger flag to check page icons
+            checkPageChange = true;
+        }
     }
 
     /**
@@ -410,294 +242,10 @@ public class HorizontalCardScroller extends GameObject {
     }
 
     /**
-     * Gets the scaled dimensions of a bitmap based on a maximum height
-     * If the height of the bitmap is less than maxHeight, original dimensions are returned
-     * @param maxHeight
-     * @return Vector2 containing the half width and half height of the bitmap
-     */
-    private Vector2 getNewBitmapDimensions(Bitmap bitmap, int maxHeight, boolean occupyFullHeight) {
-        if(bitmap == null) bitmap = baseBitmap;
-        if(maxHeight == 0 || (bitmap.getHeight() < maxHeight && !occupyFullHeight)) return new Vector2(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
-
-        float scaleFactor = (float) maxHeight / bitmap.getHeight();
-        int newWidth = (int) (bitmap.getWidth() * scaleFactor);
-        int newHeight = (int) (bitmap.getHeight() * scaleFactor);
-
-        return new Vector2(newWidth / 2, newHeight / 2);
-    }
-
-    /**
-     * Adds item to scroller
-     * @param card
-     */
-    public void addScrollerItem(Card card) {
-        if(card != null && cardScrollerItems.size() <= maxScrollerItems && !isAnimating()) {
-            if(cardScrollerItems.size() == 0) currentItemIndex = 0;
-            else if(cardScrollerItems.size() == 1) nextItemIndex = 1;
-
-            if(multiMode) {
-                card.setHeight((int) maxItemDimensions.y * 2);
-            } else {
-                Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
-                card.setHeight((int) dimensions.y * 2);
-            }
-
-            cardScrollerItems.add(card);
-
-            // Check if card should be displayed immediately
-            int relativePosition = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex - 1: -1;
-            if(multiMode && relativePosition != -1) {
-                calculateCurrentMultiVectors();
-                cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (relativePosition * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
-            } else
-                cardScrollerItems.get(cardScrollerItems.size() - 1).position = new Vector2(position);
-
-            // Trigger flag to check page icons
-            checkPageChange = true;
-        }
-    }
-
-    /**
-     * Checks if nextIndex exists
-     * @return
-     */
-    private boolean checkDoesNextExist() {
-        if(cardScrollerItems.size() > 1) return true;
-        else return false;
-    }
-
-    /**
-     * * * * * * * * * * *
-     * SINGLE MODE METHODS
-     * * * * * * * * * * *
-     */
-
-    /**
-     * Calculates position of next vector for single image mode
-     */
-    private void calculateNextSingleVector() {
-        if(nextItemIndex == -1) return;
-        if(scrollDirection) {
-            nextItemPosition = new Vector2(currentItemPosition.x - itemDistance, currentItemPosition.y);
-        }
-        else {
-            nextItemPosition = new Vector2(currentItemPosition.x + itemDistance, currentItemPosition.y);
-        }
-
-        cardScrollerItems.get(nextItemIndex).position = nextItemPosition;
-    }
-
-    /**
-     * Gets the next imageScrollerItem from ArrayList based on the direction
-     */
-    private void calculateNextSingleIndex() {
-        if(cardScrollerItems.size() > 1) {
-            int directionInt = scrollDirection ? -1 : 1;
-            nextItemIndex = (currentItemIndex + cardScrollerItems.size() + directionInt) % cardScrollerItems.size();
-        }
-    }
-
-    /**
      * * * * * * * * * * *
      * MULTI MODE METHODS
      * * * * * * * * * * *
      */
-
-    /**
-     * Toggles scroller from single card to multi card mode
-     * @param value
-     * @param heightOccupyPercentage
-     */
-    public void setMultiMode(boolean value, int heightOccupyPercentage) {
-        if(!value) {
-            multiMode = false;
-            currentItemIndex = 0;
-
-            cardScrollerItems.get(currentItemIndex).position = new Vector2(position);
-            for (Card i : cardScrollerItems) {
-                Vector2 dimensions = getNewBitmapDimensions(i.getBitmap(), (int) mBound.getHeight(), true);
-                //i.setWidthAndHeight(dimensions.x * 2, dimensions.y * 2);
-                i.setHeight((int) dimensions.y * 2);
-            }
-            calculateNextSingleVector();
-        } else {
-            multiMode = true;
-            calculateMultiItemsDisplayed(heightOccupyPercentage);
-        }
-    }
-
-    /**
-     * Calculates the next multi based index
-     */
-    private void calculateNextMultiIndex() {
-        if(scrollDirection) {
-            nextItemIndex = currentItemIndex - maxDisplayedItems < 0 ? cardScrollerItems.size() - (cardScrollerItems.size() % maxDisplayedItems) : currentItemIndex - maxDisplayedItems;
-            nextItemIndex = nextItemIndex == cardScrollerItems.size() ? cardScrollerItems.size() - maxDisplayedItems : nextItemIndex;
-        } else {
-            nextItemIndex = currentItemIndex + maxDisplayedItems > cardScrollerItems.size() ? 0 : currentItemIndex + maxDisplayedItems;
-            nextItemIndex = nextItemIndex == cardScrollerItems.size() ?  0 : nextItemIndex;
-        }
-    }
-
-    /**
-     * Calculates the number of cards that can be displayed
-     * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
-     */
-    public void calculateMultiItemsDisplayed(float heightOccupyPercentage) {
-        if(!multiMode) return;
-        // Ensure heightOccupyPercentage is within bounds then divide by 100, else set to 1 (100%)
-        if(heightOccupyPercentage <= 0 || heightOccupyPercentage > 100)
-            heightOccupyPercentage = 1;
-        else
-            heightOccupyPercentage /= 100;
-
-        // Find the maximum height allowed for the card
-        int maxHeight = (int) (mBound.getHeight() * heightOccupyPercentage);
-        // Rescale card dimensions using the maxHeight
-        Vector2 scaledBitmapDimensions = getNewBitmapDimensions(baseBitmap, maxHeight, true);
-
-        // Set maxItemDimensions
-        maxItemDimensions.x = scaledBitmapDimensions.x;
-        maxItemDimensions.y = scaledBitmapDimensions.y;
-
-        // Find the max images that can be displayed
-        int maxImages = (int) (mBound.getWidth() / (scaledBitmapDimensions.x * 2));
-        maxImages = maxImages > MAX_DISPLAYED_ITEMS_ALLOWED ? MAX_DISPLAYED_ITEMS_ALLOWED : maxImages;
-        // Find the remaining screen space
-        int remainder = (int) (mBound.getWidth() % (scaledBitmapDimensions.x * 2));
-        // Use the remainder to determine the spacing between displayed items
-        int spacing = remainder <= 0 ? 0 : remainder / (maxImages + 1);
-
-        // Set the maxDisplayedItems and maxItemSpacing
-        maxDisplayedItems = maxImages;
-        maxItemSpacing = spacing;
-
-        // Set dimensions of all items to be the same
-        for (Card i : cardScrollerItems) {
-            i.setHeight((int) scaledBitmapDimensions.y * 2);
-        }
-
-        calculateCurrentMultiVectors();
-    }
-
-    /**
-     * Gets vectors for currently displayed items
-     */
-    private void calculateCurrentMultiVectors() {
-        // If a current item exists, draw any current items else return
-        if(!multiMode || currentItemIndex == -1 || cardScrollerItems.size() < 1) return;
-
-        // Set position of current item
-        cardScrollerItems.get(currentItemIndex).position = new Vector2(mBound.getLeft() + maxItemSpacing + cardScrollerItems.get(0).getBound().halfWidth, position.y);
-
-        // Set positions of any other current items
-        int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
-        for(int i = 0; i < breaker; i++)
-            cardScrollerItems.get(currentItemIndex + i).position = new Vector2(cardScrollerItems.get(currentItemIndex).position.x + (i * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
-
-    }
-
-    /**
-     * Calculates the positions of the next cards based on the direction the scroller
-     * is being moved in
-     */
-    public void calculateNextMultiVectors() {
-        if(!multiMode || cardScrollerItems.size() <= 1) return;
-        // Get starting position of next items based on the direction the scroller is going to move
-        float startPosition = 0;
-        startPosition = scrollDirection ? mBound.getLeft() - mBound.getWidth() : mBound.getRight();
-
-        // Set the new item index
-        calculateNextMultiIndex();
-
-        // Set  position of first next item
-        cardScrollerItems.get(nextItemIndex).position = new Vector2(startPosition + maxItemSpacing + maxItemDimensions.x, position.y);
-
-        // Set positions of any other next items
-        int breaker = nextItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - nextItemIndex : maxDisplayedItems;
-        for(int i = 1; i < breaker; i++) {
-            cardScrollerItems.get(nextItemIndex + i).position = new Vector2(cardScrollerItems.get(nextItemIndex).position.x + (i * (maxItemSpacing + (maxItemDimensions.x * 2))), position.y);
-        }
-    }
-
-    /**
-     * Adds moveBy to distanceMoved then checks if distanceMoved
-     * has reached the item distance
-     * @param moveBy
-     * @return
-     */
-    private boolean addAndCheckScrollerDistanceMoved(float moveBy) {
-        // Add to distance moved
-        distanceMoved += Math.abs(moveBy);
-
-        float distance = itemDistance;
-
-        // If intended distance has been moved, end animation
-        if(distanceMoved >= distance) return true;
-        else return false;
-    }
-
-    /**
-     * Executes the updating of positions of items for scroll animation if
-     * scrollAnimationTriggered is true
-     */
-    private void checkAndPerformScrollAnimation() {
-        if(!scrollAnimationTriggered) return;
-
-        // Move current card and next card
-        float moveBy = 0;
-        if(!scrollDirection) moveBy = -1 * itemDistance * 0.05f;
-        else moveBy = itemDistance * 0.05f;
-
-        // Branch based on whether multi mode or single mode is enabled
-        if(multiMode) {
-            // Move any currently displayed items
-            int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
-            for (int i = 0; i < breaker; i++) {
-                cardScrollerItems.get(i + currentItemIndex).position.add(moveBy, 0);
-            }
-
-            // Move any next items
-            breaker = nextItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - nextItemIndex : maxDisplayedItems;
-            for (int i = 0; i < breaker; i++) {
-                cardScrollerItems.get(nextItemIndex + i).position.add(moveBy, 0);
-            }
-        } else {
-            // Draw current item
-            cardScrollerItems.get(currentItemIndex).position.add(moveBy, 0);
-            if(checkDoesNextExist())
-                cardScrollerItems.get(nextItemIndex).position.add(moveBy, 0);
-        }
-        // Carry out completing steps if the move distance has been reached
-        if(addAndCheckScrollerDistanceMoved(moveBy)) {
-            // Stop animation
-            scrollAnimationTriggered = false;
-
-            // Branch based on whether multi mode or single mode is enabled
-            if(multiMode) {
-                // Negate currentIndex
-                if(reduceCurrentIndexAfterMoveNewCard) {
-                    currentItemIndex -= maxDisplayedItems;
-                    reduceCurrentIndexAfterMoveNewCard = false;
-                }
-
-                // Calculate the vectors for the new current items
-                calculateCurrentMultiVectors();
-            } else {
-                // Set position of new current item to scroller position
-                cardScrollerItems.get(currentItemIndex).position = new Vector2(position);
-            }
-            // Set current index to the next index, as next index is now at the position
-            // current index was at originally before the animation
-            currentItemIndex = nextItemIndex;
-            // Reset distance moved
-            distanceMoved = 0;
-
-            // Trigger flag for page icon changed
-            checkPageChange = true;
-            pageScroll = true;
-        }
-    }
 
     /**
      * Executes the updating of positions of items for card move animation if
@@ -707,9 +255,9 @@ public class HorizontalCardScroller extends GameObject {
         if(!(cardMoveAnimationTriggered && itemSelected)) return;
 
         // Move current item and next item
-        Vector2 moveVector = new Vector2((currentSelectDestination.x - cardScrollerItems.get(selectedItemIndex).position.x) * 0.4f, (currentSelectDestination.y - cardScrollerItems.get(selectedItemIndex).position.y) * 0.4f) ;
+        Vector2 moveVector = new Vector2((currentSelectDestination.x - scrollerItems.get(selectedItemIndex).position.x) * 0.4f, (currentSelectDestination.y - scrollerItems.get(selectedItemIndex).position.y) * 0.4f) ;
 
-        cardScrollerItems.get(selectedItemIndex).position.add(moveVector);
+        scrollerItems.get(selectedItemIndex).position.add(moveVector);
 
         // Carry out completing steps if the move distance has been reached
         if(checkIfSelectedCardMovedToDest()) {
@@ -737,11 +285,10 @@ public class HorizontalCardScroller extends GameObject {
             newCardMoveAnimationTriggered = false;
 
             // Calculate new positions of displayed cards
-            if(currentItemIndex == cardScrollerItems.size() && cardScrollerItems.size() != 0){
-                reduceCurrentIndexAfterMoveNewCard = true;
-                pushButtonLeftPush = true;
+            if(currentItemIndex == scrollerItems.size() && scrollerItems.size() != 0){
+                scrollAnimationTriggered = true;
+                scrollDirection = true;
                 itemDistance = mBound.getWidth();
-                autoScroll = true;
             }
             else
                 calculateCurrentMultiVectors();
@@ -754,7 +301,7 @@ public class HorizontalCardScroller extends GameObject {
         // Move current item and next item
         float moveBy = -1 * newMoveDistance * 0.1f;
 
-        cardScrollerItems.get(selectedItemIndex).position.add(moveBy, 0);
+        scrollerItems.get(selectedItemIndex).position.add(moveBy, 0);
 
         distanceMoved += Math.abs(moveBy);
 
@@ -764,92 +311,14 @@ public class HorizontalCardScroller extends GameObject {
             newCardMoveAnimationTriggered = false;
 
             // Set position of new card to old position
-            cardScrollerItems.get(selectedItemIndex).position = movedCardOriginalPosition;
+            scrollerItems.get(selectedItemIndex).position = movedCardOriginalPosition;
 
             // Reset distance moved
             distanceMoved = 0;
 
-            if(cardScrollerItems.size() == 0) setMultiMode(false, 100);
+            if(scrollerItems.size() == 0) setMultiMode(false, 100);
         }
     }
-
-    /**
-     * Checks for a touch event on the scroller and carries out
-     * necessary actions depending on what is touched
-     */
-    private void checkForTouchEvent() {
-        boolean leftPushed = pushButtonLeft.isPushTriggered() || pushButtonLeftPush;
-        boolean rightPushed = pushButtonRight.isPushTriggered() || pushButtonRightPush;
-
-        if(isAnimating()) return;
-
-        // Check for input to determine if animation should be triggered to move the items
-        if((leftPushed || rightPushed) && (nextItemIndex != -1)) {
-            // Reset pushButton artificial booleans
-            pushButtonLeftPush = false;
-            pushButtonRightPush = false;
-
-            if(multiMode && maxDisplayedItems >= cardScrollerItems.size() && !autoScroll) return;
-            autoScroll = false;
-            // Trigger scroll animation
-            scrollAnimationTriggered = true;
-
-            // Set direction to scroll images and vector of next card
-            if(leftPushed) {
-                scrollDirection = true;
-            }
-            else {
-                scrollDirection = false;
-            }
-
-            // Branch based on multi mode or single mode is enabled
-            if(multiMode) {
-                // Calculates next item's vectors
-                calculateNextMultiVectors();
-            } else {
-                // Calculates next vector and index
-                calculateNextSingleIndex();
-                calculateNextSingleVector();
-            }
-
-            // Reset distance moved to base value of 0
-            distanceMoved = 0;
-        }
-    }
-
-    /**
-     * Check if a touch is within the general area of a certain location
-     * @param userTouchLocation
-     * @param touchLocation
-     * @param deviation
-     */
-    private boolean checkIfTouchInArea(Vector2 userTouchLocation, Vector2 touchLocation, float deviation) {
-        if(userTouchLocation == null || touchLocation == null) return false;
-
-        BoundingBox tempBound = new BoundingBox();
-        tempBound.x = touchLocation.x;
-        tempBound.y = touchLocation.y;
-        tempBound.halfWidth = deviation;
-        tempBound.halfHeight = deviation;
-
-        if(tempBound.contains(userTouchLocation.x, userTouchLocation.y)) return true;
-
-        return false;
-    }
-
-    /**
-     * Check if a touch is within the general area of a certain location
-     * @param userTouchLocation
-     */
-    public boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
-        if(userTouchLocation == null || touchDestination == null) return false;
-
-        if(touchDestination.contains(userTouchLocation.x, userTouchLocation.y)) return true;
-
-        return false;
-    }
-
-
 
     /**
      * Checks whether the moving card has reached it's destination
@@ -858,8 +327,8 @@ public class HorizontalCardScroller extends GameObject {
     private boolean checkIfSelectedCardMovedToDest() {
         if(!(selectedItemIndex < 0 || itemSelected)) return false;
 
-        if(Math.abs(cardScrollerItems.get(selectedItemIndex).position.x - currentSelectDestination.x) < 15 && Math.abs(cardScrollerItems.get(selectedItemIndex).position.y - currentSelectDestination.y) < 15) {
-            cardScrollerItems.get(selectedItemIndex).position = new Vector2(currentSelectDestination.x, currentSelectDestination.y);
+        if(Math.abs(scrollerItems.get(selectedItemIndex).position.x - currentSelectDestination.x) < 15 && Math.abs(scrollerItems.get(selectedItemIndex).position.y - currentSelectDestination.y) < 15) {
+            scrollerItems.get(selectedItemIndex).position = new Vector2(currentSelectDestination.x, currentSelectDestination.y);
             return true;
         }
 
@@ -870,57 +339,40 @@ public class HorizontalCardScroller extends GameObject {
      * Performs necessary calculations after a card has been moved
      */
     private void calculateForMovingNewCard() {
-        if(currentItemIndex == cardScrollerItems.size() - 1) {
-            cardScrollerItems.remove(cardScrollerItems.size() - 1);
+        if(currentItemIndex == scrollerItems.size() - 1) {
+            scrollerItems.remove(scrollerItems.size() - 1);
             skipMoveNewCardAnimation = true;
             return;
         }
 
-        if(selectedItemIndex == cardScrollerItems.size() - 1) {
-            cardScrollerItems.remove(cardScrollerItems.size() - 1);
+        if(selectedItemIndex == scrollerItems.size() - 1) {
+            scrollerItems.remove(scrollerItems.size() - 1);
             skipMoveNewCardAnimation = true;
             return;
         }
 
-        Card temp = new Card(mGameScreen, cardScrollerItems.get(cardScrollerItems.size() - 1).getPlayerID(), 100);
+        Card temp = new Card(mGameScreen, scrollerItems.get(scrollerItems.size() - 1).getPlayerID(), 100);
         temp.setHeight((int) maxItemDimensions.y * 2);
-        cardScrollerItems.set(selectedItemIndex, temp);
-        cardScrollerItems.get(selectedItemIndex).position = new Vector2(movedCardOriginalPosition);
+        scrollerItems.set(selectedItemIndex, temp);
+        scrollerItems.get(selectedItemIndex).position = new Vector2(movedCardOriginalPosition);
 
         // Set position of new card to that of the original position
         // else if card is off screen set to position of original moved card + mBound.getWidth()
-        if(cardScrollerItems.size() - 1 < currentItemIndex + maxDisplayedItems) {
-            Vector2 positionOne =  cardScrollerItems.get(selectedItemIndex).position;
-            Vector2 positionTwo =  cardScrollerItems.get(cardScrollerItems.size() - 1).position;
-            cardScrollerItems.get(selectedItemIndex).position = new Vector2(positionTwo);
+        if(scrollerItems.size() - 1 < currentItemIndex + maxDisplayedItems) {
+            Vector2 positionOne =  scrollerItems.get(selectedItemIndex).position;
+            Vector2 positionTwo =  scrollerItems.get(scrollerItems.size() - 1).position;
+            scrollerItems.get(selectedItemIndex).position = new Vector2(positionTwo);
 
             // Use pythagorean theorem to calculate length between position of original moved card
             // and the card that is going to be moved
             double innerCalc = Math.pow((positionTwo.x - positionOne.x), 2) + Math.pow((positionTwo.y - positionOne.y), 2);
             newMoveDistance = (float) Math.sqrt(innerCalc);
         } else {
-            cardScrollerItems.get(selectedItemIndex).position.add(mBound.getWidth(), 0);
+            scrollerItems.get(selectedItemIndex).position.add(mBound.getWidth(), 0);
             newMoveDistance = mBound.getWidth();
         }
 
-        cardScrollerItems.remove(cardScrollerItems.size() - 1);
-    }
-
-    /**
-     * Used to move scroller and all contents
-     * @param x amount to move x position by
-     * @param y amount to move y position by
-     */
-    public void adjustPosition(float x, float y) {
-        position.add(x, y);
-        for (Card card : cardScrollerItems) {
-            card.position.add(x, y);
-        }
-        pushButtonLeft.position.add(x, y);
-        pushButtonRight.position.add(x, y);
-        selectBound.x += x;
-        selectBound.y += y;
-        getBound();
+        scrollerItems.remove(scrollerItems.size() - 1);
     }
 
     /**
@@ -944,10 +396,16 @@ public class HorizontalCardScroller extends GameObject {
      * Returns whether an animation is occuring
      * @return
      */
+    @Override
     public boolean isAnimating() {
         return scrollAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered;
     }
 
+    /**
+     * Checks for a touch event on a card and moves card
+     * Card is removed if a TOUCH_UP is detected in a select destination
+     *
+     */
     private void checkAndPerformDragCard() {
         if(!selectMode) return;
 
@@ -962,16 +420,16 @@ public class HorizontalCardScroller extends GameObject {
                 // Check if touch event is a touch down
                 if (t.type == TouchEvent.TOUCH_DOWN) {
                     // Breaker to determine the amount of cards to iterate through while checking check location
-                    int breaker = currentItemIndex + 1 >= cardScrollerItems.size() ? 0 : currentItemIndex + 1;
+                    int breaker = currentItemIndex + 1 >= scrollerItems.size() ? 0 : currentItemIndex + 1;
                     if(multiMode)
-                        breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
+                        breaker = currentItemIndex + maxDisplayedItems >= scrollerItems.size() ? scrollerItems.size() - currentItemIndex : maxDisplayedItems;
 
                     // Check if the touch location is within the bounds of any displayed cards
                     for (int i = 0; i < breaker; i++) {
-                        if(checkIfTouchInArea(new Vector2(t.x, t.y), cardScrollerItems.get(currentItemIndex + i).getBound())) {
+                        if(checkIfTouchInArea(new Vector2(t.x, t.y), scrollerItems.get(currentItemIndex + i).getBound())) {
                             selectedItemIndex = currentItemIndex + i;
                             touchDown = true;
-                            draggedCardOriginalPosition = new Vector2(cardScrollerItems.get(selectedItemIndex).position.x, cardScrollerItems.get(selectedItemIndex).position.y);
+                            draggedCardOriginalPosition = new Vector2(scrollerItems.get(selectedItemIndex).position.x, scrollerItems.get(selectedItemIndex).position.y);
                             itemSelected = true;
                         }
                     }
@@ -982,8 +440,8 @@ public class HorizontalCardScroller extends GameObject {
             // If touch event is a drag event, modify position of card
             if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
                 if (!Float.isNaN(t.x)) {
-                    cardScrollerItems.get(selectedItemIndex).position.x = t.x;
-                    cardScrollerItems.get(selectedItemIndex).position.y = t.y;
+                    scrollerItems.get(selectedItemIndex).position.x = t.x;
+                    scrollerItems.get(selectedItemIndex).position.y = t.y;
                 }
             }
             // If touch event is a touch up event, check if location is within a select destination and remove card
@@ -994,15 +452,15 @@ public class HorizontalCardScroller extends GameObject {
                 // For each select destination, check if touch up is within the bounds of the destination BoundingBox
                 boolean inDestination = false;
                 for (BoundingBox selectDestination : selectDestinations) {
-                    if(checkIfTouchInArea(cardScrollerItems.get(selectedItemIndex).position, selectDestination) && !cardMoveAnimationTriggered) {
+                    if(checkIfTouchInArea(scrollerItems.get(selectedItemIndex).position, selectDestination) && !cardMoveAnimationTriggered) {
                         // Trigger flag to check page icons
                         checkPageChange = true;
 
                         currentSelectDestination = selectDestination;
                         cardMoveAnimationTriggered = true;
                         movedCardOriginalPosition = draggedCardOriginalPosition;
-                        cardScrollerItems.get(selectedItemIndex).position = new Vector2(selectDestination.x, selectDestination.y);
-                        removedCard = cardScrollerItems.get(selectedItemIndex);
+                        scrollerItems.get(selectedItemIndex).position = new Vector2(selectDestination.x, selectDestination.y);
+                        removedCard = scrollerItems.get(selectedItemIndex);
                         removedCardBound = selectDestination;
                         removedCardReady = true;
                         inDestination = true;
@@ -1010,7 +468,7 @@ public class HorizontalCardScroller extends GameObject {
                     }
                 }
                 if(!inDestination)
-                    cardScrollerItems.get(selectedItemIndex).position = new Vector2(draggedCardOriginalPosition);
+                    scrollerItems.get(selectedItemIndex).position = new Vector2(draggedCardOriginalPosition);
             }
         }
     }
@@ -1045,78 +503,6 @@ public class HorizontalCardScroller extends GameObject {
     }
 
     /**
-     * Clears items in the scroller
-     */
-    public void clearScroller() {
-        cardScrollerItems.clear();
-    }
-
-    /**
-     * Checks if the current page icon should be changed
-     */
-    private void checkChangeCurrentPage() {
-        // Page icon should be changed
-        if(checkPageChange) {
-            calculateCurrentPageIndex();
-            checkPageChange = false;
-        }
-    }
-
-    /**
-     * Calculates positions of page icons
-     */
-    public void calculateCurrentPageIndex() {
-        if(!multiMode) return;
-        if(cardScrollerItems.size() == 0 || maxDisplayedItems <= 0) pageIconPositions.clear();
-
-        // Calculate number of pages needed
-        int pages = (int) Math.ceil((double) cardScrollerItems.size() / maxDisplayedItems);
-
-        // Change current page index if a page scroll was triggered
-        if(pageScroll) {
-            int moveDirection = scrollDirection ? -1 : 1;
-            currentPageIndex = (currentPageIndex + moveDirection) % pages;
-            currentPageIndex = currentPageIndex < 0 ? pages - 1 : currentPageIndex;
-            pageScroll = false;
-        }
-
-        // If there has been no changes in the number of changes return
-        if(pages == pageIconPositions.size()) return;
-
-        // Calculate position of each icon starting with the first as a basis
-        pageIconPositions.clear();
-        pageIconShadowPositions.clear();
-        Vector2 firstIconPos = new Vector2((getBound().getWidth() - (pages * getBound().getHeight() * 0.05f) - ((pages - 1) * getBound().getHeight() * 0.1f)) / 2, position.y + getBound().halfHeight * 0.8f);
-        pageIconPositions.add(new RectF(firstIconPos.x, firstIconPos.y, firstIconPos.x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
-        pageIconShadowPositions.add(new RectF(firstIconPos.x + pageIconShadowOffset, firstIconPos.y + pageIconShadowOffset, firstIconPos.x + getBound().getHeight() * 0.05f + pageIconShadowOffset, firstIconPos.y + getBound().getHeight() * 0.05f + pageIconShadowOffset));
-
-        for (int i = 1; i < pages; i++) {
-            float x = firstIconPos.x + (i * (getBound().getHeight() * 0.15f));
-            pageIconPositions.add(new RectF(x, firstIconPos.y, x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
-            pageIconShadowPositions.add(new RectF(x + pageIconShadowOffset, firstIconPos.y + pageIconShadowOffset, x + getBound().getHeight() * 0.05f + pageIconShadowOffset, firstIconPos.y + getBound().getHeight() * 0.05f + pageIconShadowOffset));
-        }
-    }
-
-
-    /**
-     * * * * * * * * * * *
-     *   TESTING METHODS
-     * * * * * * * * * * *
-     */
-    public void updateSimulatedTouchEvents() {
-        if(!useSimulatedTouchEvents) return;
-        pushButtonLeft.setUseSimulatedTouchEvents(true);
-        pushButtonLeft.setSimulatedTouchEvents(simulatedTouchEvents);
-        pushButtonRight.setUseSimulatedTouchEvents(true);
-        pushButtonLeft.setSimulatedTouchEvents(simulatedTouchEvents);
-
-        for (Card card : cardScrollerItems) {
-//            card.setUseSimulatedTouchEvents(true);
-//            card.setSimulatedTouchEvents(simulatedTouchEvents);
-        }
-    }
-
-    /**
      * * * * * * * * * * *
      *   UPDATE AND DRAW
      * * * * * * * * * * *
@@ -1126,38 +512,15 @@ public class HorizontalCardScroller extends GameObject {
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
 
-        // Toggles use of simulated touch events
-        updateSimulatedTouchEvents();
-
-        // Updates PushButtons on scroller
-        pushButtonLeft.update(elapsedTime);
-        pushButtonRight.update(elapsedTime);
-
-        // Updates Cards on scroller
-        for (Card card : cardScrollerItems)
-            card.update(elapsedTime);
-
-        if(cardScrollerItems.isEmpty()) return;
-
         // Checks if a card has been dragged/released and will carry out any
         // necessary actions
         checkAndPerformDragCard();
-
-        // Checks if scroller has been touched and will carry out any
-        // necessary actions depending on where is touched
-        checkForTouchEvent();
-
-        // Checks if scroll animation has been triggered and performs animation if so
-        checkAndPerformScrollAnimation();
 
         // Checks if move animation has been triggered and performs animation if so
         checkAndPerformMoveCardAnimation();
 
         // Checks if move new card animation has been triggered and performs animation if so
         checkAndPerformMoveNewCardAnimation();
-
-        // Checks if the current page icon should be changed
-        checkChangeCurrentPage();
     }
 
     @Override
@@ -1168,46 +531,50 @@ public class HorizontalCardScroller extends GameObject {
             // If a current item exists, draw any current items else return
             if(currentItemIndex == -1) return;
 
-            // Draw page icons
-            for (int i = 0; i < pageIconPositions.size(); i++) {
-                paint.setColor(Color.rgb(1, 32, 61));
-                graphics2D.drawArc(pageIconShadowPositions.get(i), 0,360, true, paint);
-                if(i == currentPageIndex) {
-                    paint.setColor(Color.rgb(4, 46, 84));
-                    graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
-                } else {
-                    paint.setColor(Color.rgb(250, 250, 250));
-                    graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
-                }
-            }
+            drawPageIcons(graphics2D);
 
             // Determine how many current items to draw, then draw
-            int breaker = currentItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - currentItemIndex : maxDisplayedItems;
+            int breaker = currentItemIndex + maxDisplayedItems >= scrollerItems.size() ? scrollerItems.size() - currentItemIndex : maxDisplayedItems;
             for (int i = 0; i < breaker; i++) {
                 if(touchDown && currentItemIndex + i == selectedItemIndex) continue;
-                cardScrollerItems.get(currentItemIndex + i).draw(elapsedTime, graphics2D);
+                scrollerItems.get(currentItemIndex + i).draw(elapsedTime, graphics2D);
             }
 
             // Draw selectedItem so that it renders above all other cards
             if(touchDown && selectedItemIndex >= 0)
-                cardScrollerItems.get(selectedItemIndex).draw(elapsedTime, graphics2D);
+                scrollerItems.get(selectedItemIndex).draw(elapsedTime, graphics2D);
 
             // Continue if scroll animation has been triggered else return
             if(!scrollAnimationTriggered) return;
 
             // Determine how many next items to draw, then draw
-            breaker = nextItemIndex + maxDisplayedItems >= cardScrollerItems.size() ? cardScrollerItems.size() - nextItemIndex : maxDisplayedItems;
+            breaker = nextItemIndex + maxDisplayedItems >= scrollerItems.size() ? scrollerItems.size() - nextItemIndex : maxDisplayedItems;
             for (int i = 0; i < breaker; i++) {
-                cardScrollerItems.get(nextItemIndex + i).draw(elapsedTime, graphics2D);
+                scrollerItems.get(nextItemIndex + i).draw(elapsedTime, graphics2D);
             }
         } else {
             // If current card exists draw else return
             if(currentItemIndex == -1) return;
-            cardScrollerItems.get(currentItemIndex).draw(elapsedTime, graphics2D);
+            scrollerItems.get(currentItemIndex).draw(elapsedTime, graphics2D);
 
             // If a scroll animation has been triggered, draw next item
             if(!scrollAnimationTriggered) return;
-            cardScrollerItems.get(nextItemIndex).draw(elapsedTime, graphics2D);
+            scrollerItems.get(nextItemIndex).draw(elapsedTime, graphics2D);
+        }
+    }
+
+    public void drawPageIcons(IGraphics2D graphics2D) {
+        // Draw page icons
+        for (int i = 0; i < pageIconPositions.size(); i++) {
+            paint.setColor(Color.rgb(1, 32, 61));
+            graphics2D.drawArc(pageIconShadowPositions.get(i), 0,360, true, paint);
+            if(i == currentPageIndex) {
+                paint.setColor(Color.rgb(4, 46, 84));
+                graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
+            } else {
+                paint.setColor(Color.rgb(250, 250, 250));
+                graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
+            }
         }
     }
 
@@ -1216,7 +583,7 @@ public class HorizontalCardScroller extends GameObject {
      */
 
     public int getItemCount() {
-        return cardScrollerItems.size();
+        return scrollerItems.size();
     }
 
     public int getCurrentItemIndex() {
@@ -1259,14 +626,6 @@ public class HorizontalCardScroller extends GameObject {
         return scrollDirection;
     }
 
-    public PushButton getPushButtonLeft() {
-        return pushButtonLeft;
-    }
-
-    public PushButton getPushButtonRight() {
-        return pushButtonRight;
-    }
-
     public boolean isMultiMode() {
         return multiMode;
     }
@@ -1291,29 +650,7 @@ public class HorizontalCardScroller extends GameObject {
         return currentItemPositions;
     }
 
-    public boolean isSelectMode() {
-        return selectMode;
-    }
-
-    public boolean isItemSelected() {
-        return itemSelected;
-    }
-
-    public int getSelectedItemIndex() {
-        return selectedItemIndex;
-    }
-
-    public BoundingBox getSelectBound() {
-        return selectBound;
-    }
-
-    public ArrayList<Card> getCardScrollerItems() {
-        return cardScrollerItems;
-    }
-
     public void setScrollDirection(boolean scrollDirection) { this.scrollDirection = scrollDirection; }
-
-    public void setCurrentSelectDestination(BoundingBox currentSelectDestination) { this.currentSelectDestination = currentSelectDestination; }
 
     public int getMaxScrollerItems() { return maxScrollerItems; }
 
@@ -1325,14 +662,6 @@ public class HorizontalCardScroller extends GameObject {
 
     public void setSelectDestinations(ArrayList<BoundingBox> selectDestinations) {
         this.selectDestinations = selectDestinations;
-    }
-
-    public void setPushButtonLeftPush(boolean pushButtonLeftPush) {
-        this.pushButtonLeftPush = pushButtonLeftPush;
-    }
-
-    public void setPushButtonRightPush(boolean pushButtonRightPush) {
-        this.pushButtonRightPush = pushButtonRightPush;
     }
 
     public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
@@ -1347,7 +676,7 @@ public class HorizontalCardScroller extends GameObject {
             this.useSimulatedTouchEvents = false;
         }
 
-        for (Card card : cardScrollerItems) {
+        for (Card card : scrollerItems) {
             card.setUseSimulatedTouchEvents(useSimulatedTouchEvents);
         }
     }

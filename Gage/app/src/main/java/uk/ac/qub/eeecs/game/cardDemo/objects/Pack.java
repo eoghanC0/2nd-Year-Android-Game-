@@ -58,7 +58,7 @@ public class Pack extends GameObject {
     private void createPack(int numberOfCards, int numberOfRares, int minRating, int maxRating) {
         createCards(numberOfCards - numberOfRares, false, minRating, maxRating);
         createCards(numberOfRares, true, minRating, maxRating);
-        Collections.shuffle(cardScroller.getCardScrollerItems());
+        Collections.shuffle(cardScroller.getScrollerItems());
     }
 
     public boolean packOpened() {
@@ -68,7 +68,7 @@ public class Pack extends GameObject {
     private Card getBestCard() {
         int highestRating = 0;
         Card bestCard = null;
-        for (Card card : cardScroller.getCardScrollerItems()) {
+        for (Card card : cardScroller.getScrollerItems()) {
             if (card.getRating() > highestRating) {
                 highestRating = card.getRating();
                 bestCard = new Card(card);
@@ -94,7 +94,7 @@ public class Pack extends GameObject {
     }
 
     public ArrayList<Card> getPlayers() {
-        return cardScroller.getCardScrollerItems();
+        return cardScroller.getScrollerItems();
     }
 
     @Override
