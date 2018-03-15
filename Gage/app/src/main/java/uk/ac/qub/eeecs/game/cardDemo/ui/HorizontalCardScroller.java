@@ -446,7 +446,8 @@ public class HorizontalCardScroller extends Scroller<Card> {
 
             // If touch event is a drag event, modify position of card
             if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
-                if(System.nanoTime() - touchDownTime > 350000000) {
+                if(System.nanoTime() - touchDownTime > 250000000) {
+                    scrollEnabled = false;
                     if (!Float.isNaN(t.x)) {
                         scrollerItems.get(selectedItemIndex).position.x = t.x;
                         scrollerItems.get(selectedItemIndex).position.y = t.y;
@@ -478,6 +479,8 @@ public class HorizontalCardScroller extends Scroller<Card> {
                 }
                 if(!inDestination)
                     scrollerItems.get(selectedItemIndex).position = new Vector2(draggedCardOriginalPosition);
+
+                scrollEnabled = true;
             }
         }
     }

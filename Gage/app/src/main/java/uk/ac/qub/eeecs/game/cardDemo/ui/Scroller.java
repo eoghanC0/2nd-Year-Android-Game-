@@ -4,23 +4,18 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.text.method.Touch;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
-import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 
 /**
  * Created by eimhin on 28/01/2018.
@@ -102,6 +97,11 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      * true = right
      */
     protected boolean scrollDirection = false;
+
+    /**
+     * Added for sub classes to enable/disable scroller
+     */
+    protected boolean scrollEnabled = true;
 
     /**
      * Declaration for touchEvents
@@ -536,7 +536,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
         // Check touch events for a swipe gesture
         for (TouchEvent t : touchEvents) {
-            if(t.type == TouchEvent.TOUCH_FLING) {
+            if(t.type == TouchEvent.TOUCH_FLING && scrollEnabled) {
                 if(t.dx > 0) scrollDirection = true;
                 else scrollDirection = false;
 
