@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.text.method.Touch;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -101,21 +102,6 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      * true = right
      */
     protected boolean scrollDirection = false;
-
-    /**
-     * Flag to tell when a touch down has occured
-     */
-    private boolean touchDown = false;
-
-    /**
-     * The time when the last touch down occured
-     */
-    private long touchDownTime = 0;
-
-    /**
-     * The last touch down event
-     */
-    private TouchEvent touchDownEvent;
 
     /**
      * Declaration for touchEvents
@@ -550,26 +536,11 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
         // Check touch events for a swipe gesture
         for (TouchEvent t : touchEvents) {
-            // If there is no touch down yet, check for a touch down
-            if(!touchDown) {
-                // Check if touch event is a touch down
-                if (t.type == TouchEvent.TOUCH_DOWN && checkIfTouchInArea(new Vector2(t.x, t.y), getBound())) {
-                    touchDownTime = System.nanoTime();
-                    touchDownEvent = t;
-                }
-            }
+            if(t.type == TouchEvent.TOUCH_FLING) {
+                if(t.dx > 0) scrollDirection = true;
+                else scrollDirection = false;
 
-            // If touch event is a touch up event, check if location is within a select destination and remove card
-            // else return card to original position
-            if (t.type == TouchEvent.TOUCH_UP) {
-                touchDown = false;
-
-                if(System.nanoTime() - touchDownTime < 350000000) {
-                    if(touchDownEvent.x > t.x) scrollDirection = true;
-                    else scrollDirection = false;
-
-                    scrollAnimationTriggered = true;
-                }
+                scrollAnimationTriggered = true;
             }
         }
 
