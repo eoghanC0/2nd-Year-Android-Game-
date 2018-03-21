@@ -130,6 +130,14 @@ public class SquadSelectionPane extends GameObject {
     //////////////////////////////////////////////
     //  Methods
     //////////////////////////////////////////////
+    public void populateWithPreviousSquad(ArrayList<Card> cards) {
+        if (cards.size() == 11) {
+            for (int i = 0; i < squadSelectionHolders.length; i++) {
+                squadSelectionHolders[i].setCard(cards.get(i));
+            }
+        }
+    }
+
     /**
      * Creates new CardHolders
      */

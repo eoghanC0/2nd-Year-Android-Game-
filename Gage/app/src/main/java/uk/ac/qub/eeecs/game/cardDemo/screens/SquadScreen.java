@@ -33,6 +33,7 @@ public class SquadScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("SquadBackground", "img/MainBackground.jpg");
         background = assetManager.getBitmap("SquadBackground");
         selectionPane = new SquadSelectionPane(this);
+        selectionPane.populateWithPreviousSquad(mGame.getSquad());
     }
 
     private void changeToScreen(GameScreen screen) {
