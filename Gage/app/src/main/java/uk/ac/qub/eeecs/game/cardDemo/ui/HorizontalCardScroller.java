@@ -121,6 +121,11 @@ public class HorizontalCardScroller extends Scroller<Card> {
     private boolean touchDown = false;
 
     /**
+     * Stores the time of the last TOUCH_DOWN event on the selectBound
+     */
+    private long touchDownTime = 0;
+
+    /**
      * Stores positino of dragged card before it was dragged
      */
     private Vector2 draggedCardOriginalPosition = new Vector2();
@@ -419,6 +424,8 @@ public class HorizontalCardScroller extends Scroller<Card> {
             if(!touchDown) {
                 // Check if touch event is a touch down
                 if (t.type == TouchEvent.TOUCH_DOWN) {
+                    // Set touchDownTime
+                    touchDownTime = System.nanoTime();
                     // Breaker to determine the amount of cards to iterate through while checking check location
                     int breaker = currentItemIndex + 1 >= scrollerItems.size() ? 0 : currentItemIndex + 1;
                     if(multiMode)
@@ -439,9 +446,12 @@ public class HorizontalCardScroller extends Scroller<Card> {
 
             // If touch event is a drag event, modify position of card
             if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
-                if (!Float.isNaN(t.x)) {
-                    scrollerItems.get(selectedItemIndex).position.x = t.x;
-                    scrollerItems.get(selectedItemIndex).position.y = t.y;
+                if(System.nanoTime() - touchDownTime > 250000000) {
+                    scrollEnabled = false;
+                    if (!Float.isNaN(t.x)) {
+                        scrollerItems.get(selectedItemIndex).position.x = t.x;
+                        scrollerItems.get(selectedItemIndex).position.y = t.y;
+                    }
                 }
             }
             // If touch event is a touch up event, check if location is within a select destination and remove card
@@ -469,6 +479,8 @@ public class HorizontalCardScroller extends Scroller<Card> {
                 }
                 if(!inDestination)
                     scrollerItems.get(selectedItemIndex).position = new Vector2(draggedCardOriginalPosition);
+
+                scrollEnabled = true;
             }
         }
     }
