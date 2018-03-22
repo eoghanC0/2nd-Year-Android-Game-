@@ -12,7 +12,8 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.input.Input;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.PackScreen;
 
 /**

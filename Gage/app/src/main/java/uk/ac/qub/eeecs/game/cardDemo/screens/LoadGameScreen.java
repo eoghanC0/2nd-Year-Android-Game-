@@ -2,24 +2,15 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Vector;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.util.Vector2;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.ListBox;
 
 /**

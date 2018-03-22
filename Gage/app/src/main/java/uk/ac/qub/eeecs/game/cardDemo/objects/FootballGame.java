@@ -1,4 +1,4 @@
-package uk.ac.qub.eeecs.game;
+package uk.ac.qub.eeecs.game.cardDemo.objects;
 
 import android.os.Bundle;
 import android.util.Log;

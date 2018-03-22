@@ -10,15 +10,10 @@ import java.util.ArrayList;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
-import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
-import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
-import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
  * Created by stephenmcveigh on 04/12/2017.

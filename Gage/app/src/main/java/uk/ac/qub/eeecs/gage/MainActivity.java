@@ -1,6 +1,6 @@
 package uk.ac.qub.eeecs.gage;
 
-import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.os.Bundle;

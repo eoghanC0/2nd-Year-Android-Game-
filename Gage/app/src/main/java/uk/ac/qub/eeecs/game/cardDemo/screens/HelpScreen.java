@@ -2,21 +2,14 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.text.method.Touch;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
-import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 

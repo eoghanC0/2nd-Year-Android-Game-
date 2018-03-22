@@ -15,9 +15,8 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.ui.Toggle;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameObject;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
 
 /**

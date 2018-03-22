@@ -1,10 +1,5 @@
 package uk.ac.qub.eeecs.game.cardDemo.objects;
 
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.Log;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import uk.ac.qub.eeecs.gage.Game;
@@ -12,7 +7,6 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**

@@ -1,9 +1,8 @@
-package uk.ac.qub.eeecs.gage.world;
+package uk.ac.qub.eeecs.game.cardDemo.objects;
 
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
 
 /**
  * Game screen class acting as a container for a coherent section of the game (a
