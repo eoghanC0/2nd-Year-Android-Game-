@@ -610,6 +610,9 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         for (GameObject item : scrollerItems) {
             item.position.add(x, y);
         }
+        for (RectF pageIconRectF : pageIconPositions) {
+            pageIconRectF.offset(x, y);
+        }
         getBound();
     }
 

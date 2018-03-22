@@ -76,7 +76,7 @@ public class MatchEvent extends GameObject{
         cardHolder1 = new CardHolder(mGame.getScreenHeight()/6, leftHolderPosition , (int)(mGame.getScreenHeight() * 0.35), gameScreen);
         cardHolder2 = new CardHolder(mGame.getScreenHeight()/6, rightHolderPosition, (int)(mGame.getScreenHeight() * 0.35), gameScreen);
 
-        horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() * 0.5f, (mGame.getScreenHeight() * 0.5f) + (mGame.getScreenHeight()), mGame.getScreenWidth(), mGame.getScreenHeight() * 0.4f, mGameScreen);
+        horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() * 0.5f, (mGame.getScreenHeight() * 0.8f) + mGame.getScreenHeight(), mGame.getScreenWidth(), mGame.getScreenHeight() * 0.4f, mGameScreen);
 
         for (int i = 0; i < AITeam.size(); i++) {
             horizontalCardScroller.addScrollerItem(AITeam.get(i));
@@ -338,19 +338,15 @@ public class MatchEvent extends GameObject{
         // Draw current item
         horizontalCardScroller.adjustPosition(0, moveBy);
 
-
-
         // Add to distance moved
         distanceMoved += Math.abs(moveBy);
 
         // If intended distance has been moved, end animation
-        if(distanceMoved >= mGame.getScreenHeight() * 0.75f) {
+        if(distanceMoved >= mGame.getScreenHeight()) {
             scrollerAnimationTriggered = false;
             scrollerDisplayed = !scrollerDisplayed;
             distanceMoved = 0;
-
         }
-
     }
 
     /**
@@ -366,52 +362,7 @@ public class MatchEvent extends GameObject{
         return false;
     }
 
-    /**
-     * Checks for touch input and performs necessary actions to move a card
-     * and trigger any associated events
-     */
-    private void checkAndPerformDragCard() {
-        Input input = mGameScreen.getGame().getInput();
-        //Consider all buffered touch events
-        for (TouchEvent t : input.getTouchEvents()) {
-            // If there is no touch down yet, check for a touch down
-            if(!touchDown) {
-                // Check if touch event is a touch down
-                if (t.type == TouchEvent.TOUCH_DOWN) {
-                    // Check if the touch location is within the bounds of the player's card holder
-                        if(checkIfTouchInArea(new Vector2(t.x, t.y), cardHolder1.getBound())) {
-                            touchDown = true;
-                            draggedCardOriginalPosition = new Vector2(cardHolder1.position.x, cardHolder1.position.y);
-                        }
 
-                } else // No touch down
-                    continue;
-            }
-
-            // If touch event is a drag event, modify position of card
-            if (t.type == TouchEvent.TOUCH_DRAGGED && touchDown) {
-                if (!Float.isNaN(input.getTouchX(t.pointer)) && cardHolder1.getCard() != null) {
-                    Log.d("DEBUG", "Holder: " + cardHolder1.position.x + "," + cardHolder1.position.y + " Card: " + cardHolder1.getCard().position.x + "," + cardHolder1.getCard().position.y);
-                    Log.d("DEBUG", "Scroller position: "+ checkIfTouchInArea(cardHolder1.position, horizontalCardScroller.getBound()));
-                    cardHolder1.setPosition(input.getTouchX(t.pointer), input.getTouchY(t.pointer));
-                }
-            }
-            // If touch event is a touch up event, check if location is within a select destination and remove card
-            // else return card to original position
-            if (t.type == TouchEvent.TOUCH_UP) {
-                touchDown = false;
-
-                // For each select destination, check if touch up is within the bounds of the destination BoundingBox
-                if(checkIfTouchInArea(cardHolder1.position, horizontalCardScroller.getBound())) {
-                    horizontalCardScroller.addScrollerItem(cardHolder1.getCard());
-                    cardHolder1.setCard(null);
-                    cardHolder1.setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
-                } else
-                    cardHolder1.setPosition(draggedCardOriginalPosition.x, draggedCardOriginalPosition.y);
-
-            }
-        }
-    }
 
     /**
      * Checks if a removed card is ready from the scroller
@@ -493,7 +444,6 @@ public class MatchEvent extends GameObject{
 
         checkAndPerformScrollerAnimation();
 
-        checkAndPerformDragCard();
         checkIfRemovedCardReady();
         checkIfTempCardReady();
 

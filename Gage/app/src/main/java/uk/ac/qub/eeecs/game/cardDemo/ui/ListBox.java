@@ -108,6 +108,7 @@ public class ListBox extends GameObject {
     public void setBorderColor(int color) {borderColor = color;}
     public void setSelectionColor(int color) {selectionColor = color;}
     public void setTextColor(int color) {textColor = color;}
+    public void setSelectedIndex(int selectedIndex) {this.selectedIndex = selectedIndex;}
 
     //////////////////////////////////////////////////////
     //  Methods
@@ -208,7 +209,7 @@ public class ListBox extends GameObject {
         if (btnPreviousPage.isPushTriggered()) {
             handlePrevButtonTrigger();
         } else if (btnNextPage.isPushTriggered()) {
-           handleNextButtonTrigger();
+            handleNextButtonTrigger();
         }
     }
 

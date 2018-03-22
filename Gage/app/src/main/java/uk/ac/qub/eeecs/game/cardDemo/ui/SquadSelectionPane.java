@@ -15,6 +15,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.ui.Toggle;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
+import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
@@ -103,26 +104,52 @@ public class SquadSelectionPane extends GameObject {
     /**
      * @param gameScreen The screen the pane is displayed on
      */
-    public SquadSelectionPane(GameScreen gameScreen) {
+    public SquadSelectionPane(FootballGameScreen gameScreen) {
         super(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight()/2, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight(), null, gameScreen);
         loadAssets();
         pitchStateBitmap = assetManager.getBitmap("Pitch_Top");
 
         //Set up the UI Elements of the SelectionPane
-        showFormationsToggle = new Toggle( mBound.getRight() - mBound.getWidth() * (SIDE_BAR_COVERAGE/2),mBound.getBottom() + mBound.getHeight()*7/12,
+        showFormationsToggle = new Toggle( mBound.getLeft() + mBound.getWidth() * (SIDE_BAR_COVERAGE/2),mBound.getBottom() + mBound.getHeight()*7/12,
                 mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f) * (TOGGLE_BITMAP_ASPECT_RATIO),
                 "ToggleButton_Off", "ToggleButton_On", gameScreen);
-        previousAreaButton = new PushButton(mBound.getRight() - mBound.getWidth() * (SIDE_BAR_COVERAGE/2), mBound.getBottom() + mBound.getHeight()*9/12,
+        previousAreaButton = new PushButton(mBound.getLeft() + mBound.getWidth() * (SIDE_BAR_COVERAGE/2), mBound.getBottom() + mBound.getHeight()*9/12,
                 mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), "ArrowUp", "ArrowUpPushed", gameScreen);
-        nextAreaButton = new PushButton(mBound.getRight() - mBound.getWidth() * (SIDE_BAR_COVERAGE/2), mBound.getBottom() + mBound.getHeight()*11/12,
+        nextAreaButton = new PushButton(mBound.getLeft() + mBound.getWidth() * (SIDE_BAR_COVERAGE/2), mBound.getBottom() + mBound.getHeight()*11/12,
                 mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), mBound.getWidth() * (SIDE_BAR_COVERAGE - 0.04f), "ArrowDown", "ArrowDownPushed", gameScreen);
         openListBoxPositionY = position.y + mBound.getHeight()*3/12;
         formationsListBox = new ListBox(position.x, openListBoxPositionY, mBound.getWidth()/1.5f, mBound.getHeight()/2, gameScreen);
         setUpFormationsListBox();
         initializeCardHolders();
-        //TODO : Populate the squad with the previous squad
+
+        // Used to remove squad cards from club so as to prevent duplicates in the card scroller
+        ArrayList<Card> tempClub = new ArrayList<>(gameScreen.getGame().getClub());
+
+        // If a squad exists, automatically add it to the selection pane
+        if(gameScreen.getGame().getSquad().size() == 11) {
+            // Determine formation to use
+            formationsListBox.setSelectedIndex(0);
+            for (int i = 0; i < formationsListBox.getItems().size(); i++) {
+                if(formationsListBox.getItems().get(i) == gameScreen.getGame().getFormation()) {
+                    formationsListBox.setSelectedIndex(i);
+                    break;
+                }
+            }
+
+            // Add squad to card holders
+            for (int i = 0; i < gameScreen.getGame().getSquad().size(); i++) {
+                squadSelectionHolders[i].setCard(gameScreen.getGame().getSquad().get(i));
+                tempClub.remove(gameScreen.getGame().getSquad().get(i));
+            }
+        }
+
         cardScroller = new HorizontalCardScroller(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight() * 0.25f, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight()/2, gameScreen);
-        cardScroller.addTestData(); //TODO : Replace this with populating the scroller with the club
+
+        // Add club to card scroller
+        for (Card card : tempClub) {
+            cardScroller.addScrollerItem(card);
+        }
+
         cardScroller.setMultiMode(true, 80);
         cardScroller.setSelectMode(true);
     }
@@ -448,6 +475,19 @@ public class SquadSelectionPane extends GameObject {
         }
     }
 
+    /**
+     * Checks if all CardHolders are occupied
+     * @return boolean
+     */
+    public boolean isSquadSelected() {
+        int sum = 0;
+        for (CardHolder cardHolder: squadSelectionHolders) {
+            if(cardHolder.getCard() != null) sum++;
+        }
+        if(sum == squadSelectionHolders.length) return true;
+        else return false;
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         if (listBoxAnimationCounter < LISTBOX_ANIMATION_LENGTH) {
@@ -506,7 +546,7 @@ public class SquadSelectionPane extends GameObject {
         paint.reset();
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(20);
-        graphics2D.drawText("Formation", position.x + mBound.halfWidth - mBound.getWidth() * SIDE_BAR_COVERAGE/2, mBound.getBottom() + mBound.getHeight()*7/12 - mBound.getHeight()/24, paint);
+        graphics2D.drawText("Formation", position.x - mBound.halfWidth + mBound.getWidth() * SIDE_BAR_COVERAGE/2, mBound.getBottom() + mBound.getHeight()*7/12 - mBound.getHeight()/24, paint);
         showFormationsToggle.draw(elapsedTime, graphics2D);
 
         cardScroller.draw(elapsedTime, graphics2D);

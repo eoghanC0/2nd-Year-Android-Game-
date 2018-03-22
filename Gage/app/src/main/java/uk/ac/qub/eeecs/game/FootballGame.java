@@ -30,6 +30,7 @@ public class FootballGame extends Game {
     public final int MAX_SAVE_SLOTS = 3;
     private int gameID, wins, losses, draws, xp;
     private ArrayList<Card> club, squad;
+    private String formation;
     private int pitchBackground, difficulty, gameLength;
 
     private Music bgMusic;
@@ -50,6 +51,7 @@ public class FootballGame extends Game {
         difficulty = -1;
         gameLength = -1;
         pitchBackground = -1;
+        formation = "";
     }
 
     /*
@@ -115,6 +117,7 @@ public class FootballGame extends Game {
     public int getDifficulty() {return difficulty;}
     public int getGameLength() {return gameLength;}
     public int getPitchBackground() {return pitchBackground;}
+    public String getFormation() {return formation;}
 
     public Music getBGMusic() {
         return bgMusic;
@@ -130,6 +133,7 @@ public class FootballGame extends Game {
     public void setDifficulty(int difficulty) {this.difficulty = difficulty;}
     public void setGameLength(int gameLength) {this.gameLength = gameLength;}
     public void setPitchBackground(int pitchBackGround) {this.pitchBackground = pitchBackGround;}
+    public void setFormation(String formation) {this.formation = formation;}
 
     ///////////////////////////////////////////////////////////////////////////
     // Methods
