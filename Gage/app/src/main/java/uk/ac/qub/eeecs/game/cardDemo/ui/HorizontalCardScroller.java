@@ -45,6 +45,7 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
  * - selectMode = false
  *
  * TODO: Only draw cards within the bounds of the scroller
+ * TODO: PRIORITY: FIX CARDS NOT ADDING BACK TO SCROLLER CORRECTLY
  */
 public class HorizontalCardScroller extends Scroller<Card> {
 
@@ -413,6 +414,7 @@ public class HorizontalCardScroller extends Scroller<Card> {
      */
     private void checkAndPerformDragCard() {
         if(!selectMode) return;
+        if(scrollerItems.isEmpty()) return;
 
         List<TouchEvent> touchEvents;
         if(!useSimulatedTouchEvents) touchEvents = mGameScreen.getGame().getInput().getTouchEvents();

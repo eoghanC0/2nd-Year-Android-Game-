@@ -534,8 +534,13 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         if(!useSimulatedTouchEvents) touchEvents = mGameScreen.getGame().getInput().getTouchEvents();
         else touchEvents = simulatedTouchEvents;
 
+        Vector2 touchVector = new Vector2();
+
         // Check touch events for a swipe gesture
         for (TouchEvent t : touchEvents) {
+            touchVector.set(t.x, t.y);
+            if(!checkIfTouchInArea(touchVector, mBound)) continue;
+
             if(t.type == TouchEvent.TOUCH_FLING && scrollEnabled) {
                 if(t.dx > 0) scrollDirection = true;
                 else scrollDirection = false;
