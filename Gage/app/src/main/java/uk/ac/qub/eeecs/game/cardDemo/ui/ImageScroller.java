@@ -38,7 +38,7 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
  * - multiMode = false
  *
  */
-public class HorizontalImageScroller extends Scroller<ImageScrollerItem> {
+public class ImageScroller extends Scroller<ImageScrollerItem> {
 
     /**
      * Main constructor
@@ -48,7 +48,7 @@ public class HorizontalImageScroller extends Scroller<ImageScrollerItem> {
      * @param height
      * @param gameScreen
      */
-    public HorizontalImageScroller(float x, float y, float width, float height, GameScreen gameScreen) {
+    public ImageScroller(float x, float y, float width, float height, GameScreen gameScreen) {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, gameScreen);
         if(width < 0) width = 100;
         if(height < 0) height = 100;

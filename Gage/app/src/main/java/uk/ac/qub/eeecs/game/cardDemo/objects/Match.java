@@ -30,7 +30,7 @@ public class Match extends GameObject {
     private boolean winnerDecided, scenarioActive, gameOver;
     public enum GameState{MIDFIELD, PLAYER_A_DANGEROUS_ATTACK, PLAYER_A_ATTACK, PLAYER_B_ATTACK, PLAYER_B_DANGEROUS_ATTACK };
 
-    public Match(GameScreen gameScreen, int difficulty, int gameLength, ArrayList<Card> playerTeam){
+    public Match(FootballGameScreen gameScreen, int difficulty, int gameLength, ArrayList<Card> playerTeam){
         super(gameScreen);
         this.playerAScore = 0;
         this.playerBScore = 0;
@@ -45,7 +45,7 @@ public class Match extends GameObject {
         this.gameOver = false;
         this.scenarioActive = false;
         timeSinceLastScenario = 0;
-
+        playerTeam = gameScreen.getGame().getSquad();
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, mGameScreen, "", "Test Player", "M A I N  M E N U", "0 | 0 | 0");
     }
 

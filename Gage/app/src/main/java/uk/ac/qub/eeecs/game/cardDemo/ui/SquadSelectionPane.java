@@ -38,7 +38,7 @@ public class SquadSelectionPane extends GameObject {
      * UI Uses
      */
     private ListBox formationsListBox;
-    private HorizontalCardScroller cardScroller;
+    private CardScroller cardScroller;
     private Toggle showFormationsToggle;
     private PushButton nextAreaButton;
     private PushButton previousAreaButton;
@@ -142,7 +142,7 @@ public class SquadSelectionPane extends GameObject {
             }
         }
 
-        cardScroller = new HorizontalCardScroller(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight() * 0.25f, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight()/2, gameScreen);
+        cardScroller = new CardScroller(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight() * 0.25f, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight()/2, gameScreen);
 
         // Add club to card scroller
         for (Card card : tempClub) {

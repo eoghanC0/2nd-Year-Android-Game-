@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -542,10 +543,11 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
             if(!checkIfTouchInArea(touchVector, mBound)) continue;
 
             if(t.type == TouchEvent.TOUCH_FLING && scrollEnabled) {
-                if(t.dx > 0) scrollDirection = true;
+                if (t.dx > 0) scrollDirection = true;
                 else scrollDirection = false;
 
                 scrollAnimationTriggered = true;
+                Log.d("DEBUG", "checkForTouchEvent: TRIGGERED SCROLL ANIMATION");
             }
         }
 
@@ -720,10 +722,6 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
         // Checks if scroll animation has been triggered and performs animation if so
         checkAndPerformScrollAnimation();
-
-        // Checks if scroller has been touched and will carry out any
-        // necessary actions depending on where is touched
-        checkForTouchEvent();
 
         // Checks if the current page icon should be changed
         checkChangeCurrentPage();

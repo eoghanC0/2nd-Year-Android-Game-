@@ -2,11 +2,8 @@ package uk.ac.qub.eeecs.game.cardDemo.objects;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.util.Log;
 
 import java.lang.Math;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,16 +11,13 @@ import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.engine.input.Input;
-import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.CardHolder;
-import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
+import uk.ac.qub.eeecs.game.cardDemo.ui.CardScroller;
 
 /**
  * Created by Aedan on 24/01/2018.
@@ -51,7 +45,7 @@ public class MatchEvent extends GameObject{
     private int scrollerMoveDirection = 1;
     private float distanceMoved = 0;
 
-    private HorizontalCardScroller horizontalCardScroller;
+    private CardScroller cardScroller;
 
     /**
      * Properties for drag and drop
@@ -76,15 +70,15 @@ public class MatchEvent extends GameObject{
         cardHolder1 = new CardHolder(mGame.getScreenHeight()/6, leftHolderPosition , (int)(mGame.getScreenHeight() * 0.35), gameScreen);
         cardHolder2 = new CardHolder(mGame.getScreenHeight()/6, rightHolderPosition, (int)(mGame.getScreenHeight() * 0.35), gameScreen);
 
-        horizontalCardScroller = new HorizontalCardScroller(mGame.getScreenWidth() * 0.5f, (mGame.getScreenHeight() * 0.8f) + mGame.getScreenHeight(), mGame.getScreenWidth(), mGame.getScreenHeight() * 0.4f, mGameScreen);
+        cardScroller = new CardScroller(mGame.getScreenWidth() * 0.5f, (mGame.getScreenHeight() * 0.8f) + mGame.getScreenHeight(), mGame.getScreenWidth(), mGame.getScreenHeight() * 0.4f, mGameScreen);
 
         for (int i = 0; i < AITeam.size(); i++) {
-            horizontalCardScroller.addScrollerItem(AITeam.get(i));
+            cardScroller.addScrollerItem(AITeam.get(i));
         }
-        horizontalCardScroller.setMultiMode(true, 100);
-        horizontalCardScroller.setSelectMode(true);
+        cardScroller.setMultiMode(true, 100);
+        cardScroller.setSelectMode(true);
 
-        horizontalCardScroller.addSelectDestination(cardHolder1.getBound());
+        cardScroller.addSelectDestination(cardHolder1.getBound());
 
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("ConfirmButton", "img/BUTTONCONFIRM.png");
@@ -316,7 +310,7 @@ public class MatchEvent extends GameObject{
     }
 
     private void showScroller() {
-        if(!scrollerEnabled || scrollerAnimationTriggered || horizontalCardScroller.isAnimating()) return;
+        if(!scrollerEnabled || scrollerAnimationTriggered || cardScroller.isAnimating()) return;
 
         if(scrollerDisplayed) scrollerMoveDirection = 1;
         else scrollerMoveDirection = -1;
@@ -336,7 +330,7 @@ public class MatchEvent extends GameObject{
 
         // Move scroller
         // Draw current item
-        horizontalCardScroller.adjustPosition(0, moveBy);
+        cardScroller.adjustPosition(0, moveBy);
 
         // Add to distance moved
         distanceMoved += Math.abs(moveBy);
@@ -378,8 +372,8 @@ public class MatchEvent extends GameObject{
     private Card tempCard;
     private boolean tempCardReady = false;
     private void checkIfRemovedCardReady() {
-        if (horizontalCardScroller.isRemovedCardReady()) {
-            Card removedCard = (horizontalCardScroller.getRemovedCard());
+        if (cardScroller.isRemovedCardReady()) {
+            Card removedCard = (cardScroller.getRemovedCard());
             if(removedCard.getBound().intersects(cardHolder1.getBound())) {
                 if (cardHolder1.getCard() != null){
                     tempCard = cardHolder1.getCard();
@@ -391,8 +385,8 @@ public class MatchEvent extends GameObject{
     }
 
     private void checkIfTempCardReady() {
-        if(tempCardReady && !horizontalCardScroller.isAnimating()) {
-            horizontalCardScroller.addScrollerItem(tempCard);
+        if(tempCardReady && !cardScroller.isAnimating()) {
+            cardScroller.addScrollerItem(tempCard);
             tempCardReady = false;
         }
     }
@@ -436,7 +430,7 @@ public class MatchEvent extends GameObject{
     @Override
     public void update(ElapsedTime elapsedTime) {
         animationCounter++;
-        horizontalCardScroller.update(elapsedTime);
+        cardScroller.update(elapsedTime);
         cardHolder1.update(elapsedTime);
         confirmPlayer.update(elapsedTime);
 
@@ -472,7 +466,7 @@ public class MatchEvent extends GameObject{
                 graphics2D.drawText("Your Card", leftHolderPosition - 100, (int) (mGame.getScreenHeight() * 0.5), paint);
 
 
-                horizontalCardScroller.draw(elapsedTime, graphics2D);
+                cardScroller.draw(elapsedTime, graphics2D);
 
                 cardHolder1.draw(elapsedTime, graphics2D);
                 if (cardHolder1.getCard() != null) confirmPlayer.draw(elapsedTime, graphics2D);

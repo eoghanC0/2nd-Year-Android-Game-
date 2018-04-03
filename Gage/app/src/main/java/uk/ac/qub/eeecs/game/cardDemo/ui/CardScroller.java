@@ -47,7 +47,7 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
  * TODO: Only draw cards within the bounds of the scroller
  * TODO: PRIORITY: FIX CARDS NOT ADDING BACK TO SCROLLER CORRECTLY
  */
-public class HorizontalCardScroller extends Scroller<Card> {
+public class CardScroller extends Scroller<Card> {
 
     // /////////////////////////////////////////////////////////////////////////
     // Properties
@@ -158,7 +158,7 @@ public class HorizontalCardScroller extends Scroller<Card> {
      * @param height
      * @param gameScreen
      */
-    public HorizontalCardScroller(float x, float y, float width, float height, GameScreen gameScreen) {
+    public CardScroller(float x, float y, float width, float height, GameScreen gameScreen) {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, gameScreen);
 
         // Set BoundingBox of card selection area
@@ -172,7 +172,7 @@ public class HorizontalCardScroller extends Scroller<Card> {
         assetManager.loadAndAddBitmap("BaseBitmap", "img/CardFront.png");
         baseBitmap = assetManager.getBitmap("BaseBitmap");
         if(baseBitmap == null) {
-            Log.d("ERROR", "HorizontalCardScroller: BASE BITMAP NOT FOUND> THIS IS A PROBLEM.");
+            Log.d("ERROR", "CardScroller: BASE BITMAP NOT FOUND> THIS IS A PROBLEM.");
             baseBitmap = assetManager.getBitmap("Empty");
         }
 
@@ -216,7 +216,7 @@ public class HorizontalCardScroller extends Scroller<Card> {
         if(card != null && scrollerItems.size() <= maxScrollerItems && !isAnimating()) {
             if(scrollerItems.size() == 0) currentItemIndex = 0;
             else if(scrollerItems.size() == 1) nextItemIndex = 1;
-
+            Log.d("DEBUG", "addScrollerItem: part 1");
             if(multiMode) {
                 card.setHeight((int) maxItemDimensions.y * 2);
             } else {
@@ -225,7 +225,7 @@ public class HorizontalCardScroller extends Scroller<Card> {
             }
 
             scrollerItems.add(card);
-
+            Log.d("DEBUG", "addScrollerItem: part 2");
             // Check if card should be displayed immediately
             int relativePosition = currentItemIndex + maxDisplayedItems >= scrollerItems.size() ? scrollerItems.size() - currentItemIndex - 1: -1;
             if(multiMode && relativePosition != -1) {
@@ -236,6 +236,8 @@ public class HorizontalCardScroller extends Scroller<Card> {
 
             // Trigger flag to check page icons
             checkPageChange = true;
+
+            Log.d("DEBUG", "addScrollerItem: added card " + card.toString());
         }
     }
 
@@ -404,6 +406,7 @@ public class HorizontalCardScroller extends Scroller<Card> {
      */
     @Override
     public boolean isAnimating() {
+        //Log.d("DEBUG", "isAnimating: " + scrollAnimationTriggered + cardMoveAnimationTriggered + newCardMoveAnimationTriggered);
         return scrollAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered;
     }
 
@@ -413,8 +416,7 @@ public class HorizontalCardScroller extends Scroller<Card> {
      *
      */
     private void checkAndPerformDragCard() {
-        if(!selectMode) return;
-        if(scrollerItems.isEmpty()) return;
+        if(!selectMode || scrollerItems.isEmpty()) return;
 
         List<TouchEvent> touchEvents;
         if(!useSimulatedTouchEvents) touchEvents = mGameScreen.getGame().getInput().getTouchEvents();

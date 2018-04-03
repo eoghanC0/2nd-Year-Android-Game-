@@ -3,19 +3,16 @@ package uk.ac.qub.eeecs.game.cardDemo.objects;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
+import uk.ac.qub.eeecs.game.cardDemo.ui.CardScroller;
 
 /**
  * Created by stephenmcveigh on 06/03/2018.
@@ -24,7 +21,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalCardScroller;
 public class Pack extends GameObject {
     private final int OPENING_ANIMATION_LENGTH = 60;
     private final int SCROLLER_ANIMATION_LENGTH = 8;
-    private HorizontalCardScroller cardScroller;
+    private CardScroller cardScroller;
 
     private int openingAnimationCounter;
     private Card bestCard;
@@ -36,7 +33,7 @@ public class Pack extends GameObject {
 
     public Pack(GameScreen gameScreen, int numberOfCards, int numberOfRares, int minRating, int maxRating) {
         super(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight()/2, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight(),null, gameScreen);
-        cardScroller = new HorizontalCardScroller(position.x - mBound.getWidth(),mBound.getHeight()/3,mBound.getWidth(),5*mBound.getHeight()/9,gameScreen);
+        cardScroller = new CardScroller(position.x - mBound.getWidth(),mBound.getHeight()/3,mBound.getWidth(),5*mBound.getHeight()/9,gameScreen);
         createPack(numberOfCards, numberOfRares, minRating, maxRating);
         cardScroller.setMultiMode(true, 80);
         openingAnimationCounter = 0;

@@ -10,7 +10,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.ui.HorizontalImageScroller;
+import uk.ac.qub.eeecs.game.cardDemo.ui.ImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
@@ -42,7 +42,7 @@ public class HelpScreen extends FootballGameScreen {
     /**
      * Allows user to scroll between help images
      */
-    private HorizontalImageScroller horizontalImageScroller;
+    private ImageScroller imageScroller;
     
     /**
      * Create a new game screen associated with the specified game instance
@@ -67,11 +67,11 @@ public class HelpScreen extends FootballGameScreen {
         menuScreenButton = new PushButton(
                 mGame.getScreenWidth() * 0.075f, mGame.getScreenHeight() * 0.9f, mGame.getScreenWidth() * 0.1f, mGame.getScreenWidth() * 0.1f, "ArrowBack", "ArrowBackPushed", this);
 
-        horizontalImageScroller = new HorizontalImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
-        horizontalImageScroller.addScrollerItem(assetManager.getBitmap("HelpPlayAGame"));
-        horizontalImageScroller.addScrollerItem(assetManager.getBitmap("HelpPlaying"));
-        horizontalImageScroller.addScrollerItem(assetManager.getBitmap("HelpGetPlayers"));
-        horizontalImageScroller.addScrollerItem(assetManager.getBitmap("HelpToggleSounds"));
+        imageScroller = new ImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpPlayAGame"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpPlaying"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpGetPlayers"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpToggleSounds"));
 
     }
 
@@ -82,7 +82,7 @@ public class HelpScreen extends FootballGameScreen {
 
         if(menuScreenButton.isPushTriggered()) changeToScreen(new MenuScreen(mGame));
 
-        horizontalImageScroller.update(elapsedTime);
+        imageScroller.update(elapsedTime);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class HelpScreen extends FootballGameScreen {
         graphics2D.clear(0xe6ffff);
         graphics2D.drawBitmap(background,null, backgroundRect, null);
         infoBar.draw(elapsedTime, graphics2D);
-        horizontalImageScroller.draw(elapsedTime, graphics2D);
+        imageScroller.draw(elapsedTime, graphics2D);
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
     }
 
