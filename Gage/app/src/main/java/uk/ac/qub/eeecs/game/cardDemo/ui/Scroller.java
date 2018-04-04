@@ -199,6 +199,16 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     protected Paint paint = new Paint();
 
     /**
+     * Determines whether a touch down event is present
+     */
+    private boolean touchDown = false;
+
+    /**
+     * Stores the time of the last TOUCH_DOWN event
+     */
+    private long touchDownTime = 0;
+
+    /**
      * TESTING VARIABLES
      */
 
@@ -542,12 +552,26 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
             touchVector.set(t.x, t.y);
             if(!checkIfTouchInArea(touchVector, mBound)) continue;
 
+            if(!touchDown) {
+                if(t.type == TouchEvent.TOUCH_DOWN) {
+                    touchDown = true;
+                    touchDownTime = System.nanoTime();
+                }
+            }
+
             if(t.type == TouchEvent.TOUCH_FLING && scrollEnabled) {
                 if (t.dx > 0) scrollDirection = true;
                 else scrollDirection = false;
 
-                scrollAnimationTriggered = true;
                 Log.d("DEBUG", "checkForTouchEvent: TRIGGERED SCROLL ANIMATION");
+            }
+
+            if(t.type == TouchEvent.TOUCH_UP) {
+                if(System.nanoTime() - touchDownTime < 300000000) {
+                    scrollAnimationTriggered = true;
+                }
+                touchDown = false;
+                touchDownTime = 0;
             }
         }
 
