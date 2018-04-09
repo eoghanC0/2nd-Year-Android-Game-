@@ -127,7 +127,7 @@ public class ImageScrollerTest {
     }
 
     @Test
-    public void testConstructor_ValidData() {
+    public void test_Constructor_ValidData() {
         float x = 0, y = 0, width = 100, height = 50;
         scroller = new ImageScroller(x, y, width, height, helpScreen);
 
