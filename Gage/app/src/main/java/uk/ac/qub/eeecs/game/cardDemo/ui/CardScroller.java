@@ -263,7 +263,7 @@ public class CardScroller extends Scroller<Card> {
         if(!(cardMoveAnimationTriggered && itemSelected)) return;
 
         // Move current item and next item
-        Vector2 moveVector = new Vector2((currentSelectDestination.x - scrollerItems.get(selectedItemIndex).position.x) * 0.4f, (currentSelectDestination.y - scrollerItems.get(selectedItemIndex).position.y) * 0.4f) ;
+        Vector2 moveVector = new Vector2((currentSelectDestination.x - scrollerItems.get(selectedItemIndex).position.x) * 0.4f, (currentSelectDestination.y - scrollerItems.get(selectedItemIndex).position.y) * 0.4f);
 
         scrollerItems.get(selectedItemIndex).position.add(moveVector);
 
@@ -308,6 +308,8 @@ public class CardScroller extends Scroller<Card> {
 
         // Move current item and next item
         float moveBy = -1 * newMoveDistance * 0.1f;
+
+        if(useSimulatedTouchEvents) moveBy = -1 * newMoveDistance;
 
         scrollerItems.get(selectedItemIndex).position.add(moveBy, 0);
 
@@ -406,14 +408,12 @@ public class CardScroller extends Scroller<Card> {
      */
     @Override
     public boolean isAnimating() {
-        //Log.d("DEBUG", "isAnimating: " + scrollAnimationTriggered + cardMoveAnimationTriggered + newCardMoveAnimationTriggered);
         return scrollAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered;
     }
 
     /**
      * Checks for a touch event on a card and moves card
      * Card is removed if a TOUCH_UP is detected in a select destination
-     *
      */
     private void checkAndPerformDragCard() {
         if(!selectMode || scrollerItems.isEmpty()) return;
@@ -458,6 +458,7 @@ public class CardScroller extends Scroller<Card> {
                     }
                 }
             }
+
             // If touch event is a touch up event, check if location is within a select destination and remove card
             // else return card to original position
             if (t.type == TouchEvent.TOUCH_UP) {
@@ -707,5 +708,9 @@ public class CardScroller extends Scroller<Card> {
 
     public void setPageScroll(boolean pageScroll) {
         this.pageScroll = pageScroll;
+    }
+
+    public void setTouchDownTime(long touchDownTime) {
+        this.touchDownTime = touchDownTime;
     }
 }
