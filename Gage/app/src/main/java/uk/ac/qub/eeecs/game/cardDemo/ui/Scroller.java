@@ -264,7 +264,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     /**
      * Test items
      */
-    public void addTestData() { return;};
+    public abstract void addTestData();
 
     /**
      * Sets the background bitmap of the scroller
@@ -491,6 +491,8 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         if(!scrollDirection) moveBy = -1 * itemDistance * 0.05f;
         else moveBy = itemDistance * 0.05f;
 
+        if(useSimulatedTouchEvents) moveBy = scrollDirection ? itemDistance : -1 * itemDistance;
+
         // Branch based on whether multi mode or single mode is enabled
         if(multiMode) {
             // Move any currently displayed items
@@ -562,12 +564,10 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
             if(t.type == TouchEvent.TOUCH_FLING && scrollEnabled) {
                 if (t.dx > 0) scrollDirection = true;
                 else scrollDirection = false;
-
-                Log.d("DEBUG", "checkForTouchEvent: TRIGGERED SCROLL ANIMATION");
             }
 
             if(t.type == TouchEvent.TOUCH_UP) {
-                if(System.nanoTime() - touchDownTime < 300000000) {
+                if(System.nanoTime() - touchDownTime < 300000000 && scrollerItems.size() > 1) {
                     scrollAnimationTriggered = true;
                 }
                 touchDown = false;
@@ -598,7 +598,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      * Check if a touch is within the general area of a certain location
      * @param userTouchLocation
      */
-    protected boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
+    public boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
         if(userTouchLocation == null || touchDestination == null) return false;
 
         if(touchDestination.contains(userTouchLocation.x, userTouchLocation.y)) return true;
@@ -612,7 +612,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      * @param touchLocation
      * @param deviation
      */
-    protected boolean checkIfTouchInArea(Vector2 userTouchLocation, Vector2 touchLocation, float deviation) {
+    public boolean checkIfTouchInArea(Vector2 userTouchLocation, Vector2 touchLocation, float deviation) {
         if(userTouchLocation == null || touchLocation == null) return false;
 
         BoundingBox tempBound = new BoundingBox();
@@ -713,12 +713,12 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      * * * * * * * * * * *
      */
     public void updateSimulatedTouchEvents() {
-        if(!useSimulatedTouchEvents) return;
+        /*if(!useSimulatedTouchEvents) return;
 
         for (GameObject item : scrollerItems) {
-//            item.setUseSimulatedTouchEvents(true);
-//            item.setSimulatedTouchEvents(simulatedTouchEvents);
-        }
+            item.setUseSimulatedTouchEvents(true);
+            item.setSimulatedTouchEvents(simulatedTouchEvents);
+        }*/
     }
 
     /**

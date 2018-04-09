@@ -70,6 +70,18 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
         scrollerItems = new ArrayList<ImageScrollerItem>();
     }
 
+    /**
+     * Adds test adata
+     */
+    public void addTestData() {
+        mGameScreen.getGame().getAssetManager().loadAndAddBitmap("TestBitmap", "img/card-1.png");
+        Bitmap testBitmap =  mGameScreen.getGame().getAssetManager().getBitmap("TestBitmap");
+        ImageScrollerItem imageScrollerItem = new ImageScrollerItem(0,0,100,200, testBitmap, mGameScreen);
+        for (int i = 0; i < 8; i++) {
+            addScrollerItem(imageScrollerItem);
+        }
+    }
+
     @Override
     public void addScrollerItem(GameObject imageScrollerItem) {
         if(imageScrollerItem != null || scrollerItems.size() <= maxScrollerItems) {
@@ -132,6 +144,8 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
 
             // Draw page icons
             drawPageIcons(graphics2D);
+
+            if(nextItemIndex == -1) return;
 
             // If a scroll animation has been triggered, draw next item
             if(scrollAnimationTriggered)
