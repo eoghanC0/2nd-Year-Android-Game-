@@ -46,7 +46,7 @@ public class Match extends GameObject {
         this.scenarioActive = false;
         timeSinceLastScenario = 0;
         playerTeam = gameScreen.getGame().getSquad();
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, mGameScreen, "", "Test Player", "M A I N  M E N U", "0 | 0 | 0");
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, mGameScreen, "Test Player", "M A I N  M E N U", "0 | 0 | 0");
     }
 
     private void setPlayerAScore(int score){this.playerAScore = score;}

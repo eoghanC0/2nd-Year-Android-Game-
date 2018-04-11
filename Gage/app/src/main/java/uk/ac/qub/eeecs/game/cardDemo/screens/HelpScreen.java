@@ -1,6 +1,7 @@
 package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Rect;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
@@ -37,12 +38,12 @@ public class HelpScreen extends FootballGameScreen {
     /**
      * Button to return to MenuScreen
      */
-    private PushButton menuScreenButton;
+    public PushButton menuScreenButton;
 
     /**
      * Allows user to scroll between help images
      */
-    private ImageScroller imageScroller;
+    public ImageScroller imageScroller;
     
     /**
      * Create a new game screen associated with the specified game instance
@@ -52,15 +53,16 @@ public class HelpScreen extends FootballGameScreen {
     public HelpScreen(FootballGame game) {
         super("HelpScreen", game);
 
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "XP | " + String.valueOf(mGame.getXp()), "H E L P  S C R E E N", mGame.getMatchStats());
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "XP | " + String.valueOf(mGame.getXp()), "H E L P  S C R E E N", mGame.getMatchStats());
 
         AssetStore assetManager = mGame.getAssetManager();
 
         // Load in bitmaps
-        assetManager.loadAndAddBitmap("HelpGetPlayers", "img/help-get-new-players.png");
-        assetManager.loadAndAddBitmap("HelpPlayAGame", "img/help-play-a-game.png");
-        assetManager.loadAndAddBitmap("HelpPlaying", "img/help-playing.png");
-        assetManager.loadAndAddBitmap("HelpToggleSounds", "img/help-toggle-sounds.png");
+        assetManager.loadAndAddBitmap("HelpLoadScreen", "img/help-load-screen.png");
+        assetManager.loadAndAddBitmap("HelpMenuScreen", "img/help-menu-screen.png");
+        assetManager.loadAndAddBitmap("HelpOptionsScreen", "img/help-options-screen.png");
+        assetManager.loadAndAddBitmap("HelpPacksScreen", "img/help-packs-screen.png");
+        assetManager.loadAndAddBitmap("HelpSquadScreen", "img/help-squad-screen.png");
 
         background = assetManager.getBitmap("MainBackground");
 
@@ -68,11 +70,14 @@ public class HelpScreen extends FootballGameScreen {
                 mGame.getScreenWidth() * 0.075f, mGame.getScreenHeight() * 0.9f, mGame.getScreenWidth() * 0.1f, mGame.getScreenWidth() * 0.1f, "ArrowBack", "ArrowBackPushed", this);
 
         imageScroller = new ImageScroller(mGame.getScreenWidth() / 2, mGame.getScreenHeight() / 2, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.80f, this);
-        imageScroller.addScrollerItem(assetManager.getBitmap("HelpPlayAGame"));
-        imageScroller.addScrollerItem(assetManager.getBitmap("HelpPlaying"));
-        imageScroller.addScrollerItem(assetManager.getBitmap("HelpGetPlayers"));
-        imageScroller.addScrollerItem(assetManager.getBitmap("HelpToggleSounds"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpLoadScreen"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpMenuScreen"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpOptionsScreen"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpPacksScreen"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpSquadScreen"));
 
+        imageScroller.setPageIconSelectedColour(Color.rgb(159, 200, 250));
+        imageScroller.setPageIconRelativePercentageYPos(1.1f);
     }
 
     @Override
@@ -99,7 +104,7 @@ public class HelpScreen extends FootballGameScreen {
      *
      * @param screen game screen to become active
      */
-    private void changeToScreen(GameScreen screen) {
+    public void changeToScreen(GameScreen screen) {
         mGame.getScreenManager().removeScreen(this.getName());
         mGame.getScreenManager().addScreen(screen);
     }

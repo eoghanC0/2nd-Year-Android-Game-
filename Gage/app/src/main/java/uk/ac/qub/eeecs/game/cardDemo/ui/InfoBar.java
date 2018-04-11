@@ -31,11 +31,6 @@ public class InfoBar extends GameObject {
     // /////////////////////////////////////////////////////////////////////////
 
     /**
-     * Icon bitmap
-     */
-    private Bitmap iconBitmap;
-
-    /**
      * Paint object for text
      */
     private Paint textPaint;
@@ -60,16 +55,6 @@ public class InfoBar extends GameObject {
     private Vector2 areaThreeVector;
 
     /**
-     * Internal matrix use to support draw requests
-     */
-    protected Matrix drawMatrix = new Matrix();
-
-    /**
-     * Current background bitmap
-     */
-    private String currentBitmap;
-
-    /**
      * Stores whether a notification is currently displayed
      */
     private boolean notificationDisplayed = false;
@@ -92,7 +77,6 @@ public class InfoBar extends GameObject {
     /**
      * Notification class
      */
-    // TODO: Continue work on iNotification
     public class iNotification {
         /**
          * Data
@@ -137,8 +121,6 @@ public class InfoBar extends GameObject {
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
 
-    // TODO: Clean up constructors
-
     /**
      * Main constructor
      * @param x
@@ -151,9 +133,6 @@ public class InfoBar extends GameObject {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
         if(width < 0) width = 100;
         if(height < 0) height = 100;
-        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("IconBitmap", "img/empty.png");
-        iconBitmap = assetManager.getBitmap("IconBitmap");
 
         areaTextData[0] = "";
         areaTextData[1] = "";
@@ -173,21 +152,12 @@ public class InfoBar extends GameObject {
      * @param width
      * @param height
      * @param gameScreen
-     * @param iconPath
      * @param areaOneText
      * @param areaTwoText
      * @param areaThreeText
      */
-    public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String iconPath, String areaOneText, String areaTwoText, String areaThreeText) {
+    public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String areaOneText, String areaTwoText, String areaThreeText) {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
-        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("IconBitmap", iconPath);
-        iconBitmap = assetManager.getBitmap("IconBitmap");
-
-        if(iconBitmap == null) {
-            assetManager.loadAndAddBitmap("IconBitmap", "img/empty.png");
-            iconBitmap = assetManager.getBitmap("IconBitmap");
-        }
 
         areaTextData[0] = areaOneText;
         areaTextData[1] = areaTwoText;
@@ -236,7 +206,7 @@ public class InfoBar extends GameObject {
      * @param duration
      */
     public void addNotification(String notification, int type, float duration) {
-        if(notification != null && type >= 0 && type <= 2 && duration > 0) {
+        if(notification != null && type >= 0 && type <= 2 && duration >= 0) {
             notificationQueue.add(new iNotification(notification, type, duration));
             Log.d("DEBUG", "Successfully added notification. Current queue: " + notificationQueue.toString());
         }
@@ -376,18 +346,6 @@ public class InfoBar extends GameObject {
         float scaleX = (float) drawScreenRect.width() / (float) drawSourceRect.width();
         float scaleY = (float) drawScreenRect.height() / (float) drawSourceRect.height();
 
-        // TODO: Profile icon needs more work. Probably doesn't work on different resolutions.
-        // Build an appropriate transformation matrix
-        drawMatrix.reset();
-        drawMatrix.postScale(scaleX, scaleY);
-        drawMatrix.postRotate(0, scaleX * iconBitmap.getWidth()
-                / 2.0f, scaleY * iconBitmap.getHeight() / 2.0f);
-        drawMatrix.postTranslate(drawScreenRect.left, drawScreenRect.top);
-        drawMatrix.setScale(0.35f, 0.35f);
-
-        // Draw the image
-        graphics2D.drawBitmap(iconBitmap, null, drawScreenRect,null);
-
         // Draw the image
         drawScreenRect.set(0,0,mGameScreen.getGame().getScreenWidth(),(int) (mGameScreen.getGame().getScreenHeight() * 0.1));
         graphics2D.drawBitmap(mBitmap, null, drawScreenRect, null);
@@ -443,8 +401,8 @@ public class InfoBar extends GameObject {
       GETTERS AND SETTERS FOR TESTING
     = = = = = = = = = = = = = = = = */
 
-    public void setCurrentNotificationDisplayTime(long time) {
-        currentNotificationDisplayTime = time;
+    public void setCurrentNotificationDisplayTime(long currentNotificationDisplayTime) {
+        this.currentNotificationDisplayTime = currentNotificationDisplayTime;
     }
 
     public iNotification getCurrentNotification() {
