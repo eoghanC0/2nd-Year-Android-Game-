@@ -61,10 +61,8 @@ public class Pack extends GameObject {
         FootballGame game = (FootballGame) mGameScreen.getGame();
         for (Card card : cardScroller.getScrollerItems()) {
             if (getClubIDs(game).contains(card.getPlayerID())) {
-                Log.i("PlayerID", card.getPlayerID());
                 game.addXP(card.getRating());
             } else {
-                Log.i("Adding", "adding" + card.getPlayerID());
                 game.getClub().add(card);
             }
         }
