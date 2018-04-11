@@ -2,6 +2,7 @@ package uk.ac.qub.eeecs.game.cardDemo.screens;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.util.Log;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -10,6 +11,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
+import uk.ac.qub.eeecs.game.cardDemo.ui.CardHolder;
 import uk.ac.qub.eeecs.game.cardDemo.ui.SquadSelectionPane;
 
 
@@ -32,9 +34,8 @@ public class SquadScreen extends FootballGameScreen {
      */
     public SquadScreen(FootballGame game) {
         super("SquadScreen", game);
-        AssetStore assetManager = mGame.getAssetManager();
-        assetManager.loadAndAddBitmap("SquadBackground", "img/MainBackground.jpg");
-        background = assetManager.getBitmap("SquadBackground");
+
+        background = game.getAssetManager().getBitmap("MainBackground");
         selectionPane = new SquadSelectionPane(this);
         startButton = new PushButton(mGame.getScreenWidth() * 0.9f, mGame.getScreenHeight() * 0.85f, mGame.getScreenHeight() * 0.25f, mGame.getScreenHeight() * 0.25f, "NextButton","NextButtonActive", this );
     }
@@ -60,6 +61,17 @@ public class SquadScreen extends FootballGameScreen {
 
         startButton.update(elapsedTime);
         if(startButton.isPushTriggered()) {
+            // Save squad from SquadSelectionPane to game
+            CardHolder[] squadCards = selectionPane.getSquadSelectionHolders();
+            mGame.clearSquad();
+            for (int i = 0; i < 11; i++) {
+                mGame.addToSquad(squadCards[i].getCard());
+            }
+
+            // Save game
+            mGame.saveGame();
+
+            // Transition to PlayScreen
             changeToScreen(new PlayScreen(mGame));
         }
     }

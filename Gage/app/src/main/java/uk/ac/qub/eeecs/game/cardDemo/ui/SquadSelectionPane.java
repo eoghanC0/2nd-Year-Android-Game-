@@ -3,6 +3,7 @@ package uk.ac.qub.eeecs.game.cardDemo.ui;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.gage.ui.Toggle;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
@@ -122,7 +124,7 @@ public class SquadSelectionPane extends GameObject {
         initializeCardHolders();
 
         // Used to remove squad cards from club so as to prevent duplicates in the card scroller
-        ArrayList<Card> tempClub = new ArrayList<>(gameScreen.getGame().getClub());
+        ArrayList<Card> tempClub = new ArrayList<>();
 
         // If a squad exists, automatically add it to the selection pane
         if(gameScreen.getGame().getSquad().size() == 11) {
@@ -135,12 +137,29 @@ public class SquadSelectionPane extends GameObject {
                 }
             }
 
-            // Add squad to card holders
+            // Populate squad card hlders
             for (int i = 0; i < gameScreen.getGame().getSquad().size(); i++) {
                 squadSelectionHolders[i].setCard(gameScreen.getGame().getSquad().get(i));
-                tempClub.remove(gameScreen.getGame().getSquad().get(i));
+            }
+
+            // Populate club ensuring the prevention of duplication of players from squad
+            for (int i = 0; i < gameScreen.getGame().getClub().size(); i++) {
+                boolean inSquad = false;
+                for (int j = 0; j < gameScreen.getGame().getSquad().size(); j++) {
+                     if(gameScreen.getGame().getClub().get(i).toString().equals(gameScreen.getGame().getSquad().get(j).toString())) {
+                         inSquad = true;
+                     }
+                }
+                if(!inSquad) tempClub.add(gameScreen.getGame().getClub().get(i));
+            }
+        } else {
+            // Add club to scroller
+            for (int i = 0; i < gameScreen.getGame().getClub().size(); i++) {
+                tempClub.add(gameScreen.getGame().getClub().get(i));
             }
         }
+
+
 
         cardScroller = new CardScroller(gameScreen.getGame().getScreenWidth()/2, gameScreen.getGame().getScreenHeight() * 0.25f, gameScreen.getGame().getScreenWidth(), gameScreen.getGame().getScreenHeight()/2, gameScreen);
 
@@ -485,6 +504,10 @@ public class SquadSelectionPane extends GameObject {
         }
         if(sum == squadSelectionHolders.length) return true;
         else return false;
+    }
+
+    public CardHolder[] getSquadSelectionHolders() {
+        return squadSelectionHolders;
     }
 
     @Override
