@@ -66,6 +66,7 @@ public class Pack extends GameObject {
                 game.getClub().add(card);
             }
         }
+        game.saveGame();
     }
 
     private ArrayList<String> getClubIDs(FootballGame game) {
