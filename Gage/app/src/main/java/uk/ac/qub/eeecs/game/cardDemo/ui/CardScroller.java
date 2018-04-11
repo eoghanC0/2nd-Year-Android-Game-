@@ -44,8 +44,6 @@ import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
  * - multiMode = false
  * - selectMode = false
  *
- * TODO: Only draw cards within the bounds of the scroller
- * TODO: PRIORITY: FIX CARDS NOT ADDING BACK TO SCROLLER CORRECTLY
  */
 public class CardScroller extends Scroller<Card> {
 
