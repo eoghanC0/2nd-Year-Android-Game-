@@ -514,6 +514,10 @@ public class SquadSelectionPane extends GameObject {
         return squadSelectionHolders;
     }
 
+    public String getFormationString() {
+        return formationString;
+    }
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         if (listBoxAnimationCounter < LISTBOX_ANIMATION_LENGTH) {

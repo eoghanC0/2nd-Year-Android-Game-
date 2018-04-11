@@ -68,6 +68,8 @@ public class SquadScreen extends FootballGameScreen {
                 mGame.addToSquad(squadCards[i].getCard());
             }
 
+            mGame.setFormation(selectionPane.getFormationString());
+
             // Save game
             mGame.saveGame();
 
