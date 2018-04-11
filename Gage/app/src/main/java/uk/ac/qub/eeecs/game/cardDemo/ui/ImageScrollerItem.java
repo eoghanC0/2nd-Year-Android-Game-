@@ -20,19 +20,9 @@ public class ImageScrollerItem extends GameObject {
     public String[] metaData;
 
     /**
-     * Used by the ImageScroller for management purposes
-     */
-    public int index;
-
-    /**
      * Rect of the mBound
      */
     private Rect mBoundRect = new Rect();
-
-    /**
-     * Scaled dimensions
-     */
-    private Vector2 scaledDimensions = new Vector2();
 
     /**
      * Default constructor

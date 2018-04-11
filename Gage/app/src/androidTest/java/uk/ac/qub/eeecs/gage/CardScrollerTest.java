@@ -1,7 +1,7 @@
 package uk.ac.qub.eeecs.gage;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -42,6 +43,8 @@ public class CardScrollerTest {
 
     private CardScroller scroller;
 
+    private Random rand;
+
     List<TouchEvent> touchEvents = new ArrayList<TouchEvent>();
 
     private TouchEvent touchEventDown;
@@ -62,6 +65,8 @@ public class CardScrollerTest {
         gameScreen = new HelpScreen(game);
 
         scroller = new CardScroller(0, 0, 500, 200, gameScreen);
+
+        rand = new Random();
 
         // Instantiate touch events
         touchEventDown = getTouchEventDown();
@@ -130,19 +135,19 @@ public class CardScrollerTest {
 
     @Test
     public void testConstructor_CheckPosition() {
-        boolean result = scroller.position.x == 0 && scroller.position.y == 0 ? true : false;
+        boolean result = scroller.position.x == 0 && scroller.position.y == 0;
         assertEquals(true, result);
     }
 
     @Test
     public void testConstructor_CheckWidth() {
-        boolean result = scroller.getBound().getWidth() == 500 ? true : false;
+        boolean result = scroller.getBound().getWidth() == 500;
         assertEquals(true, result);
     }
 
     @Test
     public void testConstructor_CheckHeight() {
-        boolean result = scroller.getBound().getHeight() == 200 ? true : false;
+        boolean result = scroller.getBound().getHeight() == 200;
         assertEquals(true, result);
     }
 
@@ -151,7 +156,7 @@ public class CardScrollerTest {
         float x = 0, y = 0, width = -98.23f, height = -11;
         scroller = new CardScroller(x, y, width, height, gameScreen);
 
-        boolean result = scroller.position.x == 0 && scroller.position.y == 0 ? true : false;
+        boolean result = scroller.position.x == 0 && scroller.position.y == 0;
         assertEquals(true, result);
     }
 
@@ -160,7 +165,7 @@ public class CardScrollerTest {
         float x = 0, y = 0, width = -98.23f, height = -11;
         scroller = new CardScroller(x, y, width, height, gameScreen);
 
-        boolean result = scroller.getBound().getWidth() == 98.23f ? true : false;
+        boolean result = scroller.getBound().getWidth() == 98.23f;
         assertEquals(true, result);
     }
 
@@ -169,7 +174,7 @@ public class CardScrollerTest {
         float x = 0, y = 0, width = -98.23f, height = -11;
         scroller = new CardScroller(x, y, width, height, gameScreen);
 
-        boolean result = scroller.getBound().getHeight() == 11 ? true : false;
+        boolean result = scroller.getBound().getHeight() == 11;
         assertEquals(true, result);
     }
 
@@ -296,7 +301,8 @@ public class CardScrollerTest {
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.setMultiMode(true, 80);
         scroller.setSelectMode(false);
-        BoundingBox selectedDestination = new BoundingBox(1000, 1000, 50, 50);
+        float x = rand.nextInt(), y = rand.nextInt(), width = rand.nextFloat() + 2, height = rand.nextFloat() + 2;
+        BoundingBox selectedDestination = new BoundingBox(x, y, width / 2.0f, height / 2.0f);
         scroller.addSelectDestination(selectedDestination);
         scroller.setUseSimulatedTouchEvents(true);
 
@@ -338,6 +344,7 @@ public class CardScrollerTest {
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.setMultiMode(true, 80);
         scroller.setSelectMode(true);
+        float x = rand.nextInt(), y = rand.nextInt(), width = rand.nextFloat(), height = rand.nextFloat();
         BoundingBox selectedDestination = new BoundingBox(1000, 1000, 50, 50);
         scroller.addSelectDestination(selectedDestination);
         scroller.setUseSimulatedTouchEvents(true);
@@ -388,7 +395,8 @@ public class CardScrollerTest {
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.setMultiMode(true, 80);
         scroller.setSelectMode(true);
-        BoundingBox selectedDestination = new BoundingBox(1000, 1000, 50, 50);
+        float x = rand.nextInt(), y = rand.nextInt(), width = rand.nextFloat() + 2, height = rand.nextFloat() + 2;
+        BoundingBox selectedDestination = new BoundingBox(x, y, width / 2.0f, height / 2.0f);
         scroller.addSelectDestination(selectedDestination);
         scroller.setUseSimulatedTouchEvents(true);
 
@@ -573,16 +581,8 @@ public class CardScrollerTest {
         assertEquals(scroller.getScrollerItems().size(), 0);
     }
 
-    // TODO: Fix these isAnimating tests
     @Test
     public void test_isAnimating_NoAnimations() {
-        assertEquals(scroller.isAnimating(), false);
-    }
-
-    @Test
-    public void test_isAnimating_ScrollerAnimating() {
-        // hmm
-
         assertEquals(scroller.isAnimating(), false);
     }
 
@@ -618,18 +618,20 @@ public class CardScrollerTest {
 
     @Test
     public void test_checkIfTouchInArea_InArea() {
-        Vector2 touchLocation = new Vector2(50, 50);
-        BoundingBox selectDestination = new BoundingBox(50, 50, 5, 5);
+        float x = rand.nextFloat(), y = rand.nextFloat(), width = (rand.nextFloat() + 1) % 25, height = (rand.nextFloat() + 1) % 25;
+        Vector2 touchLocation = new Vector2(x, y);
+        BoundingBox selectDestination = new BoundingBox(x, y, width / 2.0f, height / 2.0f);
 
-        assertEquals(scroller.checkIfTouchInArea(touchLocation, selectDestination), true);
+        assertEquals(true, scroller.checkIfTouchInArea(touchLocation, selectDestination));
     }
 
     @Test
     public void test_checkIfTouchInArea_OutsideArea() {
-        Vector2 touchLocation = new Vector2(25, 25);
-        BoundingBox selectDestination = new BoundingBox(50, 50, 5, 5);
+        float x = rand.nextFloat(), y = rand.nextFloat(), width = (rand.nextFloat() + 1) % 25, height = (rand.nextFloat() + 1) % 25;
+        Vector2 touchLocation = new Vector2(x + width, y + height);
+        BoundingBox selectDestination = new BoundingBox(x, y, width / 2.0f, height / 2.0f);
 
-        assertEquals(scroller.checkIfTouchInArea(touchLocation, selectDestination), false);
+        assertEquals(false, scroller.checkIfTouchInArea(touchLocation, selectDestination));
     }
 
     @Test
@@ -809,40 +811,83 @@ public class CardScrollerTest {
     }
 
     @Test
-    public void test_checkChangeToNextPageOnLeftSideClickTwice() {
+    public void test_checkChangeToNextPageOnSwipeLeftTwice() {
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
         scroller.addScrollerItem(new Card(gameScreen, "1", 100));
-
-        // Create a fake input event and touch event array
-        TouchEvent touchEvent = new TouchEvent();
-        touchEvent.type = TouchEvent.TOUCH_UP;
-        touchEvent.x = scroller.getBound().getLeft();
-        touchEvent.y = scroller.getBound().getHeight() / 2;
-
-        touchEvents.add(touchEvent);
-
-        // Simulates pushing the left side of the scroller
-        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
-
-        scroller.setUseSimulatedTouchEvents(true);
-        scroller.setSimulatedTouchEvents(touchEvents);
-
         scroller.setMultiMode(true, 80);
 
+        // Create a fake input event and touch event array
+        scroller.setUseSimulatedTouchEvents(true);
+
+        // First swipe
+        touchEvents.clear();
+        touchEvents.add(touchEventDown);
+        scroller.setSimulatedTouchEvents(touchEvents);
         scroller.update(new ElapsedTime());
 
-        scroller.setPageScroll(true);
-        scroller.calculateCurrentPageIndex();
-
+        touchEvents.clear();
+        touchEvents.add(touchEventFlingLeft);
+        scroller.setSimulatedTouchEvents(touchEvents);
         scroller.update(new ElapsedTime());
 
-        scroller.setPageScroll(true);
-        scroller.calculateCurrentPageIndex();
+        touchEvents.clear();
+        touchEvents.add(touchEventUp);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(new ElapsedTime());
+
+        // Second swipe
+        touchEvents.clear();
+        touchEvents.add(touchEventDown);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(new ElapsedTime());
+
+        touchEvents.clear();
+        touchEvents.add(touchEventFlingLeft);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(new ElapsedTime());
+
+        touchEvents.clear();
+        touchEvents.add(touchEventUp);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(new ElapsedTime());
 
         assertEquals(0, scroller.getCurrentPageIndex());
     }
+
+    @Test
+    public void test_setPageIconUnselectedColour() {
+        int colour = rand.nextInt();
+        scroller.setPageIconUnselectedColour(colour);
+
+        assertEquals(colour, scroller.getPageIconUnselectedColour());
+    }
+
+    @Test
+    public void test_setPageIconSelectedColour() {
+        int colour = rand.nextInt();
+        scroller.setPageIconSelectedColour(colour);
+
+        assertEquals(colour, scroller.getPageIconSelectedColour());
+    }
+
+    @Test
+    public void test_setPageIconShadowColour() {
+        int colour = rand.nextInt();
+        scroller.setPageIconShadowColour(colour);
+
+        assertEquals(colour, scroller.getPageIconShadowColour());
+    }
+
+    @Test
+    public void test_setPageIconRelativePercentageYPos() {
+        float percentage = Math.abs((rand.nextInt() % 20) / 10.0f);
+        scroller.setPageIconRelativePercentageYPos(percentage);
+
+        assertEquals(percentage, scroller.getPageIconRelativePercentageYPos());
+    }
+
 }

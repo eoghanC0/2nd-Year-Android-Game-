@@ -40,6 +40,10 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
  */
 public class ImageScroller extends Scroller<ImageScrollerItem> {
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Constructor
+    // /////////////////////////////////////////////////////////////////////////
+
     /**
      * Main constructor
      * @param x
@@ -70,18 +74,6 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
         scrollerItems = new ArrayList<ImageScrollerItem>();
     }
 
-    /**
-     * Adds test adata
-     */
-    public void addTestData() {
-        mGameScreen.getGame().getAssetManager().loadAndAddBitmap("TestBitmap", "img/card-1.png");
-        Bitmap testBitmap =  mGameScreen.getGame().getAssetManager().getBitmap("TestBitmap");
-        ImageScrollerItem imageScrollerItem = new ImageScrollerItem(0,0,100,200, testBitmap, mGameScreen);
-        for (int i = 0; i < 8; i++) {
-            addScrollerItem(imageScrollerItem);
-        }
-    }
-
     @Override
     public void addScrollerItem(GameObject imageScrollerItem) {
         if(imageScrollerItem != null || scrollerItems.size() <= maxScrollerItems) {
@@ -109,6 +101,11 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
             scrollerItems.add(new ImageScrollerItem(position.x, position.y, dimensions.x * 2, dimensions.y * 2, bitmap, mGameScreen));
         }
     }
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Update and Draw
+    // /////////////////////////////////////////////////////////////////////////
+
 
     @Override
     public void update(ElapsedTime elapsedTime) {
@@ -156,4 +153,17 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
         drawPageIcons(graphics2D);
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Testing
+    // /////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void addTestData() {
+        mGameScreen.getGame().getAssetManager().loadAndAddBitmap("TestBitmap", "img/card-1.png");
+        Bitmap testBitmap =  mGameScreen.getGame().getAssetManager().getBitmap("TestBitmap");
+        ImageScrollerItem imageScrollerItem = new ImageScrollerItem(0,0,100,200, testBitmap, mGameScreen);
+        for (int i = 0; i < 8; i++) {
+            addScrollerItem(imageScrollerItem);
+        }
+    }
 }

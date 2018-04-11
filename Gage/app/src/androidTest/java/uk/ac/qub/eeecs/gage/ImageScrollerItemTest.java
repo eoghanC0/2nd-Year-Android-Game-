@@ -8,11 +8,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Random;
+
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
-import uk.ac.qub.eeecs.game.cardDemo.ui.ImageScroller;
 import uk.ac.qub.eeecs.game.cardDemo.ui.ImageScrollerItem;
 
 import static junit.framework.Assert.assertEquals;
@@ -30,7 +31,7 @@ public class ImageScrollerItemTest {
     // Testing of scroller requires a GameScreen, so I have randomly chosen HelpScreen
     private HelpScreen helpScreen;
     private ImageScrollerItem imageScrollerItem;
-
+    private Random rand;
     @Before
     public void setup() {
         appContext = InstrumentationRegistry.getTargetContext();
@@ -41,17 +42,20 @@ public class ImageScrollerItemTest {
         game.mFileIO = fileIO;
         game.mAssetManager = new AssetStore(fileIO);
 
+        rand = new Random();
+
         helpScreen = new HelpScreen(game);
 
         game.getAssetManager().loadAndAddBitmap("TestBitmap1", "img/card-0.png");
         game.getAssetManager().loadAndAddBitmap("TestBitmap2", "img/card-1.png");
 
-        imageScrollerItem = new ImageScrollerItem(0,0,100,100, game.getAssetManager().getBitmap("TestBitmap1"), helpScreen);
+        imageScrollerItem = new ImageScrollerItem(rand.nextFloat(),rand.nextFloat(),rand.nextFloat() + 1,rand.nextFloat() + 1, game.getAssetManager().getBitmap("TestBitmap1"), helpScreen);
     }
 
     @Test
     public void test_Constructor1() {
         imageScrollerItem = new ImageScrollerItem(helpScreen);
+
         assertEquals(imageScrollerItem.position.x, 0.0f);
         assertEquals(imageScrollerItem.position.y, 0.0f);
         assertEquals(imageScrollerItem.getBound().getWidth(), 2.0f);
@@ -61,7 +65,7 @@ public class ImageScrollerItemTest {
 
     @Test
     public void test_Constructor2_ValidData() {
-        float x = 0, y = 0, width = 100, height = 50;
+        float x = rand.nextFloat(), y = rand.nextFloat(), width = rand.nextFloat() + 1, height = rand.nextFloat() + 1;
         imageScrollerItem = new ImageScrollerItem(x, y, width, height, game.getAssetManager().getBitmap("TestBitmap1"), helpScreen);
 
         assertEquals(imageScrollerItem.position.x, x);
@@ -73,7 +77,7 @@ public class ImageScrollerItemTest {
 
     @Test
     public void test_Constructor2_InvalidData() {
-        float x = 0, y = 0, width = -100, height = -50;
+        float x = rand.nextFloat(), y = rand.nextFloat(), width = -(rand.nextFloat() + 1), height = -(rand.nextFloat() + 1);
         imageScrollerItem = new ImageScrollerItem(x, y, width, height, game.getAssetManager().getBitmap("TestBitmap12345"), helpScreen);
 
         assertEquals(x, imageScrollerItem.position.x);
@@ -85,9 +89,10 @@ public class ImageScrollerItemTest {
 
     @Test
     public void test_setWidthAndHeight() {
-        imageScrollerItem.setWidthAndHeight(500,250);
-        assertEquals(500.0f, imageScrollerItem.getBound().getWidth());
-        assertEquals(250.0f, imageScrollerItem.getBound().getHeight());
+        float width = rand.nextFloat(), height = rand.nextFloat();
+        imageScrollerItem.setWidthAndHeight(width,height);
+        assertEquals(width, imageScrollerItem.getBound().getWidth());
+        assertEquals(height, imageScrollerItem.getBound().getHeight());
     }
 
     @Test
@@ -102,7 +107,4 @@ public class ImageScrollerItemTest {
         // Retains original bitmap set in constructor
         assertEquals(game.getAssetManager().getBitmap("TestBitmap1"), imageScrollerItem.getBitmap());
     }
-
-
-
 }
