@@ -1,9 +1,12 @@
 package uk.ac.qub.eeecs.game.cardDemo.objects;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -13,6 +16,7 @@ import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.CardScroller;
+import uk.ac.qub.eeecs.game.cardDemo.ui.PopUpWindow;
 
 /**
  * Created by stephenmcveigh on 06/03/2018.
@@ -50,6 +54,27 @@ public class Pack extends GameObject {
         for (int i = 0; i < numberOfCards; i++) {
             cardScroller.addScrollerItem(new Card(mGameScreen, rare,null, minRating, maxRating));
         }
+        addToClub();
+    }
+
+    private void addToClub() {
+        FootballGame game = (FootballGame) mGameScreen.getGame();
+        for (Card card : cardScroller.getScrollerItems()) {
+            if (!getClubIDs(game).contains(card.getPlayerID())) {
+                game.getClub().add(card);
+            } else {
+                game.addXP(card.getRating());
+            }
+        }
+    }
+
+    private ArrayList<String> getClubIDs(FootballGame game) {
+        ArrayList<String> playerIDs = new ArrayList<>();
+        for (Card player : game.getClub()) {
+            playerIDs.add(player.getPlayerID());
+        }
+        Collections.sort(playerIDs);
+        return playerIDs;
     }
 
     private void createPack(int numberOfCards, int numberOfRares, int minRating, int maxRating) {
