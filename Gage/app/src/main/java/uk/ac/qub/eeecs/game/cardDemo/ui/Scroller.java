@@ -147,7 +147,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     /**
      * User defined maximum number of items allowed in scroller
      */
-    protected int maxScrollerItems = 25;
+    protected int maxScrollerItems = 100;
 
     /**
      * Dimensions of bitmaps

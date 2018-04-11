@@ -228,4 +228,22 @@ public class FootballGame extends Game {
         bgMusic.setLooping(true);
         bgMusic.play();
     }
+
+    public void addToClub(Card card) {
+        club.add(card);
+    }
+
+    public void addToSquad(Card card) {
+        if(squad.size() <= 11) {
+            squad.add(card);
+        }
+    }
+
+    public void clearClub() {
+        club.clear();
+    }
+
+    public void clearSquad() {
+        squad.clear();
+    }
 }
