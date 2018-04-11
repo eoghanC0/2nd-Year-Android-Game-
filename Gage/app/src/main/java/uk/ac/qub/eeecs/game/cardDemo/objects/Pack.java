@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
@@ -54,16 +55,17 @@ public class Pack extends GameObject {
         for (int i = 0; i < numberOfCards; i++) {
             cardScroller.addScrollerItem(new Card(mGameScreen, rare,null, minRating, maxRating));
         }
-        addToClub();
     }
 
     private void addToClub() {
         FootballGame game = (FootballGame) mGameScreen.getGame();
         for (Card card : cardScroller.getScrollerItems()) {
-            if (!getClubIDs(game).contains(card.getPlayerID())) {
-                game.getClub().add(card);
-            } else {
+            if (getClubIDs(game).contains(card.getPlayerID())) {
+                Log.i("PlayerID", card.getPlayerID());
                 game.addXP(card.getRating());
+            } else {
+                Log.i("Adding", "adding" + card.getPlayerID());
+                game.getClub().add(card);
             }
         }
     }
@@ -73,13 +75,13 @@ public class Pack extends GameObject {
         for (Card player : game.getClub()) {
             playerIDs.add(player.getPlayerID());
         }
-        Collections.sort(playerIDs);
         return playerIDs;
     }
 
     private void createPack(int numberOfCards, int numberOfRares, int minRating, int maxRating) {
         createCards(numberOfCards - numberOfRares, false, minRating, maxRating);
         createCards(numberOfRares, true, minRating, maxRating);
+        addToClub();
         Collections.shuffle(cardScroller.getScrollerItems());
     }
 
