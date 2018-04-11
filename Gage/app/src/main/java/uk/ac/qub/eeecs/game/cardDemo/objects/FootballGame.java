@@ -138,6 +138,10 @@ public class FootballGame extends Game {
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
+    public void addXP(int xp) {
+        this.xp += xp;
+    }
+
     private JSONArray getCardCollectionAsJson(ArrayList<Card> collection) throws JSONException{
         JSONArray array = new JSONArray();
         for (Card card : collection) {

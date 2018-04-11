@@ -326,8 +326,6 @@ public class PackScreen extends FootballGameScreen {
             break;
         }
         myPack = new Pack(this, packSizes, noOfRares,minRating, maxRating);
-        mGame.getClub().addAll(myPack.getPlayers());
-        mGame.saveGame();
     }
 
 }

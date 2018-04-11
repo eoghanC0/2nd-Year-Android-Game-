@@ -27,7 +27,6 @@ public class StarterPackScreen extends FootballGameScreen {
     public StarterPackScreen(FootballGame game) {
         super("StarterPackScreen", game);
         starterPack = new Pack(this, 11, 5, 0,80);
-
         mGame.getAssetManager().loadAndAddBitmap("MenuButton", "img/MenuButton.png");
         mGame.getAssetManager().loadAndAddBitmap("MenuButtonPushed", "img/MenuButtonPushed.png");
         menuScreenButton = new PushButton(mGame.getScreenWidth() * 0.5f, mGame.getScreenHeight() * 0.82f, mGame.getScreenWidth() * 0.4f, mGame.getScreenWidth() * 0.15f, "MenuButton", "MenuButtonPushed", this);
