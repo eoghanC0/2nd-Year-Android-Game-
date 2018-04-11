@@ -199,6 +199,28 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     protected Paint paint = new Paint();
 
     /**
+     * Colour of page icon unselected
+     */
+    protected int pageIconUnselectedColour;
+
+    /**
+     * Colour of page icon unselected
+     */
+    protected int pageIconSelectedColour;
+
+    /**
+     * Colour of page icon shadow
+     */
+    protected int pageIconShadowColour;
+
+    /**
+     * Used when calculating the Y position of page icons
+     * The percentage is the percentage height of the scroller, to which the icons will be positioned
+     * Default is 0.8
+     */
+    protected float pageIconRelativePercentageYPos = 0.8f;
+
+    /**
      * Determines whether a touch down event is present
      */
     private boolean touchDown = false;
@@ -255,6 +277,10 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
         paint.setStrokeWidth(5);
         paint.setColor(Color.CYAN);
+
+        pageIconUnselectedColour = Color.rgb(250, 250, 250);
+        pageIconSelectedColour = Color.rgb(4, 46, 84);
+        pageIconShadowColour = Color.rgb(1, 32, 61);
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -264,7 +290,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     /**
      * Test items
      */
-    public void addTestData() { return;};
+    public abstract void addTestData();
 
     /**
      * Sets the background bitmap of the scroller
@@ -307,11 +333,9 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         else return false;
     }
 
-    /**
-     * * * * * * * * * * *
-     * SINGLE MODE METHODS
-     * * * * * * * * * * *
-     */
+    // /////////////////////////////////////////////////////////////////////////
+    // Single Mode Methods
+    // /////////////////////////////////////////////////////////////////////////
 
     /**
      * Calculates position of next vector for single image mode
@@ -338,11 +362,9 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         }
     }
 
-    /**
-     * * * * * * * * * * *
-     * MULTI MODE METHODS
-     * * * * * * * * * * *
-     */
+    // /////////////////////////////////////////////////////////////////////////
+    // Multi Mode Methods
+    // /////////////////////////////////////////////////////////////////////////
 
     /**
      * Toggles scroller from single card to multi card mode
@@ -491,10 +513,13 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         if(!scrollDirection) moveBy = -1 * itemDistance * 0.05f;
         else moveBy = itemDistance * 0.05f;
 
+        if(useSimulatedTouchEvents) moveBy = scrollDirection ? itemDistance : -1 * itemDistance;
+
         // Branch based on whether multi mode or single mode is enabled
         if(multiMode) {
             // Move any currently displayed items
             int breaker = currentItemIndex + maxDisplayedItems >= scrollerItems.size() ? scrollerItems.size() - currentItemIndex : maxDisplayedItems;
+
             for (int i = 0; i < breaker; i++) {
                 scrollerItems.get(i + currentItemIndex).position.add(moveBy, 0);
             }
@@ -515,6 +540,10 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
             // Stop animation
             scrollAnimationTriggered = false;
 
+            // Set current index to the next index, as next index is now at the position
+            // current index was at originally before the animation
+            currentItemIndex = nextItemIndex;
+
             // Branch based on whether multi mode or single mode is enabled
             if(multiMode) {
                 // Calculate the vectors for the new current items
@@ -523,9 +552,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
                 // Set position of new current item to scroller position
                 scrollerItems.get(currentItemIndex).position = new Vector2(position);
             }
-            // Set current index to the next index, as next index is now at the position
-            // current index was at originally before the animation
-            currentItemIndex = nextItemIndex;
+
             // Reset distance moved
             distanceMoved = 0;
 
@@ -562,12 +589,10 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
             if(t.type == TouchEvent.TOUCH_FLING && scrollEnabled) {
                 if (t.dx > 0) scrollDirection = true;
                 else scrollDirection = false;
-
-                Log.d("DEBUG", "checkForTouchEvent: TRIGGERED SCROLL ANIMATION");
             }
 
             if(t.type == TouchEvent.TOUCH_UP) {
-                if(System.nanoTime() - touchDownTime < 300000000) {
+                if(System.nanoTime() - touchDownTime < 300000000 && scrollerItems.size() > 1) {
                     scrollAnimationTriggered = true;
                 }
                 touchDown = false;
@@ -598,7 +623,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      * Check if a touch is within the general area of a certain location
      * @param userTouchLocation
      */
-    protected boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
+    public boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
         if(userTouchLocation == null || touchDestination == null) return false;
 
         if(touchDestination.contains(userTouchLocation.x, userTouchLocation.y)) return true;
@@ -612,7 +637,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      * @param touchLocation
      * @param deviation
      */
-    protected boolean checkIfTouchInArea(Vector2 userTouchLocation, Vector2 touchLocation, float deviation) {
+    public boolean checkIfTouchInArea(Vector2 userTouchLocation, Vector2 touchLocation, float deviation) {
         if(userTouchLocation == null || touchLocation == null) return false;
 
         BoundingBox tempBound = new BoundingBox();
@@ -695,7 +720,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         // Calculate position of each icon starting with the first as a basis
         pageIconPositions.clear();
         pageIconShadowPositions.clear();
-        Vector2 firstIconPos = new Vector2((getBound().getWidth() - (pages * getBound().getHeight() * 0.05f) - ((pages - 1) * getBound().getHeight() * 0.1f)) / 2, position.y + getBound().halfHeight * 0.8f);
+        Vector2 firstIconPos = new Vector2((getBound().getWidth() - (pages * getBound().getHeight() * 0.05f) - ((pages - 1) * getBound().getHeight() * 0.1f)) / 2, position.y + getBound().halfHeight * pageIconRelativePercentageYPos);
         pageIconPositions.add(new RectF(firstIconPos.x, firstIconPos.y, firstIconPos.x + getBound().getHeight() * 0.05f, firstIconPos.y + getBound().getHeight() * 0.05f));
         pageIconShadowPositions.add(new RectF(firstIconPos.x + pageIconShadowOffset, firstIconPos.y + pageIconShadowOffset, firstIconPos.x + getBound().getHeight() * 0.05f + pageIconShadowOffset, firstIconPos.y + getBound().getHeight() * 0.05f + pageIconShadowOffset));
 
@@ -706,33 +731,13 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         }
     }
 
-
-    /**
-     * * * * * * * * * * *
-     *   TESTING METHODS
-     * * * * * * * * * * *
-     */
-    public void updateSimulatedTouchEvents() {
-        if(!useSimulatedTouchEvents) return;
-
-        for (GameObject item : scrollerItems) {
-//            item.setUseSimulatedTouchEvents(true);
-//            item.setSimulatedTouchEvents(simulatedTouchEvents);
-        }
-    }
-
-    /**
-     * * * * * * * * * * *
-     *   UPDATE AND DRAW
-     * * * * * * * * * * *
-     */
+    // /////////////////////////////////////////////////////////////////////////
+    // Update and Draw
+    // /////////////////////////////////////////////////////////////////////////
 
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
-
-        // Toggles use of simulated touch events
-        updateSimulatedTouchEvents();
 
         // Updates Cards on scroller
         for (GameObject item : scrollerItems)
@@ -762,21 +767,21 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      */
     protected void drawPageIcons(IGraphics2D graphics2D) {
         for (int i = 0; i < pageIconPositions.size(); i++) {
-            paint.setColor(Color.rgb(1, 32, 61));
+            paint.setColor(pageIconShadowColour);
             graphics2D.drawArc(pageIconShadowPositions.get(i), 0,360, true, paint);
             if(i == currentPageIndex) {
-                paint.setColor(Color.rgb(4, 46, 84));
+                paint.setColor(pageIconSelectedColour);
                 graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
             } else {
-                paint.setColor(Color.rgb(250, 250, 250));
+                paint.setColor(pageIconUnselectedColour);
                 graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
             }
         }
     }
 
-    /**
-     * GETTERS AND SETTERS
-     */
+    // /////////////////////////////////////////////////////////////////////////
+    // Getters
+    // /////////////////////////////////////////////////////////////////////////
 
     public int getItemCount() {
         return scrollerItems.size();
@@ -810,18 +815,6 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
         return distanceMoved;
     }
 
-    public boolean isScrollAnimationTriggered() {
-        return scrollAnimationTriggered;
-    }
-
-    public boolean isScrollDirection() {
-        return scrollDirection;
-    }
-
-    public boolean isMultiMode() {
-        return multiMode;
-    }
-
     public int getMaxDisplayedItems() {
         return maxDisplayedItems;
     }
@@ -850,22 +843,80 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     public int getMaxScrollerItems() { return maxScrollerItems; }
 
+    public ArrayList<RectF> getPageIconPositions() {
+        return pageIconPositions;
+    }
+
+    public int getCurrentPageIndex() {
+        return currentPageIndex;
+    }
+
+    public int getPageIconUnselectedColour() { return pageIconUnselectedColour; }
+
+    public int getPageIconSelectedColour() { return pageIconSelectedColour; }
+
+    public int getPageIconShadowColour() { return pageIconShadowColour; }
+
+    public float getPageIconRelativePercentageYPos() { return pageIconRelativePercentageYPos; }
+
+    public boolean isScrollAnimationTriggered() {
+        return scrollAnimationTriggered;
+    }
+
+    public boolean isScrollDirection() {
+        return scrollDirection;
+    }
+
+    public boolean isMultiMode() {
+        return multiMode;
+    }
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Setters
+    // /////////////////////////////////////////////////////////////////////////
+
     public void setMaxScrollerItems(int maxScrollerItems) { this.maxScrollerItems = maxScrollerItems > 0 ? maxScrollerItems : 25; }
 
+    public void setBaseBitmap(Bitmap baseBitmap) {
+        this.baseBitmap = baseBitmap;
+    }
+
+    public void setPageScroll(boolean pageScroll) {
+        this.pageScroll = pageScroll;
+    }
+
+    public void setPageIconUnselectedColour(int pageIconUnselectedColour) { this.pageIconUnselectedColour = pageIconUnselectedColour; }
+
+    public void setPageIconSelectedColour(int pageIconSelectedColour) { this.pageIconSelectedColour = pageIconSelectedColour; }
+
+    public void setPageIconShadowColour(int pageIconShadowColour) { this.pageIconShadowColour = pageIconShadowColour; }
+
+    public void setPageIconRelativePercentageYPos(float pageIconRelativePercentageYPos) {
+        this.pageIconRelativePercentageYPos = pageIconRelativePercentageYPos >= 0.0f ? pageIconRelativePercentageYPos : this.pageIconRelativePercentageYPos;
+    }
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Testing
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Sets the simulatedTouchEvents used for simulated input
+     * @param simulatedTouchEvents
+     */
     public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
         this.simulatedTouchEvents = simulatedTouchEvents;
     }
 
+    /**
+     * Sets whether or not the scroller should use simulated touch events passed in (for testing)
+     * or standard input settings
+     * @param useSimulatedTouchEvents
+     */
     public void setUseSimulatedTouchEvents(boolean useSimulatedTouchEvents) {
         if(useSimulatedTouchEvents) {
             this.useSimulatedTouchEvents = true;
-            updateSimulatedTouchEvents();
         } else {
             this.useSimulatedTouchEvents = false;
         }
-    }
-
-    public void setBaseBitmap(Bitmap baseBitmap) {
-        this.baseBitmap = baseBitmap;
     }
 }

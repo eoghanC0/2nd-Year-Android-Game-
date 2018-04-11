@@ -40,6 +40,10 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
  */
 public class ImageScroller extends Scroller<ImageScrollerItem> {
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Constructor
+    // /////////////////////////////////////////////////////////////////////////
+
     /**
      * Main constructor
      * @param x
@@ -98,6 +102,11 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
         }
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Update and Draw
+    // /////////////////////////////////////////////////////////////////////////
+
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
@@ -133,6 +142,8 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
             // Draw page icons
             drawPageIcons(graphics2D);
 
+            if(nextItemIndex == -1) return;
+
             // If a scroll animation has been triggered, draw next item
             if(scrollAnimationTriggered)
                 scrollerItems.get(nextItemIndex).draw(elapsedTime, graphics2D);
@@ -142,4 +153,17 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
         drawPageIcons(graphics2D);
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Testing
+    // /////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void addTestData() {
+        mGameScreen.getGame().getAssetManager().loadAndAddBitmap("TestBitmap", "img/card-1.png");
+        Bitmap testBitmap =  mGameScreen.getGame().getAssetManager().getBitmap("TestBitmap");
+        ImageScrollerItem imageScrollerItem = new ImageScrollerItem(0,0,100,200, testBitmap, mGameScreen);
+        for (int i = 0; i < 8; i++) {
+            addScrollerItem(imageScrollerItem);
+        }
+    }
 }

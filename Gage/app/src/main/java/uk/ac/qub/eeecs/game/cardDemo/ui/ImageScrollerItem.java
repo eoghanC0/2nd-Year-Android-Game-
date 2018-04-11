@@ -20,19 +20,9 @@ public class ImageScrollerItem extends GameObject {
     public String[] metaData;
 
     /**
-     * Used by the ImageScroller for management purposes
-     */
-    public int index;
-
-    /**
      * Rect of the mBound
      */
     private Rect mBoundRect = new Rect();
-
-    /**
-     * Scaled dimensions
-     */
-    private Vector2 scaledDimensions = new Vector2();
 
     /**
      * Default constructor
@@ -62,8 +52,8 @@ public class ImageScrollerItem extends GameObject {
 
         if(bitmap != null) mBitmap = bitmap;
         else {
-            AssetStore assetStore = gameScreen.getGame().getAssetManager();
-            assetStore.loadAndAddBitmap("Empty", "img/empty.png");
+            gameScreen.getGame().getAssetManager().loadAndAddBitmap("Empty", "img/empty.png");
+            mBitmap = gameScreen.getGame().getAssetManager().getBitmap("Empty");
         }
 
         metaData = new String[]{"ImageScrollerItem"};
@@ -79,13 +69,6 @@ public class ImageScrollerItem extends GameObject {
         mBound.halfHeight = height / 2;
     }
 
-    public void setAssetStoreBitmap(String bitmapName, GameScreen gameScreen) {
-        // Retrieve bitmap from gameScreen's AssetStore
-        AssetStore assetStore = gameScreen.getGame().getAssetManager();
-        mBitmap = assetStore.getBitmap(bitmapName);
-        if(mBitmap == null) mBitmap = assetStore.getBitmap("Empty");
-    }
-
     private void calculateMBoundRect() {
         mBoundRect.set((int) (position.x - mBound.getWidth()),
                 (int) (position.y - mBound.getHeight()),
@@ -93,13 +76,8 @@ public class ImageScrollerItem extends GameObject {
                 (int) (position.y + mBound.getHeight()));
     }
 
-    public Rect getMBoundRect() {
-        return mBoundRect;
-    }
-
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
-        //calculateMBoundRect();
     }
 }

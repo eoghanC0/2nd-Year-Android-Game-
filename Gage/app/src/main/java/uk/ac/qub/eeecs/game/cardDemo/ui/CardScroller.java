@@ -172,7 +172,7 @@ public class CardScroller extends Scroller<Card> {
         assetManager.loadAndAddBitmap("BaseBitmap", "img/CardFront.png");
         baseBitmap = assetManager.getBitmap("BaseBitmap");
         if(baseBitmap == null) {
-            Log.d("ERROR", "CardScroller: BASE BITMAP NOT FOUND> THIS IS A PROBLEM.");
+            Log.d("ERROR", "CardScroller: BASE BITMAP NOT FOUND. THIS IS A PROBLEM.");
             baseBitmap = assetManager.getBitmap("Empty");
         }
 
@@ -182,24 +182,6 @@ public class CardScroller extends Scroller<Card> {
     // /////////////////////////////////////////////////////////////////////////
     // Methods
     // /////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Test items
-     */
-    public void addTestData() {
-        Vector2 dimensions = getNewBitmapDimensions(baseBitmap, (int) mBound.getHeight(), true);
-        addScrollerItem(new Card(mGameScreen, "1", 100));
-        addScrollerItem(new Card(mGameScreen,"2", 100));
-        addScrollerItem(new Card(mGameScreen,"3", 100));
-        addScrollerItem(new Card(mGameScreen,"4", 100));
-        addScrollerItem(new Card(mGameScreen,"5", 100));
-        addScrollerItem(new Card(mGameScreen,"6", 100));
-        addScrollerItem(new Card(mGameScreen,"7", 100));
-        addScrollerItem(new Card(mGameScreen,"8", 100));
-        addScrollerItem(new Card(mGameScreen,"9", 100));
-        addScrollerItem(new Card(mGameScreen,"10", 100));
-        addScrollerItem(new Card(mGameScreen,"11", 100));
-    }
 
     @Override
     public void addScrollerItem(GameObject gameObject) {
@@ -216,7 +198,6 @@ public class CardScroller extends Scroller<Card> {
         if(card != null && scrollerItems.size() <= maxScrollerItems && !isAnimating()) {
             if(scrollerItems.size() == 0) currentItemIndex = 0;
             else if(scrollerItems.size() == 1) nextItemIndex = 1;
-            Log.d("DEBUG", "addScrollerItem: part 1");
             if(multiMode) {
                 card.setHeight((int) maxItemDimensions.y * 2);
             } else {
@@ -225,7 +206,7 @@ public class CardScroller extends Scroller<Card> {
             }
 
             scrollerItems.add(card);
-            Log.d("DEBUG", "addScrollerItem: part 2");
+
             // Check if card should be displayed immediately
             int relativePosition = currentItemIndex + maxDisplayedItems >= scrollerItems.size() ? scrollerItems.size() - currentItemIndex - 1: -1;
             if(multiMode && relativePosition != -1) {
@@ -237,7 +218,7 @@ public class CardScroller extends Scroller<Card> {
             // Trigger flag to check page icons
             checkPageChange = true;
 
-            Log.d("DEBUG", "addScrollerItem: added card " + card.toString());
+            Log.d("DEBUG", "addScrollerItem: Added card " + card.toString());
         }
     }
 
@@ -249,11 +230,9 @@ public class CardScroller extends Scroller<Card> {
         this.selectMode = selectMode;
     }
 
-    /**
-     * * * * * * * * * * *
-     * MULTI MODE METHODS
-     * * * * * * * * * * *
-     */
+    // /////////////////////////////////////////////////////////////////////////
+    // Multi Mode Methods
+    // /////////////////////////////////////////////////////////////////////////
 
     /**
      * Executes the updating of positions of items for card move animation if
@@ -263,7 +242,7 @@ public class CardScroller extends Scroller<Card> {
         if(!(cardMoveAnimationTriggered && itemSelected)) return;
 
         // Move current item and next item
-        Vector2 moveVector = new Vector2((currentSelectDestination.x - scrollerItems.get(selectedItemIndex).position.x) * 0.4f, (currentSelectDestination.y - scrollerItems.get(selectedItemIndex).position.y) * 0.4f) ;
+        Vector2 moveVector = new Vector2((currentSelectDestination.x - scrollerItems.get(selectedItemIndex).position.x) * 0.4f, (currentSelectDestination.y - scrollerItems.get(selectedItemIndex).position.y) * 0.4f);
 
         scrollerItems.get(selectedItemIndex).position.add(moveVector);
 
@@ -297,6 +276,7 @@ public class CardScroller extends Scroller<Card> {
                 scrollAnimationTriggered = true;
                 scrollDirection = true;
                 itemDistance = mBound.getWidth();
+                nextItemIndex = scrollerItems.size() - maxDisplayedItems;
             }
             else
                 calculateCurrentMultiVectors();
@@ -308,6 +288,8 @@ public class CardScroller extends Scroller<Card> {
 
         // Move current item and next item
         float moveBy = -1 * newMoveDistance * 0.1f;
+
+        if(useSimulatedTouchEvents) moveBy = -1 * newMoveDistance;
 
         scrollerItems.get(selectedItemIndex).position.add(moveBy, 0);
 
@@ -406,14 +388,12 @@ public class CardScroller extends Scroller<Card> {
      */
     @Override
     public boolean isAnimating() {
-        //Log.d("DEBUG", "isAnimating: " + scrollAnimationTriggered + cardMoveAnimationTriggered + newCardMoveAnimationTriggered);
         return scrollAnimationTriggered || cardMoveAnimationTriggered || newCardMoveAnimationTriggered;
     }
 
     /**
      * Checks for a touch event on a card and moves card
      * Card is removed if a TOUCH_UP is detected in a select destination
-     *
      */
     private void checkAndPerformDragCard() {
         if(!selectMode || scrollerItems.isEmpty()) return;
@@ -458,6 +438,7 @@ public class CardScroller extends Scroller<Card> {
                     }
                 }
             }
+
             // If touch event is a touch up event, check if location is within a select destination and remove card
             // else return card to original position
             if (t.type == TouchEvent.TOUCH_UP) {
@@ -518,11 +499,9 @@ public class CardScroller extends Scroller<Card> {
         return null;
     }
 
-    /**
-     * * * * * * * * * * *
-     *   UPDATE AND DRAW
-     * * * * * * * * * * *
-     */
+    // /////////////////////////////////////////////////////////////////////////
+    // Update and Draw
+    // /////////////////////////////////////////////////////////////////////////
 
     @Override
     public void update(ElapsedTime elapsedTime) {
@@ -594,9 +573,9 @@ public class CardScroller extends Scroller<Card> {
         }
     }
 
-    /**
-     * GETTERS AND SETTERS
-     */
+    // /////////////////////////////////////////////////////////////////////////
+    // Getters
+    // /////////////////////////////////////////////////////////////////////////
 
     public int getItemCount() {
         return scrollerItems.size();
@@ -666,6 +645,10 @@ public class CardScroller extends Scroller<Card> {
         return currentItemPositions;
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Setters
+    // /////////////////////////////////////////////////////////////////////////
+
     public void setScrollDirection(boolean scrollDirection) { this.scrollDirection = scrollDirection; }
 
     public int getMaxScrollerItems() { return maxScrollerItems; }
@@ -680,32 +663,35 @@ public class CardScroller extends Scroller<Card> {
         this.selectDestinations = selectDestinations;
     }
 
-    public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
-        this.simulatedTouchEvents = simulatedTouchEvents;
+    public void setTouchDownTime(long touchDownTime) {
+        this.touchDownTime = touchDownTime;
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Testing
+    // /////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void addTestData() {
+        addScrollerItem(new Card(mGameScreen, "1", 100));
+        addScrollerItem(new Card(mGameScreen,"2", 100));
+        addScrollerItem(new Card(mGameScreen,"3", 100));
+        addScrollerItem(new Card(mGameScreen,"4", 100));
+        addScrollerItem(new Card(mGameScreen,"5", 100));
+        addScrollerItem(new Card(mGameScreen,"6", 100));
+        addScrollerItem(new Card(mGameScreen,"7", 100));
+        addScrollerItem(new Card(mGameScreen,"8", 100));
+        addScrollerItem(new Card(mGameScreen,"9", 100));
+        addScrollerItem(new Card(mGameScreen,"10", 100));
+        addScrollerItem(new Card(mGameScreen,"11", 100));
+    }
+
+    @Override
     public void setUseSimulatedTouchEvents(boolean useSimulatedTouchEvents) {
-        if(useSimulatedTouchEvents) {
-            this.useSimulatedTouchEvents = true;
-            updateSimulatedTouchEvents();
-        } else {
-            this.useSimulatedTouchEvents = false;
-        }
+        super.setUseSimulatedTouchEvents(useSimulatedTouchEvents);
 
         for (Card card : scrollerItems) {
             card.setUseSimulatedTouchEvents(useSimulatedTouchEvents);
         }
-    }
-
-    public ArrayList<RectF> getPageIconPositions() {
-        return pageIconPositions;
-    }
-
-    public int getCurrentPageIndex() {
-        return currentPageIndex;
-    }
-
-    public void setPageScroll(boolean pageScroll) {
-        this.pageScroll = pageScroll;
     }
 }

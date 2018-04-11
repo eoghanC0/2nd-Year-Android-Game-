@@ -8,10 +8,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
+import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.ScreenManager;
+import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.game.DemoGame;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
 import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
 
@@ -26,57 +30,66 @@ import static junit.framework.Assert.assertEquals;
 public class HelpScreenTest {
 
     private Context appContext;
-    private Game game;
+    private FootballGame game;
+    private HelpScreen helpScreen;
 
     @Before
     public void setup() {
         appContext = InstrumentationRegistry.getTargetContext();
 
-        game = new DemoGame();
+        game = new FootballGame();
 
         FileIO fileIO = new FileIO(appContext);
         game.mFileIO = fileIO;
         game.mAssetManager = new AssetStore(fileIO);
+
+        helpScreen = new HelpScreen(game);
     }
 
     @Test
-    public void testCorrectScreenTransition() {
-        // Create test data
+    public void test_CorrectScreenTransition() {
         MenuScreen menuScreen = new MenuScreen(game);
         game.mScreenManager = new ScreenManager();
         game.mScreenManager.addScreen(menuScreen);
-        HelpScreen helpScreen = new HelpScreen(game);
-
         // Call test
-        menuScreen.changeToScreen(helpScreen);
+        helpScreen.changeToScreen(menuScreen);
 
         // Check return
-        assertEquals(game.getScreenManager().getCurrentScreen().getName(), helpScreen.getName());
+        assertEquals(game.getScreenManager().getCurrentScreen().getName(), menuScreen.getName());
     }
 
     @Test
-    public void clickMenuButton() {
+    public void test_clickMenuButton() {
         // Returns to MenuScreen
-    }
+        MenuScreen menuScreen = new MenuScreen(game);
+        game.mScreenManager = new ScreenManager();
+        game.mScreenManager.addScreen(menuScreen);
 
-    @Test
-    public void flickContentScrollRight_ContentOnRightAvailable() {
-        // Moves to content on right
-    }
+        ArrayList<TouchEvent> touchEvents = new ArrayList<>();
+        TouchEvent touchEvent = new TouchEvent();
 
-    @Test
-    public void flickContentScrollRight_ContentOnRightNotAvailable() {
-        // Does not move
-    }
+        helpScreen.menuScreenButton.setUseSimulatedTouchEvents(true);
+        helpScreen.imageScroller.setUseSimulatedTouchEvents(true);
 
-    @Test
-    public void flickContentScrollLeft_ContentOnLeftAvailable() {
-        // Moves to content on left
-    }
+        touchEvents.clear();
+        touchEvent.type = TouchEvent.TOUCH_DOWN;
+        touchEvent.x = helpScreen.menuScreenButton.position.x;
+        touchEvent.y = helpScreen.menuScreenButton.position.y;
+        touchEvents.add(touchEvent);
+        helpScreen.menuScreenButton.setSimulatedTouchEvents(touchEvents);
 
-    @Test
-    public void flickContentScrollLeft_ContentOnLeftNotAvailable() {
-        // Moves to content on right
+        helpScreen.update(new ElapsedTime());
+
+        touchEvents.clear();
+        touchEvent.type = TouchEvent.TOUCH_UP;
+        touchEvent.x = helpScreen.menuScreenButton.position.x;
+        touchEvent.y = helpScreen.menuScreenButton.position.y;
+        touchEvents.add(touchEvent);
+        helpScreen.menuScreenButton.setSimulatedTouchEvents(touchEvents);
+
+        helpScreen.update(new ElapsedTime());
+
+        assertEquals(game.getScreenManager().getCurrentScreen().getName(), menuScreen.getName());
     }
 }
 
