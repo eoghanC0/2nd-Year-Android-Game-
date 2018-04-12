@@ -369,7 +369,7 @@ public class SquadSelectionPane extends GameObject {
         numberOfCardsOnLevel[0] = Integer.valueOf(temp[2]);
         numberOfCardsOnLevel[1] = Integer.valueOf(temp[1]);
         numberOfCardsOnLevel[2] = Integer.valueOf(temp[0]);
-        numberOfCardsOnLevel[3] = 1;
+        numberOfCardsOnLevel[3] = (formationsListBox.getSelectedIndex() > -1) ? 1 : 0;
 
         // Calculate positions of holders
         calculateHolderPositions();
@@ -390,7 +390,7 @@ public class SquadSelectionPane extends GameObject {
         if (!formationString.equals(formationsListBox.getSelectedItem())) {
             formationString = formationsListBox.getSelectedItem();
             if (formationString.equals("")) {
-                formationString = "0-0-0-0";
+                formationString = "0-0-0";
             }
             assignCardsToLevels();
         }
@@ -512,6 +512,10 @@ public class SquadSelectionPane extends GameObject {
 
     public CardHolder[] getSquadSelectionHolders() {
         return squadSelectionHolders;
+    }
+
+    public String getFormationString() {
+        return formationString;
     }
 
     @Override
