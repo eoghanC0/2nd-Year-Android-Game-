@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,16 +108,16 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      */
     List<TouchEvent> touchEvents;
 
-    /**
-     * MULTI MODE VARIABLES
-     */
+    /************************
+     * Multi Mode Properties
+     ************************/
 
     /**
      * Toggle to set multi bitmap mode
      * at a time
-     * = = = = = = = = = = = = =
-     *  * *  W A R N I N G  * *
-     * = = = = = = = = = = = = =
+     * ! * ! * ! * ! * ! * ! * !
+     *  ! *  W A R N I N G  * !
+     * ! * ! * ! * ! * ! * ! * !
      * This should only be used if the bitmaps all have the same dimensions
      */
     protected boolean multiMode = false;
@@ -159,9 +158,9 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      */
     protected Vector2[] currentItemPositions = new Vector2[MAX_DISPLAYED_ITEMS_ALLOWED];
 
-    /**
-     * PAGE ICON VARIABLES
-     */
+    /***********************
+     * Page Icon Properties
+     ***********************/
 
     /**
      * Locations of page icons
@@ -230,9 +229,9 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      */
     private long touchDownTime = 0;
 
-    /**
-     * TESTING VARIABLES
-     */
+    /********************
+     * Testing Properties
+     ********************/
 
     /**
      * Determines whether to use simulated touch events or touch events from device
@@ -250,11 +249,12 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Main constructor
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param gameScreen
+     *
+     * @param x x-position
+     * @param y y-position
+     * @param width width of scroller
+     * @param height height of scroller
+     * @param gameScreen associated GameScreen
      */
     public Scroller(float x, float y, float width, float height, GameScreen gameScreen) {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
@@ -294,7 +294,8 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Sets the background bitmap of the scroller
-     * @param bitmap
+     *
+     * @param bitmap Bitmap of background
      */
     public void setBackground(Bitmap bitmap) {
         if(bitmap == null) return;
@@ -304,7 +305,8 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     /**
      * Gets the scaled dimensions of a bitmap based on a maximum height
      * If the height of the bitmap is less than maxHeight, original dimensions are returned
-     * @param maxHeight
+     *
+     * @param maxHeight Maximum height allowed for new bitmaps
      * @return Vector2 containing the half width and half height of the bitmap
      */
     protected Vector2 getNewBitmapDimensions(Bitmap bitmap, int maxHeight, boolean occupyFullHeight) {
@@ -320,13 +322,15 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Adds item to scroller
-     * @param gameObject
+     *
+     * @param gameObject GameObject to add to scroller
      */
     public abstract void addScrollerItem(GameObject gameObject);
 
     /**
      * Checks if nextIndex exists
-     * @return
+     *
+     * @return boolean as true if there is more than one scrollerItem, else false
      */
     private boolean checkDoesNextExist() {
         if(scrollerItems.size() > 1) return true;
@@ -368,8 +372,10 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Toggles scroller from single card to multi card mode
-     * @param value
-     * @param heightOccupyPercentage
+     *
+     * @param value boolean to toggle multi mode
+     * @param heightOccupyPercentage The percentage of the scroller's height that is allowed to display
+     *                               the scroller items
      */
     public void setMultiMode(boolean value, int heightOccupyPercentage) {
         if(!value) {
@@ -402,8 +408,9 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     }
 
     /**
-     * Calculates the number of cards that can be displayed
-     * @param heightOccupyPercentage The percentage of the scrollers height the image should occupy
+     * Calculates the number of cards that can be displayed along with their height and width
+     *
+     * @param heightOccupyPercentage The percentage of the scroller's height the image should occupy
      */
     public void calculateMultiItemsDisplayed(float heightOccupyPercentage) {
         if(!multiMode) return;
@@ -487,8 +494,10 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     /**
      * Adds moveBy to distanceMoved then checks if distanceMoved
      * has reached the item distance
-     * @param moveBy
-     * @return
+     *
+     * @param moveBy The distance which has been moved since the last update
+     * @return boolean as true if distanceMoved is greater than or equal to itemDistance,
+     *         else false
      */
     private boolean addAndCheckScrollerDistanceMoved(float moveBy) {
         // Add to distance moved
@@ -621,7 +630,9 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Check if a touch is within the general area of a certain location
-     * @param userTouchLocation
+     *
+     * @param userTouchLocation Vector2 of the location touched
+     * @return boolean as true if touch is in the touchDestination, else false
      */
     public boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
         if(userTouchLocation == null || touchDestination == null) return false;
@@ -633,9 +644,12 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Check if a touch is within the general area of a certain location
-     * @param userTouchLocation
-     * @param touchLocation
-     * @param deviation
+     *
+     * @param userTouchLocation Vector2 of the locationTouched
+     * @param touchLocation Vector2 of the allowed touch area
+     * @param deviation Used to generate a bounding box of height (deviation * 2) and width (deviation * 2)
+     *                  to improve the reliability of the userTouchLocation
+     * @return boolean as true if the userTouchLocation is within the area of the touchLocation else false
      */
     public boolean checkIfTouchInArea(Vector2 userTouchLocation, Vector2 touchLocation, float deviation) {
         if(userTouchLocation == null || touchLocation == null) return false;
@@ -653,6 +667,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Used to move scroller and all contents
+     *
      * @param x amount to move x position by
      * @param y amount to move y position by
      */
@@ -669,7 +684,8 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Returns whether an animation is occuring
-     * @return
+     *
+     * @return boolean as true if scrollAnimationTriggered is true, else false
      */
     public boolean isAnimating() {
         return scrollAnimationTriggered;
@@ -762,7 +778,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     }
 
     /**
-     * Draws page icons
+     * Draw page icons
      * @param graphics2D
      */
     protected void drawPageIcons(IGraphics2D graphics2D) {
@@ -901,6 +917,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
 
     /**
      * Sets the simulatedTouchEvents used for simulated input
+     *
      * @param simulatedTouchEvents
      */
     public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
@@ -910,6 +927,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     /**
      * Sets whether or not the scroller should use simulated touch events passed in (for testing)
      * or standard input settings
+     *
      * @param useSimulatedTouchEvents
      */
     public void setUseSimulatedTouchEvents(boolean useSimulatedTouchEvents) {

@@ -46,11 +46,12 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
 
     /**
      * Main constructor
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param gameScreen
+     *
+     * @param x x-position
+     * @param y y-position
+     * @param width Width of scroller
+     * @param height Height of scroller
+     * @param gameScreen Associated GameScreen
      */
     public ImageScroller(float x, float y, float width, float height, GameScreen gameScreen) {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, gameScreen);
@@ -74,6 +75,10 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
         scrollerItems = new ArrayList<ImageScrollerItem>();
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Methods
+    // /////////////////////////////////////////////////////////////////////////
+
     @Override
     public void addScrollerItem(GameObject imageScrollerItem) {
         if(imageScrollerItem != null || scrollerItems.size() <= maxScrollerItems) {
@@ -90,7 +95,8 @@ public class ImageScroller extends Scroller<ImageScrollerItem> {
 
     /**
      * Adds item to scroller
-     * @param bitmap
+     *
+     * @param bitmap Bitmap to add to scroller items
      */
     public void addScrollerItem(Bitmap bitmap) {
         if(bitmap != null || scrollerItems.size() <= maxScrollerItems) {

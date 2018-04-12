@@ -1,7 +1,5 @@
 package uk.ac.qub.eeecs.game.cardDemo.ui;
 
-import android.graphics.Color;
-import android.graphics.RectF;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -51,9 +49,9 @@ public class CardScroller extends Scroller<Card> {
     // Properties
     // /////////////////////////////////////////////////////////////////////////
 
-    /**
-     * INTERACTIVITY VARIABLES
-     */
+    /***************************
+     * Interactivity Properties
+     ***************************/
 
     /**
      * Whether or not selecting is allowed
@@ -174,7 +172,7 @@ public class CardScroller extends Scroller<Card> {
             baseBitmap = assetManager.getBitmap("Empty");
         }
 
-        scrollerItems = new ArrayList<Card>();
+        scrollerItems = new ArrayList<>();
     }
 
     // /////////////////////////////////////////////////////////////////////////
@@ -190,7 +188,8 @@ public class CardScroller extends Scroller<Card> {
 
     /**
      * Adds item to scroller
-     * @param card
+     *
+     * @param card Card to add to scroller items
      */
     public void addScrollerItem(Card card) {
         if(card != null && scrollerItems.size() <= maxScrollerItems && !isAnimating()) {
@@ -222,7 +221,8 @@ public class CardScroller extends Scroller<Card> {
 
     /**
      * Sets the value of selectMode
-     * @param selectMode
+     *
+     * @param selectMode boolean for toggling select mode on or off
      */
     public void setSelectMode(boolean selectMode) {
         this.selectMode = selectMode;
@@ -310,7 +310,9 @@ public class CardScroller extends Scroller<Card> {
 
     /**
      * Checks whether the moving card has reached it's destination
-     * @return
+     *
+     * @return boolean as true if card at scrollerItems[selectedItemIndex] has position within
+     *         15 pixels of currentSelectDestination
      */
     private boolean checkIfSelectedCardMovedToDest() {
         if(!(selectedItemIndex < 0 || itemSelected)) return false;
@@ -365,7 +367,8 @@ public class CardScroller extends Scroller<Card> {
 
     /**
      * Adds a destination which the user can select to move an item
-     * @param destination
+     *
+     * @param destination BoundingBox used for dragging items into for selection
      */
     public void addSelectDestination(BoundingBox destination) {
         if(destination != null) selectDestinations.add(destination);
@@ -373,7 +376,8 @@ public class CardScroller extends Scroller<Card> {
 
     /**
      * Removes a select destination from selectDestinations ArrayList
-     * @param index
+     *
+     * @param index Index of the select destination to remove from selectDestinations
      */
     public void removeSelectDestination(int index) {
         if(isAnimating() || index < 0 || index >= selectDestinations.size()) return;
@@ -382,7 +386,8 @@ public class CardScroller extends Scroller<Card> {
 
     /**
      * Returns whether an animation is occuring
-     * @return
+     *
+     * @return boolean as true if any animation has been triggered, else false
      */
     @Override
     public boolean isAnimating() {
@@ -470,7 +475,8 @@ public class CardScroller extends Scroller<Card> {
 
     /**
      * Returns whether there is a removed card ready to be retrieved
-     * @return
+     *
+     * @return boolean containing value of removedCardReady
      */
     public boolean isRemovedCardReady() {
         return removedCardReady;
@@ -478,7 +484,8 @@ public class CardScroller extends Scroller<Card> {
 
     /**
      * Returns the removed card
-     * @return
+     *
+     * @return Card that has been removed from scroller if removedCardReady flag is true
      */
     public Card getRemovedCard() {
         if(removedCardReady) {
@@ -490,7 +497,8 @@ public class CardScroller extends Scroller<Card> {
 
     /*
      * Returns BoundingBox containing bound of removed card
-     * @return BoundingBox
+     *
+     * @return BoundingBox of removedCard if removedCardReady is true
      */
     public BoundingBox getRemovedCardBound() {
         if (removedCardReady) return removedCardBound;
@@ -553,21 +561,6 @@ public class CardScroller extends Scroller<Card> {
             // If a scroll animation has been triggered, draw next item
             if(!scrollAnimationTriggered) return;
             scrollerItems.get(nextItemIndex).draw(elapsedTime, graphics2D);
-        }
-    }
-
-    public void drawPageIcons(IGraphics2D graphics2D) {
-        // Draw page icons
-        for (int i = 0; i < pageIconPositions.size(); i++) {
-            paint.setColor(Color.rgb(1, 32, 61));
-            graphics2D.drawArc(pageIconShadowPositions.get(i), 0,360, true, paint);
-            if(i == currentPageIndex) {
-                paint.setColor(Color.rgb(4, 46, 84));
-                graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
-            } else {
-                paint.setColor(Color.rgb(250, 250, 250));
-                graphics2D.drawArc(pageIconPositions.get(i), 0,360, true, paint);
-            }
         }
     }
 
@@ -657,9 +650,7 @@ public class CardScroller extends Scroller<Card> {
         return selectDestinations;
     }
 
-    public void setSelectDestinations(ArrayList<BoundingBox> selectDestinations) {
-        this.selectDestinations = selectDestinations;
-    }
+    public void setSelectDestinations(ArrayList<BoundingBox> selectDestinations) { this.selectDestinations = selectDestinations; }
 
     public void setTouchDownTime(long touchDownTime) {
         this.touchDownTime = touchDownTime;
