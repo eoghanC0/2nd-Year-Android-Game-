@@ -74,8 +74,6 @@ public class PackScreen extends FootballGameScreen {
     public PackScreen(FootballGame game) {
         super("PackScreen", game);
 
-        mGame.setXp(200000);
-
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "XP | " + String.valueOf(mGame.getXp()), "P A C K  S C R E E N", mGame.getMatchStats());
 
         // Load in the bitmaps used on the main menu screen

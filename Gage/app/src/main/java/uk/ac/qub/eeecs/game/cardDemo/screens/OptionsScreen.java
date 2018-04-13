@@ -36,7 +36,6 @@ public class OptionsScreen extends FootballGameScreen {
      * Define viewports for this layer and the associated screen projection
      */
     private ScreenViewport mScreenViewport;
-    private LayerViewport mLayerViewport;
 
 
     /**
@@ -47,8 +46,6 @@ public class OptionsScreen extends FootballGameScreen {
     private PushButton difficultyDownButton;
     private PushButton timeUpButton;
     private PushButton timeDownButton;
-    private PushButton pitchUpButton;
-    private PushButton pitchDownButton;
 
     /**
      * Define background
@@ -87,17 +84,6 @@ public class OptionsScreen extends FootballGameScreen {
         // Create the screen viewport
         mScreenViewport = new ScreenViewport(0, 0, game.getScreenWidth(),
                 game.getScreenHeight());
-
-        // Create the layer viewport, taking into account the orientation
-        // and aspect ratio of the screen.
-        if (mScreenViewport.width > mScreenViewport.height)
-            mLayerViewport = new LayerViewport(240.0f, 240.0f
-                    * mScreenViewport.height / mScreenViewport.width, 240,
-                    240.0f * mScreenViewport.height / mScreenViewport.width);
-        else
-            mLayerViewport = new LayerViewport(240.0f * mScreenViewport.height
-                    / mScreenViewport.width, 240.0f, 240.0f
-                    * mScreenViewport.height / mScreenViewport.width, 240);
 
         AssetStore assetManager = mGame.getAssetManager();
         assetManager.loadAndAddBitmap("MenuButton", "img/MenuButton.png");
@@ -143,10 +129,6 @@ public class OptionsScreen extends FootballGameScreen {
                 "ArrowRight", "ArrowRightPushed", this );
         timeDownButton = new PushButton(leftButtonX, textPositions[4].y - yAdjustment, mGame.getScreenHeight() * 0.1f, mGame.getScreenHeight() * 0.1f,
                 "ArrowLeft", "ArrowLeftPushed", this );
-        pitchUpButton = new PushButton(rightButtonX, textPositions[5].y - yAdjustment, mGame.getScreenHeight() * 0.1f, mGame.getScreenHeight() * 0.1f,
-                "ArrowRight", "ArrowRightPushed", this );
-        pitchDownButton = new PushButton(leftButtonX, textPositions[5].y - yAdjustment, mGame.getScreenHeight() * 0.1f, mGame.getScreenHeight() * 0.1f,
-                "ArrowLeft", "ArrowLeftPushed", this );
 
         // Calculate positions of dynamic text elements relative to corresponding buttons
         textPositions[3] = calculateNewTextPosition(difficultyDownButton, difficultyUpButton, textPositions[3], mGame.getStringPreference("Difficulty"));
@@ -178,67 +160,50 @@ public class OptionsScreen extends FootballGameScreen {
             difficultyUpButton.update(elapsedTime);
             timeDownButton.update(elapsedTime);
             timeUpButton.update(elapsedTime);
-            pitchDownButton.update(elapsedTime);
-            pitchUpButton.update(elapsedTime);
 
-            if (menuButton.isPushTriggered())
+            if (menuButton.isPushTriggered()) {
+                mGame.saveGame();
                 changeToScreen(new MenuScreen(mGame));
+            }
 
             if (difficultyDownButton.isPushTriggered()) {
-                if(mGame.getStringPreference("Difficulty").equals("Amateur")){
-                    mGame.setPreference("Difficulty", "Beginner" );
-                }else if (mGame.getStringPreference("Difficulty").equals("Difficult")){
-                    mGame.setPreference("Difficulty", "Amateur" );
-                }
-
-                textPositions[3] = calculateNewTextPosition(difficultyDownButton, difficultyUpButton, textPositions[3], mGame.getStringPreference("Difficulty"));
+                if (mGame.getDifficulty() > 0) mGame.setDifficulty(mGame.getDifficulty() - 1);
+                textPositions[3] = calculateNewTextPosition(difficultyDownButton, difficultyUpButton, textPositions[3], getDifficultyName(mGame.getDifficulty()));
             }
 
             if (difficultyUpButton.isPushTriggered()){
-                if(mGame.getStringPreference("Difficulty").equals("Amateur")){
-                    mGame.setPreference("Difficulty", "Difficult" );
-                }else if (mGame.getStringPreference("Difficulty").equals("Beginner")){
-                    mGame.setPreference("Difficulty", "Amateur" );
-                }
-
-                textPositions[3] = calculateNewTextPosition(difficultyDownButton, difficultyUpButton, textPositions[3], mGame.getStringPreference("Difficulty"));
+                if (mGame.getDifficulty() < 2) mGame.setDifficulty(mGame.getDifficulty() + 1);
+                textPositions[3] = calculateNewTextPosition(difficultyDownButton, difficultyUpButton, textPositions[3], getDifficultyName(mGame.getDifficulty()));
             }
 
-            int length = (mGame.getIntPreference("GameLength"));
+            int length = (mGame.getGameLength());
             if (timeUpButton.isPushTriggered()){
                 if (length < 360){
                     length += 60;
-                    mGame.setPreference("GameLength", length);
+                    mGame.setGameLength(length);
                 }
-                textPositions[4] = calculateNewTextPosition(timeDownButton, timeUpButton, textPositions[4], String.valueOf((mGame.getIntPreference("GameLength") / 60)) + " mins");
+                textPositions[4] = calculateNewTextPosition(timeDownButton, timeUpButton, textPositions[4], String.valueOf((mGame.getGameLength() / 60)) + " mins");
             }
             if (timeDownButton.isPushTriggered()){
                 if (length > 240){
                     length -= 60;
-                    mGame.setPreference("GameLength", length);
+                    mGame.setGameLength(length);
                 }
-
-                textPositions[4] = calculateNewTextPosition(timeDownButton, timeUpButton, textPositions[4], String.valueOf((mGame.getIntPreference("GameLength") / 60)) + " mins");
-            }
-
-            int screenType = mGame.getIntPreference("ScreenType");
-            if (pitchDownButton.isPushTriggered()){
-                if (screenType > 1){
-                    screenType--;
-                    mGame.setPreference("ScreenType", screenType);
-                }
-
-                textPositions[5] = calculateNewTextPosition(difficultyDownButton, difficultyUpButton, textPositions[5],"Screen " + mGame.getIntPreference("ScreenType"));
-            }
-            if (pitchUpButton.isPushTriggered()){
-                if (screenType < 3){
-                    screenType++;
-                    mGame.setPreference("ScreenType", screenType);
-                }
-
-                textPositions[5] = calculateNewTextPosition(difficultyDownButton, difficultyUpButton, textPositions[5], "Screen " + mGame.getIntPreference("ScreenType"));
+                textPositions[4] = calculateNewTextPosition(timeDownButton, timeUpButton, textPositions[4], String.valueOf((mGame.getGameLength() / 60)) + " mins");
             }
         }
+    }
+
+    private String getDifficultyName(int id) {
+        switch (id) {
+            case 0:
+                return "Beginner";
+            case 1:
+                return "Amateur";
+            case 2:
+                return "Professional";
+        }
+        return null;
     }
 
     /**
@@ -259,8 +224,6 @@ public class OptionsScreen extends FootballGameScreen {
         difficultyDownButton.draw(elapsedTime, graphics2D);
         timeUpButton.draw(elapsedTime, graphics2D);
         timeDownButton.draw(elapsedTime, graphics2D);
-        pitchUpButton.draw(elapsedTime, graphics2D);
-        pitchDownButton.draw(elapsedTime, graphics2D);
         menuButton.draw(elapsedTime, graphics2D);
 
         mPaint.reset();
@@ -270,15 +233,13 @@ public class OptionsScreen extends FootballGameScreen {
 
         drawText(graphics2D, "D I F F I C U L T Y", textPositions[0].x, textPositions[0].y);
         drawText(graphics2D, "G A M E  L E N G T H", textPositions[1].x, textPositions[1].y);
-        drawText(graphics2D, "P I T C H", textPositions[2].x, textPositions[2].y);
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
             drawText(graphics2D, "|", mGame.getScreenWidth() * 0.5f, textPositions[i].y);
 
 
-        drawText(graphics2D, String.valueOf(mGame.getStringPreference("Difficulty")),textPositions[3].x, textPositions[3].y);
-        drawText(graphics2D, String.valueOf((mGame.getIntPreference("GameLength") / 60)) + " mins",textPositions[4].x, textPositions[4].y);
-        drawText(graphics2D, String.valueOf("Screen " + mGame.getIntPreference("ScreenType")),textPositions[5].x, textPositions[5].y);
+        drawText(graphics2D, getDifficultyName(mGame.getDifficulty()),textPositions[3].x, textPositions[3].y);
+        drawText(graphics2D, String.valueOf((mGame.getGameLength() / 60)) + " mins",textPositions[4].x, textPositions[4].y);
 
         infoBar.draw(elapsedTime, graphics2D);
     }

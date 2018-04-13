@@ -205,7 +205,7 @@ public class FootballGame extends Game {
         wins = 0;
         losses = 0;
         draws = 0;
-        xp = 0;
+        xp = 500;
         difficulty = 1;
         gameLength = 300;
         pitchBackground = 0;
