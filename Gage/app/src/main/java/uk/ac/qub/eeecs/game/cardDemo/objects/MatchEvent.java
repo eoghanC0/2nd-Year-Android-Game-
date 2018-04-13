@@ -36,7 +36,7 @@ public class MatchEvent extends GameObject{
 
     //properties used for animation of objects
     private int animationCounter, size = 250;
-    private float height, leftHolderPosition, rightHolderPosition;
+    private float textHeight, leftHolderPosition, rightHolderPosition;
 
     //Properties for using the side scroller
     private boolean scrollerEnabled = true;
@@ -55,15 +55,17 @@ public class MatchEvent extends GameObject{
 
     private String winner;
     private ArrayList<Card> AITeam;
+    private ArrayList<Card> PlayerTeam;
 
 
-    public MatchEvent(GameScreen gameScreen, Match.GameState gameState, ArrayList<Card> AISquad){
+    public MatchEvent(GameScreen gameScreen, Match.GameState gameState, ArrayList<Card> AITeam, ArrayList<Card> playerTeam){
         super(gameScreen);
         mGame = mGameScreen.getGame();
-        this.AITeam = AISquad;
+        this.AITeam = AITeam;
+        this.PlayerTeam = playerTeam;
         generateSccenario(gameState);
         animationCounter = 0;
-        height = mGame.getScreenHeight() * 0.5f;
+        textHeight = 0;
         leftHolderPosition = mGame.getScreenWidth() * 0.1f;
         rightHolderPosition = mGame.getScreenWidth() * 0.9f;
 
@@ -137,11 +139,57 @@ public class MatchEvent extends GameObject{
         //choose the scenario
         Random rand = new Random();
         chosenScenario = possibleScenarios.get(rand.nextInt(4));
+        getScenarioDescription();
         possibleScenarios.clear();
 
+    }
+
+    private void getScenarioDescription(){
+        switch (chosenScenario){
+            case "HEA HEA":
+                scenarioDescription = "Both players jump up to win a header";
+                break ;
+            case "DRI DRI":
+                scenarioDescription = "Both players try to dribble past each other";
+                break ;
+            case "PAS PAS":
+                scenarioDescription = "Both players try to pick out a pass";
+                break ;
+            case "PAC PAC":
+                scenarioDescription = "Both players are sprinting after the ball";
+                break ;
+            case "DRI DEF":
+                scenarioDescription = "Your attacker is trying to dribble past a defender";
+                break ;
+            case "PAS DEF":
+                scenarioDescription = "Your attacker is trying to pass around a defender";
+                break ;
+            case "SHO GK":
+                scenarioDescription = "Your attacker takes a shot on goal";
+                break ;
+            case "HEA GK":
+                scenarioDescription = "Your attacker heads the ball towards goal";
+                break ;
+            case "DEF DRI":
+                scenarioDescription = "Your defender is trying to dispossess an opponent";
+                break ;
+            case "DEF PAS":
+                scenarioDescription = "Your defender is trying to block a pass";
+                break ;
+            case "GK HEA":
+                scenarioDescription = "Your Goalkeeper is trying to save a header";
+                break ;
+            case "GK SHO":
+                scenarioDescription = "Your Goalkeeper is trying to save a shot";
+                break ;
 
 
 
+
+
+
+
+        }
     }
 
     private void selectPlayers(){
@@ -393,18 +441,16 @@ public class MatchEvent extends GameObject{
 
     private void checkForDrawAnimations(){
         if (animationCounter >= 50){
-            if ((animationCounter % 1) == 0) {
-                if (height > mGame.getScreenHeight() * 0.25)
-                    height -= 10;
-                if (size > 75)
-                    size -= 5;
-            }
+                if (textHeight < mGame.getScreenHeight() * 0.25)
+                    textHeight += 10;
 
-            if ((height <= mGame.getScreenHeight() * 0.25) && size <= 75 && !playersChosen)
+
+
+            if ((textHeight >= mGame.getScreenHeight() * 0.25) && size <= 75 && !playersChosen)
                 drawCards = true;
 
             if (drawCards){
-                if (animationCounter % 2 == 0) {
+                if (animationCounter % 4  == 0) {
                     if (leftHolderPosition < mGame.getScreenWidth() * 0.25) {
                         leftHolderPosition += 10;
                         cardHolder1.setPosition(leftHolderPosition, (int) (mGame.getScreenHeight() * 0.35));
@@ -453,12 +499,12 @@ public class MatchEvent extends GameObject{
         if (!clearScenario){
             paint.reset();
             paint.setColor(Color.BLACK);
-            paint.setTextSize(size);
+            paint.setTextSize(75);
 
-            graphics2D.drawText(chosenScenario, (int)(mGame.getScreenWidth()/ 2.25), height, paint);
+            graphics2D.drawText(scenarioDescription, (int)(mGame.getScreenWidth()/ 4), textHeight, paint);
 
             if(drawCards) {
-                graphics2D.drawText("Please choose your card", (int) (mGame.getScreenWidth() / 3), (int) (height * 1.5), paint);
+                graphics2D.drawText("Please choose your card", (int) (mGame.getScreenWidth() / 3), (int) (textHeight * 1.5), paint);
 
                 paint.reset();
                 paint.setTextSize(50);

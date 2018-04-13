@@ -1,12 +1,14 @@
 package uk.ac.qub.eeecs.game.cardDemo.objects;
 
+import android.graphics.Color;
+import android.graphics.Paint;
+
 import java.util.ArrayList;
 
 import uk.ac.qub.eeecs.gage.Game;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.world.GameObject;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 /**
@@ -23,19 +25,21 @@ public class Match extends GameObject {
     private ArrayList<Card> AITeam, playerTeam;
     private int difficulty;
     private InfoBar infoBar;
+    private String gameResult;
+    private String resultMessage;
 
     private final int totalGameTimeLength;
     private double currentGameTime, displayTime, timeSinceLastScenario;
 
-    private boolean winnerDecided, scenarioActive, gameOver;
+    private boolean winnerDecided, scenarioActive, gameOver, displayGameWinner;
     public enum GameState{MIDFIELD, PLAYER_A_DANGEROUS_ATTACK, PLAYER_A_ATTACK, PLAYER_B_ATTACK, PLAYER_B_DANGEROUS_ATTACK };
 
     public Match(FootballGameScreen gameScreen, int difficulty, int gameLength, ArrayList<Card> playerTeam){
         super(gameScreen);
-        this.playerAScore = 0;
+        this.playerAScore = 1;
         this.playerBScore = 0;
         this.difficulty = difficulty;
-        this.totalGameTimeLength = gameLength;
+        this.totalGameTimeLength = 50;
         currentGameTime = 0.0;
         this.playerTeam = playerTeam;
         this.gameState = gameState.MIDFIELD;
@@ -44,9 +48,12 @@ public class Match extends GameObject {
         mGame = mGameScreen.getGame();
         this.gameOver = false;
         this.scenarioActive = false;
+        this.displayGameWinner = false;
         timeSinceLastScenario = 0;
-        playerTeam = gameScreen.getGame().getSquad();
+        this.playerTeam = playerTeam;
         infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, mGameScreen, "", "Test Player", "M A I N  M E N U", "0 | 0 | 0");
+        this.gameResult = null;
+        this.resultMessage = null;
     }
 
     private void setPlayerAScore(int score){this.playerAScore = score;}
@@ -64,6 +71,8 @@ public class Match extends GameObject {
     public int getPlayerAScore() {
         return playerAScore;
     }
+
+    public String getGameResult(){ return gameResult;}
 
     private void populateAITeam() {
         int minRating = 0, maxRating = 0;
@@ -114,11 +123,11 @@ public class Match extends GameObject {
 
     private void makeScenario(){
         scenarioActive = true;
-        newEvent = new MatchEvent(mGameScreen, gameState, AITeam);
+        newEvent = new MatchEvent(mGameScreen, gameState, AITeam, playerTeam);
         winnerDecided = false;
     }
 
-    private void displayWinner(){
+    private void displayScenarioWinner(){
         String winner = newEvent.getWinner();
          if (winner != null){
 
@@ -170,7 +179,7 @@ public class Match extends GameObject {
     private void checkForWinner(){
         if (newEvent != null)
             if (newEvent.getWinner() != null){
-                displayWinner();
+                displayScenarioWinner();
                 winnerDecided = true;
             }
 
@@ -178,8 +187,28 @@ public class Match extends GameObject {
     }
 
     private void checkIfGameOver(){
-      if (currentGameTime >= totalGameTimeLength)
-            gameOver = true;
+      if (currentGameTime >= totalGameTimeLength){
+          gameOver = true;
+          checkForGameWinner();
+          displayGameWinner = true;
+      }
+
+
+    }
+
+    private void checkForGameWinner(){
+        if (playerAScore > playerBScore){
+            gameResult = "Player A";
+            resultMessage = "You have won this game!";
+
+        } else if (playerBScore > playerAScore){
+            gameResult = "Player B";
+            resultMessage = "You have lost this game!";
+        } else {
+            gameResult = "Draw";
+            resultMessage = "This game is a draw!";
+        }
+
     }
     /**
      * Updates properties of the InfoBar
@@ -227,6 +256,14 @@ public class Match extends GameObject {
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         if (newEvent != null)
             newEvent.draw(elapsedTime, graphics2D);
+
+        Paint paint = mGame.getPaint();
+        paint.reset();
+        paint.setTextSize(75);
+        paint.setColor(Color.BLACK);
+        if (displayGameWinner){
+            graphics2D.drawText(resultMessage, mGame.getScreenWidth()/3, mGame.getScreenHeight() / 2, paint );
+        }
 
         infoBar.draw(elapsedTime, graphics2D);
     }
