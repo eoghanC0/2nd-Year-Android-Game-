@@ -36,7 +36,7 @@ public class Match extends GameObject {
 
     public Match(FootballGameScreen gameScreen, int difficulty, int gameLength, ArrayList<Card> playerTeam){
         super(gameScreen);
-        this.playerAScore = 1;
+        this.playerAScore = 0;
         this.playerBScore = 0;
         this.difficulty = difficulty;
         this.totalGameTimeLength = 50;
