@@ -51,7 +51,7 @@ public class Match extends GameObject {
         this.displayGameWinner = false;
         timeSinceLastScenario = 0;
         this.playerTeam = playerTeam;
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, mGameScreen, "", "Test Player", "M A I N  M E N U", "0 | 0 | 0");
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, mGameScreen, "Test Player", "M A I N  M E N U", "0 | 0 | 0");
         this.gameResult = null;
         this.resultMessage = null;
     }
