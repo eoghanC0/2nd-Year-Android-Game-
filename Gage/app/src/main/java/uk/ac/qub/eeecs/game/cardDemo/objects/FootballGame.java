@@ -138,6 +138,10 @@ public class FootballGame extends Game {
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
+    public void addXP(int xp) {
+        this.xp += xp;
+    }
+
     private JSONArray getCardCollectionAsJson(ArrayList<Card> collection) throws JSONException{
         JSONArray array = new JSONArray();
         for (Card card : collection) {
@@ -223,5 +227,23 @@ public class FootballGame extends Game {
         }
         bgMusic.setLooping(true);
         bgMusic.play();
+    }
+
+    public void addToClub(Card card) {
+        club.add(card);
+    }
+
+    public void addToSquad(Card card) {
+        if(squad.size() <= 11) {
+            squad.add(card);
+        }
+    }
+
+    public void clearClub() {
+        club.clear();
+    }
+
+    public void clearSquad() {
+        squad.clear();
     }
 }

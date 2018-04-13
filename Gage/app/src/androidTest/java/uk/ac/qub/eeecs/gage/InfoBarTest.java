@@ -3,7 +3,6 @@ package uk.ac.qub.eeecs.gage;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,9 +13,11 @@ import java.util.Random;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.game.DemoGame;
+import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
 import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
 import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Created by Eimhin Laverty on 08/12/2017.
@@ -26,7 +27,7 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 public class InfoBarTest {
 
     private Context appContext;
-    private Game game;
+    private FootballGame game;
     private HelpScreen helpScreen;
     private Random rand;
     private InfoBar infoBar;
@@ -36,7 +37,7 @@ public class InfoBarTest {
     public void setup() {
         appContext = InstrumentationRegistry.getTargetContext();
 
-        game = new DemoGame();
+        game = new FootballGame();
 
         FileIO fileIO = new FileIO(appContext);
         game.mFileIO = fileIO;
@@ -56,36 +57,55 @@ public class InfoBarTest {
         float height = rand.nextInt(1080);
         float x = width / 2, y = 0 + height;
         infoBar = new InfoBar(x,y,width, height, helpScreen);
-        assert(infoBar.position.x == x && infoBar.position.y == y && infoBar.getBound().getWidth() == width && infoBar.getBound().getHeight() == height);
+
+        assertEquals(x, infoBar.position.x);
+        assertEquals(y, infoBar.position.y);
+        assertEquals(width, infoBar.getBound().getWidth());
+        assertEquals(height, infoBar.getBound().getHeight());
     }
 
     @Test
     public void constructorA_InvalidData() {
-        float width = rand.nextInt(1920) * -1;
-        float height = rand.nextInt(1) * -1;
+        float width = -(rand.nextInt(1920) + 1);
+        float height = -(rand.nextInt(1080) + 1);
         float x = width / 2, y = 0 + height;
         infoBar = new InfoBar(x,y,width, height, helpScreen);
-        assert(infoBar.position.x == x && infoBar.position.y == y && infoBar.getBound().getWidth() == width && infoBar.getBound().getHeight() == height);
+
+        assertEquals(x, infoBar.position.x);
+        assertEquals(y, infoBar.position.y);
+        assertEquals(-width, infoBar.getBound().getWidth());
+        assertEquals(-height, infoBar.getBound().getHeight());
     }
 
     @Test
     public void constructorB_ValidData() {
-        float width = rand.nextInt(1920);
-        float height = rand.nextInt(1080);
+        float width = rand.nextInt(1920) + 1;
+        float height = rand.nextInt(1080) + 1;
         float x = width / 2, y = 0 + height;
-        infoBar = new InfoBar(x,y,width, height, helpScreen, " img/Ball.png", "Player Name", "0-0-0", "100");
-        assert(infoBar.position.x == x && infoBar.position.y == y && infoBar.getBound().getWidth() == width && infoBar.getBound().getHeight() == height
-                && infoBar.getBitmap() != null && infoBar.getAreaOneText().equals("Player Name") && infoBar.getAreaTwoText().equals("0-0-0") && infoBar.getAreaThreeText().equals("100"));
+        infoBar = new InfoBar(x,y,width, height, helpScreen, "Player Name", "0-0-0", "100");
+
+        assertEquals(x, infoBar.position.x);
+        assertEquals(y, infoBar.position.y);
+        assertEquals(width, infoBar.getBound().getWidth());
+        assertEquals("Player Name", infoBar.getAreaOneText());
+        assertEquals("0-0-0", infoBar.getAreaTwoText());
+        assertEquals("100", infoBar.getAreaThreeText());
     }
 
     @Test
     public void constructorB_InvalidData() {
-        float width = rand.nextInt(1920) * -1;
-        float height = rand.nextInt(1) * -1;
+        float width = -(rand.nextInt(1920) + 1);
+        float height = -(rand.nextInt(1080) + 1);
         float x = width / 2, y = 0 + height;
-        infoBar = new InfoBar(x,y,width, height, helpScreen, " img/Ball.png", "Player Name", "0-0-0", "100");
-        assert(infoBar.position.x == x && infoBar.position.y == y && infoBar.getBound().getWidth() == width && infoBar.getBound().getHeight() == height
-                && infoBar.getBitmap() != null && infoBar.getAreaOneText().equals("Player Name") && infoBar.getAreaTwoText().equals("0-0-0") && infoBar.getAreaThreeText().equals("100"));
+        infoBar = new InfoBar(x,y,width, height, helpScreen, "Player Name", "0-0-0", "100");
+
+        assertEquals(x, infoBar.position.x);
+        assertEquals(y, infoBar.position.y);
+        assertEquals(-width, infoBar.getBound().getWidth());
+        assertEquals(-height, infoBar.getBound().getHeight());
+        assertEquals("Player Name", infoBar.getAreaOneText());
+        assertEquals("0-0-0", infoBar.getAreaTwoText());
+        assertEquals("100", infoBar.getAreaThreeText());
     }
 
     public void setupInfoBar() {
@@ -93,67 +113,75 @@ public class InfoBarTest {
         float height = rand.nextInt(1080);
         float x = width / 2, y = 0 + height;
         infoBar = new InfoBar(x,y,width, height, helpScreen);
-        assert(infoBar.position.x == x && infoBar.position.y == y && infoBar.getBound().getWidth() == width && infoBar.getBound().getHeight() == height);
+        boolean valid = infoBar.position.x == x && infoBar.position.y == y && infoBar.getBound().getWidth() == width && infoBar.getBound().getHeight() == height;
+
+        assertEquals(true, valid);
     }
 
     @Test
     public void addNotification_ValidType0() {
         setupInfoBar();
         infoBar.clearNotifications();
-        infoBar.addNotification("Type 0", 0, 5);
+        infoBar.addNotification("Type 0", 0, rand.nextFloat() % 60);
         infoBar.update(elapsedTime);
-        assert(infoBar.getCurrentNotification().getText() == "Type 0");
+
+        assertEquals("Type 0", infoBar.getCurrentNotification().getText());
     }
 
     @Test
     public void addNotification_ValidType1() {
         setupInfoBar();
         infoBar.clearNotifications();
-        infoBar.addNotification("Type 1", 1, 5);
+        infoBar.addNotification("Type 1", 1, rand.nextFloat() % 60);
         infoBar.update(elapsedTime);
-        assert(infoBar.getCurrentNotification().getText() == "Type 1");
+
+        assertEquals("Type 1", infoBar.getCurrentNotification().getText());
     }
 
     @Test
     public void addNotification_ValidType2() {
         setupInfoBar();
         infoBar.clearNotifications();
-        infoBar.addNotification("Type 2", 2, 5);
+        infoBar.addNotification("Type 2", 2, rand.nextFloat() % 60);
         infoBar.update(elapsedTime);
-        assert(infoBar.getCurrentNotification().getText() == "Type 2");
+
+        assertEquals("Type 2", infoBar.getCurrentNotification().getText());
     }
 
     @Test
     public void addNotification_Invalid() {
         setupInfoBar();
         infoBar.clearNotifications();
-        infoBar.addNotification("Type -1", -1, 5);
+        infoBar.addNotification("Type -1", -1, rand.nextFloat() % 60);
         infoBar.update(elapsedTime);
-        assert(infoBar.getCurrentNotification() == null);
+
+        assertEquals(null, infoBar.getCurrentNotification());
     }
 
-    // TODO: checkNotifications tests not working ignore for now
     @Test
     public void checkNotifications_ChangingNotificationOnTime() {
+        float notificationDisplayTime = rand.nextFloat() % 60;
         setupInfoBar();
         infoBar.clearNotifications();
-        infoBar.addNotification("Notification 1", 0, 4);
-        infoBar.addNotification("Notification 2", 0, 5);
+        infoBar.addNotification("Notification 1", 0, notificationDisplayTime);
+        infoBar.addNotification("Notification 2", 0, notificationDisplayTime);
         infoBar.update(elapsedTime);
-        infoBar.setCurrentNotificationDisplayTime((long) (System.nanoTime() + (4.1 * 1e+9)));
+        infoBar.setCurrentNotificationDisplayTime((long) (System.nanoTime() - (notificationDisplayTime * 1e+9)));
         infoBar.update(elapsedTime);
-        assert(infoBar.getCurrentNotification().getText() == "Notification 2");
+
+        assertEquals("Notification 2", infoBar.getCurrentNotification().getText());
     }
 
     @Test
     public void checkNotifications_ReturnToDefaultState() {
+        float notificationDisplayTime = rand.nextFloat() % 60;
         setupInfoBar();
         infoBar.clearNotifications();
-        infoBar.addNotification("Type 0", 0, 5);
+        infoBar.addNotification("Type 0", 0, notificationDisplayTime);
         infoBar.update(elapsedTime);
-        infoBar.setCurrentNotificationDisplayTime((long) (System.nanoTime() + (5 * 1e+9)));
+        infoBar.setCurrentNotificationDisplayTime((long) (System.nanoTime() - (notificationDisplayTime * 1e+9)));
         infoBar.update(elapsedTime);
-        Log.d("TESTOUTPUT", infoBar.getCurrentNotification().toString());
-        assert(infoBar.getNotificationDisplayed() == false);
+
+        assertEquals(false, infoBar.getNotificationDisplayed());
     }
 }

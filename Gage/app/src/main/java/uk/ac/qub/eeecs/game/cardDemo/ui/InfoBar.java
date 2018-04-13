@@ -1,8 +1,6 @@
 package uk.ac.qub.eeecs.game.cardDemo.ui;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
@@ -13,11 +11,8 @@ import java.util.Queue;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
-import uk.ac.qub.eeecs.gage.util.GraphicsHelper;
 import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.gage.world.LayerViewport;
-import uk.ac.qub.eeecs.gage.world.ScreenViewport;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 
 /**
@@ -29,11 +24,6 @@ public class InfoBar extends GameObject {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
     // /////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Icon bitmap
-     */
-    private Bitmap iconBitmap;
 
     /**
      * Paint object for text
@@ -60,16 +50,6 @@ public class InfoBar extends GameObject {
     private Vector2 areaThreeVector;
 
     /**
-     * Internal matrix use to support draw requests
-     */
-    protected Matrix drawMatrix = new Matrix();
-
-    /**
-     * Current background bitmap
-     */
-    private String currentBitmap;
-
-    /**
      * Stores whether a notification is currently displayed
      */
     private boolean notificationDisplayed = false;
@@ -82,32 +62,39 @@ public class InfoBar extends GameObject {
     /**
      * Stores queued notifications
      */
-    private Queue<iNotification> notificationQueue = new LinkedList();
+    private Queue<Notification> notificationQueue = new LinkedList();
 
     /**
      * Current notification
      */
-    private iNotification currentNotification;
+    private Notification currentNotification;
 
-    /**
+    /*********************
      * Notification class
-     */
-    // TODO: Continue work on iNotification
-    public class iNotification {
-        /**
-         * Data
-         */
+     *********************/
+
+    public class Notification {
+
+        // /////////////////////////////////////////////////////////////////////////
+        // Properties
+        // /////////////////////////////////////////////////////////////////////////
+
         private String text;
         private int type;
         private float displayTime;
 
+        // /////////////////////////////////////////////////////////////////////////
+        // Constructor
+        // /////////////////////////////////////////////////////////////////////////
+
         /**
-         * iNotification constructor
+         * Notification constructor
+         *
          * @param text Notification message
          * @param type 0 = Default | 1 = Red | 2 = Green
          * @param displayTime Seconds to display notification
          */
-        public iNotification(String text, int type, float displayTime) {
+        public Notification(String text, int type, float displayTime) {
             this.text = text;
 
             if(!(type >= 0 && type <= 2)) this.type = 0;
@@ -117,10 +104,18 @@ public class InfoBar extends GameObject {
             this.displayTime = displayTime;
         }
 
+        // /////////////////////////////////////////////////////////////////////////
+        // Method
+        // /////////////////////////////////////////////////////////////////////////
+
         @Override
         public String toString() {
             return String.format("Notification: '%1$s' | Type: %2$d | Display Time: %3$.2f", text, type, displayTime);
         }
+
+        // /////////////////////////////////////////////////////////////////////////
+        // Getters
+        // /////////////////////////////////////////////////////////////////////////
 
         public String getText() {
             return text;
@@ -137,23 +132,17 @@ public class InfoBar extends GameObject {
     // Constructors
     // /////////////////////////////////////////////////////////////////////////
 
-    // TODO: Clean up constructors
-
     /**
      * Main constructor
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param gameScreen
+     *
+     * @param x x-position of InfoBar
+     * @param y y-position of InfoBar
+     * @param width Width of InfoBar
+     * @param height Height of InfoBar
+     * @param gameScreen Associated GameScreen
      */
     public InfoBar(float x, float y, float width, float height, GameScreen gameScreen) {
-        super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
-        if(width < 0) width = 100;
-        if(height < 0) height = 100;
-        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("IconBitmap", "img/empty.png");
-        iconBitmap = assetManager.getBitmap("IconBitmap");
+        super(x, y, width == 0 ? 1 : width, height == 0 ? 1 : height, null, gameScreen);
 
         areaTextData[0] = "";
         areaTextData[1] = "";
@@ -168,26 +157,18 @@ public class InfoBar extends GameObject {
 
     /**
      * Overloaded constructor allowing user to pass in text data
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param gameScreen
-     * @param iconPath
-     * @param areaOneText
-     * @param areaTwoText
-     * @param areaThreeText
+     *
+     * @param x x-position
+     * @param y y-position
+     * @param width Width of InfoBar
+     * @param height Height of InfoBar
+     * @param gameScreen Associated GameScreen
+     * @param areaOneText String of text for area one
+     * @param areaTwoText String of text for area two
+     * @param areaThreeText String of text for area three
      */
-    public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String iconPath, String areaOneText, String areaTwoText, String areaThreeText) {
+    public InfoBar(float x, float y, float width, float height, GameScreen gameScreen, String areaOneText, String areaTwoText, String areaThreeText) {
         super(x, y, width > 0 ? width : -width, height > 0 ? height : -height, null, gameScreen);
-        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        assetManager.loadAndAddBitmap("IconBitmap", iconPath);
-        iconBitmap = assetManager.getBitmap("IconBitmap");
-
-        if(iconBitmap == null) {
-            assetManager.loadAndAddBitmap("IconBitmap", "img/empty.png");
-            iconBitmap = assetManager.getBitmap("IconBitmap");
-        }
 
         areaTextData[0] = areaOneText;
         areaTextData[1] = areaTwoText;
@@ -225,19 +206,67 @@ public class InfoBar extends GameObject {
         mBitmap = assetManager.getBitmap("InfoBar");
     }
 
-    /*  = = = = = = = = = = = = = = = =
-        Notification Management Methods
-        = = = = = = = = = = = = = = = = */
+    /**
+     * Sets the bitmap of the InfoBar
+     *
+     * @param bg String of AssetStore name of InfoBar bitmap to use
+     */
+    private void setBitmap(String bg) {
+        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
+        if(bg == "InfoBar" || bg == "InfoBarRed" || bg == "InfoBarGreen") mBitmap = assetManager.getBitmap(bg);
+    }
 
     /**
-     * Adds notification to notification queue
-     * @param notification
-     * @param type
-     * @param duration
+     * Method to calculate the X position of text elements inserted into InfoBar
+     *
+     * @param text String of text
+     * @param totalAreaWidth Width of the total area to draw to
+     * @param offsetPercent Percentage text should be offset by
+     * @param areaWidthPercentage Percentage text should occupy
+     * @param alignment 0 = left | 1 = center | 2 = right
+     * @return Vector2 containing position of text
+     */
+    private Vector2 getAreaTextVector(String text, float totalAreaWidth, float totalAreaHeight, float offsetPercent, float areaWidthPercentage, int alignment) {
+        float yVal = totalAreaHeight / 2.0f;
+
+        switch(alignment) {
+            case 0:
+                return new Vector2((getBound().getWidth() * offsetPercent) + (totalAreaWidth * 0.01f), yVal);
+            case 1:
+                return new Vector2((getBound().getWidth() * offsetPercent) + (((totalAreaWidth * areaWidthPercentage) - getTextBounds(text).width()) / 2), yVal);
+            case 2:
+                return new Vector2((getBound().getWidth() * offsetPercent) + ((totalAreaWidth * areaWidthPercentage) - getTextBounds(text).width()) - (totalAreaWidth * 0.01f), yVal);
+            default:
+                return new Vector2(0,0);
+        }
+    }
+
+    /**
+     * Gets area occupied by block of text (uses the current paint object)
+     *
+     * @param text String of text
+     * @return Rect of the area occupied by the text
+     */
+    private Rect getTextBounds(String text) {
+        Rect bounds = new Rect();
+        textPaint.getTextBounds(text, 0, text.length(), bounds);
+        return bounds;
+    }
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Notification Management Methods
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Creates and adds notification to notification queue
+     *
+     * @param notification String of text for the notification
+     * @param type 0 = Default | 1 = Red | 2 = Green
+     * @param duration in seconds
      */
     public void addNotification(String notification, int type, float duration) {
-        if(notification != null && type >= 0 && type <= 2 && duration > 0) {
-            notificationQueue.add(new iNotification(notification, type, duration));
+        if(notification != null && type >= 0 && type <= 2 && duration >= 0) {
+            notificationQueue.add(new Notification(notification, type, duration));
             Log.d("DEBUG", "Successfully added notification. Current queue: " + notificationQueue.toString());
         }
     }
@@ -247,25 +276,25 @@ public class InfoBar extends GameObject {
      * the next notification
      */
     private void checkNotifications() {
-       boolean notificationAvailable = false;
-       // Notification present in queue
-       if(notificationQueue.size() > 0) notificationAvailable = true;
+        boolean notificationAvailable = false;
+        // Notification present in queue
+        if(notificationQueue.size() > 0) notificationAvailable = true;
 
-       // Is a notification currently displayed?
-       if(notificationDisplayed) {
-           // States whether the current notification should be removed or not
-           // true = remove false = remain
-           boolean currentNotificationStatus = checkCurrentNotification();
+        // Is a notification currently displayed?
+        if(notificationDisplayed) {
+            // States whether the current notification should be removed or not
+            // true = remove false = remain
+            boolean currentNotificationStatus = checkCurrentNotification();
 
-           // If notification should be removed then display next notification if a notification is
-           // present in the queue else return to default state
-           if(!currentNotificationStatus && notificationAvailable) displayNextNotification();
-           else if(!currentNotificationStatus && !notificationAvailable) setDefaultState();
+            // If notification should be removed then display next notification if a notification is
+            // present in the queue else return to default state
+            if(!currentNotificationStatus && notificationAvailable) displayNextNotification();
+            else if(!currentNotificationStatus && !notificationAvailable) setDefaultState();
 
-           return;
-       } else if(!notificationDisplayed && notificationAvailable){
-           displayNextNotification();
-       }
+            return;
+        } else if(!notificationDisplayed && notificationAvailable){
+            displayNextNotification();
+        }
     }
 
     /**
@@ -282,6 +311,7 @@ public class InfoBar extends GameObject {
 
     /**
      * Sets InfoBar to notification state based on the type passed in
+     *
      * @param type 0 = Default | 1 = Red | 2 = Green
      */
     private void setNotificationState(int type) {
@@ -313,7 +343,8 @@ public class InfoBar extends GameObject {
 
     /**
      * Checks whether the current notification displayed has exceeded its display time or not
-     * @return
+     *
+     * @return boolean as true if there is a notification still displayed, else false
      */
     private boolean checkCurrentNotification() {
         if(System.nanoTime() - currentNotificationDisplayTime > (currentNotification.displayTime * 1e+9)) {
@@ -335,33 +366,14 @@ public class InfoBar extends GameObject {
 
     public void clearNotifications() {
         if(!(notificationQueue.size() > 0)) return;
-        for (iNotification i : notificationQueue) {
+        for (Notification i : notificationQueue) {
             notificationQueue.remove(i);
         }
     }
 
-    /*  = = = = = = = = = = = = = = = = = = = =
-        End Of Notification Management Methods
-        = = = = = = = = = = = = = = = = = = = =*/
-
-    /**
-     * Sets the bitmap of the InfoBar
-     * @param bg
-     */
-    private void setBitmap(String bg) {
-        AssetStore assetManager = mGameScreen.getGame().getAssetManager();
-        if(bg == "InfoBar" || bg == "InfoBarRed" || bg == "InfoBarGreen") mBitmap = assetManager.getBitmap(bg);
-    }
-
-    /**
-     * Sets data of an element within areaTextData array
-     * @param data
-     * @param index
-     */
-    private void setAreaTextDataByIndex(String data, int index) {
-        if(index >= 0 && index <= 3)
-            areaTextData[index] = data;
-    }
+    // /////////////////////////////////////////////////////////////////////////
+    // Update and Draw
+    // /////////////////////////////////////////////////////////////////////////
 
     @Override
     public void update(ElapsedTime elapsedTime) {
@@ -372,82 +384,28 @@ public class InfoBar extends GameObject {
 
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
-
-        float scaleX = (float) drawScreenRect.width() / (float) drawSourceRect.width();
-        float scaleY = (float) drawScreenRect.height() / (float) drawSourceRect.height();
-
-        // TODO: Profile icon needs more work. Probably doesn't work on different resolutions.
-        // Build an appropriate transformation matrix
-        drawMatrix.reset();
-        drawMatrix.postScale(scaleX, scaleY);
-        drawMatrix.postRotate(0, scaleX * iconBitmap.getWidth()
-                / 2.0f, scaleY * iconBitmap.getHeight() / 2.0f);
-        drawMatrix.postTranslate(drawScreenRect.left, drawScreenRect.top);
-        drawMatrix.setScale(0.35f, 0.35f);
-
-        // Draw the image
-        graphics2D.drawBitmap(iconBitmap, null, drawScreenRect,null);
-
         // Draw the image
         drawScreenRect.set(0,0,mGameScreen.getGame().getScreenWidth(),(int) (mGameScreen.getGame().getScreenHeight() * 0.1));
         graphics2D.drawBitmap(mBitmap, null, drawScreenRect, null);
 
-        areaOneVector = getAreaTextVector(textPaint, areaOneText, getBound().getWidth(), getBound().getHeight(), 0.01f, 0.313f, 0);
-        areaTwoVector = getAreaTextVector(textPaint, areaTwoText, getBound().getWidth(), getBound().getHeight(), 0.368f, 0.313f, 1);
-        areaThreeVector = getAreaTextVector(textPaint, areaThreeText, getBound().getWidth(), getBound().getHeight(), 0.681f, 0.313f, 2);
+        // Get positions of area texts
+        areaOneVector = getAreaTextVector(areaOneText, getBound().getWidth(), getBound().getHeight(), 0.01f, 0.313f, 0);
+        areaTwoVector = getAreaTextVector(areaTwoText, getBound().getWidth(), getBound().getHeight(), 0.368f, 0.313f, 1);
+        areaThreeVector = getAreaTextVector(areaThreeText, getBound().getWidth(), getBound().getHeight(), 0.681f, 0.313f, 2);
 
+        // Draw area texts
         graphics2D.drawText(areaOneText, areaOneVector.x, areaOneVector.y, textPaint);
         graphics2D.drawText(areaTwoText, areaTwoVector.x, areaTwoVector.y, textPaint);
         graphics2D.drawText(areaThreeText, areaThreeVector.x, areaThreeVector.y, textPaint);
     }
 
-    /**
-     * Method to calculate the X position of text elements inserted into InfoBar
-     * @param paint
-     * @param text
-     * @param totalAreaWidth
-     * @param offsetPercent
-     * @param areaWidthPercentage
-     * @param alignment 0 = left | 1 = center | 2 = right
-     * @return Vector2
-     */
-    private Vector2 getAreaTextVector(Paint paint, String text, float totalAreaWidth, float totalAreaHeight, float offsetPercent, float areaWidthPercentage, int alignment) {
-        Rect textBounds = getTextBounds(paint, text);
-        float yVal = (totalAreaHeight * 0.76f) - (textBounds.height());
+    // /////////////////////////////////////////////////////////////////////////
+    // Getters and Setters
+    // /////////////////////////////////////////////////////////////////////////
 
-        switch(alignment) {
-            case 0:
-                return new Vector2((getBound().getWidth() * offsetPercent) + (totalAreaWidth * 0.01f), yVal);
-            case 1:
-                return new Vector2((getBound().getWidth() * offsetPercent) + (((totalAreaWidth * areaWidthPercentage) - getTextBounds(paint, text).width()) / 2), yVal);
-            case 2:
-                return new Vector2((getBound().getWidth() * offsetPercent) + ((totalAreaWidth * areaWidthPercentage) - getTextBounds(paint, text).width()) - (totalAreaWidth * 0.01f), yVal);
-            default:
-                return new Vector2(0,0);
-        }
-    }
+    public void setCurrentNotificationDisplayTime(long currentNotificationDisplayTime) { this.currentNotificationDisplayTime = currentNotificationDisplayTime;}
 
-    /**
-     * Gets area occupied by block of text
-     * @param paint
-     * @param text
-     * @return area occupied
-     */
-    private Rect getTextBounds(Paint paint, String text) {
-        Rect bounds = new Rect();
-        textPaint.getTextBounds(text, 0, text.length(), bounds);
-        return bounds;
-    }
-
-    /*  = = = = = = = = = = = = = = = =
-      GETTERS AND SETTERS FOR TESTING
-    = = = = = = = = = = = = = = = = */
-
-    public void setCurrentNotificationDisplayTime(long time) {
-        currentNotificationDisplayTime = time;
-    }
-
-    public iNotification getCurrentNotification() {
+    public Notification getCurrentNotification() {
         return currentNotification;
     }
 
@@ -478,7 +436,4 @@ public class InfoBar extends GameObject {
     public String getAreaThreeText() {
         return areaThreeText;
     }
-
-
-
 }

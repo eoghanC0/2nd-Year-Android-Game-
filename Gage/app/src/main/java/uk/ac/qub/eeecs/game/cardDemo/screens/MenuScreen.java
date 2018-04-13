@@ -62,7 +62,7 @@ public class MenuScreen extends FootballGameScreen {
     public MenuScreen(FootballGame game) {
         super("MenuScreen", game);
 
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "XP | " + String.valueOf(mGame.getXp()), "M A I N  M E N U", mGame.getMatchStats());
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "XP | " + String.valueOf(mGame.getXp()), "M A I N  M E N U", mGame.getMatchStats());
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
@@ -96,7 +96,7 @@ public class MenuScreen extends FootballGameScreen {
         mOptionsButton.setButtonText("OPTIONS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
         mSquadsButton = new PushButton(
                 screenWidth * 0.375f, screenHeight * 0.5f, screenWidth * 0.4f, screenHeight* 0.45f, "MenuButton", "MenuButtonPushed", this);
-        mSquadsButton.setButtonText("SQUADS", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
+        mSquadsButton.setButtonText("PLAY", mOptionsButton.getBound().getWidth() * 0.2f, textColor);
         mMusicButton = new PushButton(
                 screenWidth * 0.075f, screenHeight * 0.9f, screenWidth * 0.1f, screenWidth * 0.1f, "MusicIcon", "MusicIconPushed", this);
         mPacksButton = new PushButton(

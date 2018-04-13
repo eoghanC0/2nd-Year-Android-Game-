@@ -76,7 +76,7 @@ public class PackScreen extends FootballGameScreen {
 
         mGame.setXp(200000);
 
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "", "XP | " + String.valueOf(mGame.getXp()), "P A C K  S C R E E N", mGame.getMatchStats());
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, this, "XP | " + String.valueOf(mGame.getXp()), "P A C K  S C R E E N", mGame.getMatchStats());
 
         // Load in the bitmaps used on the main menu screen
         AssetStore assetManager = mGame.getAssetManager();
@@ -326,7 +326,6 @@ public class PackScreen extends FootballGameScreen {
             break;
         }
         myPack = new Pack(this, packSizes, noOfRares,minRating, maxRating);
-        mGame.getClub().addAll(myPack.getPlayers());
     }
 
 }

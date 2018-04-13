@@ -14,29 +14,30 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
  */
 
 public class ImageScrollerItem extends GameObject {
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Properties
+    // /////////////////////////////////////////////////////////////////////////
+
     /**
      * Any user generated metadata possibly for assigning ID's etc
      */
     public String[] metaData;
 
     /**
-     * Used by the ImageScroller for management purposes
-     */
-    public int index;
-
-    /**
      * Rect of the mBound
      */
     private Rect mBoundRect = new Rect();
 
-    /**
-     * Scaled dimensions
-     */
-    private Vector2 scaledDimensions = new Vector2();
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Cnostructors
+    // /////////////////////////////////////////////////////////////////////////
 
     /**
      * Default constructor
-     * @param gameScreen
+     *
+     * @param gameScreen Associated GameScreen
      */
     public ImageScrollerItem(GameScreen gameScreen) {
         super(gameScreen);
@@ -49,12 +50,12 @@ public class ImageScrollerItem extends GameObject {
 
     /**
      * Parameterised constructor
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @param bitmap
-     * @param gameScreen
+     * @param x x-position
+     * @param y y-position
+     * @param width Width of ImageScrollerItem
+     * @param height Height of ImageScrollerItem
+     * @param bitmap Bitmap of ImageScrollerItem
+     * @param gameScreen Associated GameScreen
      */
     public ImageScrollerItem(float x, float y, float width, float height, Bitmap bitmap, GameScreen gameScreen) {
         super(x, y, width, height, bitmap, gameScreen);
@@ -70,15 +71,25 @@ public class ImageScrollerItem extends GameObject {
         calculateMBoundRect();
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        if(bitmap != null) mBitmap = bitmap;
-    }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Methods
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Sets the width and height
+     *
+     * @param width New width of ImageScrollerItem
+     * @param height New height of ImageScrollerItem
+     */
     public void setWidthAndHeight(float width, float height) {
         mBound.halfWidth = width / 2;
         mBound.halfHeight = height / 2;
     }
 
+    /**
+     * Calculate the mBoundRect
+     */
     private void calculateMBoundRect() {
         mBoundRect.set((int) (position.x - mBound.getWidth()),
                 (int) (position.y - mBound.getHeight()),
@@ -86,8 +97,22 @@ public class ImageScrollerItem extends GameObject {
                 (int) (position.y + mBound.getHeight()));
     }
 
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Update
+    // /////////////////////////////////////////////////////////////////////////
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         super.update(elapsedTime);
+    }
+
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Setters
+    // /////////////////////////////////////////////////////////////////////////
+
+    public void setBitmap(Bitmap bitmap) {
+        if(bitmap != null) mBitmap = bitmap;
     }
 }

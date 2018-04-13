@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
@@ -33,8 +34,13 @@ public class ImageScrollerTest {
     // Testing of scroller requires a GameScreen, so I have randomly chosen HelpScreen
     private HelpScreen helpScreen;
     private ImageScroller scroller;
+    private ElapsedTime elapsedTime;
+
+    private Random rand;
 
     private Bitmap testBitmap;
+
+    private ArrayList<TouchEvent> touchEvents;
 
     private TouchEvent touchEventDown;
     private TouchEvent touchEventFlingLeft;
@@ -55,11 +61,17 @@ public class ImageScrollerTest {
 
         scroller = new ImageScroller(0, 0, 500, 200, helpScreen);
 
+        elapsedTime = new ElapsedTime();
+
+        rand = new Random();
+
         game.getAssetManager().loadAndAddBitmap("TestBitmap1", "img/card-0.png");
         game.getAssetManager().loadAndAddBitmap("TestBitmap2", "img/card-1.png");
         game.getAssetManager().loadAndAddBitmap("TestBitmap3", "img/his-background.png");
 
         testBitmap = game.getAssetManager().getBitmap("TestBitmap1");
+
+        touchEvents = new ArrayList<>();
 
         // Instantiate touch events
         touchEventDown = getTouchEventDown();
@@ -110,19 +122,19 @@ public class ImageScrollerTest {
 
         touchList.add(touchEventDown);
         scroller.setSimulatedTouchEvents(touchList);
-        scroller.update(new ElapsedTime());
+        scroller.update(elapsedTime);
         touchList.clear();
 
         if(direction) touchList.add(touchEventFlingRight);
         else touchList.add(touchEventFlingLeft);
 
         scroller.setSimulatedTouchEvents(touchList);
-        scroller.update(new ElapsedTime());
+        scroller.update(elapsedTime);
         touchList.clear();
 
         touchList.add(touchEventUp);
         scroller.setSimulatedTouchEvents(touchList);
-        scroller.update(new ElapsedTime());
+        scroller.update(elapsedTime);
         touchList.clear();
     }
 
@@ -330,6 +342,267 @@ public class ImageScrollerTest {
         assertEquals((scroller.getScrollerItems().get(3).position.x == 339f) && (scroller.getScrollerItems().get(3).position.y == 0.0), true);
         assertEquals((scroller.getScrollerItems().get(4).position.x == 499f) && (scroller.getScrollerItems().get(4).position.y == 0.0), true);
         assertEquals((scroller.getScrollerItems().get(5).position.x == 659f) && (scroller.getScrollerItems().get(5).position.y == 0.0), true);
+    }
+
+    @Test
+    public void test_isAnimating_NoAnimations() {
+        assertEquals(scroller.isAnimating(), false);
+    }
+
+    @Test
+    public void test_checkFor1PageIcon() {
+        scroller.addScrollerItem(testBitmap);
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 100);
+
+        scroller.update(elapsedTime);
+
+        assertEquals(1, scroller.getPageIconPositions().size());
+    }
+
+    @Test
+    public void test_checkFor2PageIcons() {
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 80);
+
+        scroller.update(elapsedTime);
+
+        assertEquals(2, scroller.getPageIconPositions().size());
+    }
+
+    @Test
+    public void test_checkForCorrectCurrentIndex_1Page() {
+        scroller.addScrollerItem(testBitmap);
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 100);
+
+        scroller.update(elapsedTime);
+
+        assertEquals(0, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkForCorrectCurrentIndex_2Pages() {
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+
+        scroller.setUseSimulatedTouchEvents(true);
+        scroller.setSimulatedTouchEvents(touchEvents);
+
+        scroller.setMultiMode(true, 80);
+
+        scroller.update(elapsedTime);
+
+        assertEquals(0, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkChangeToNextPageOnSwipeRight() {
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.setMultiMode(true, 80);
+
+        // Create a fake input event and touch event array
+        scroller.setUseSimulatedTouchEvents(true);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventDown);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventFlingRight);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventUp);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        assertEquals(1, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkChangeToNextPageOnSwipeLeft() {
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.setMultiMode(true, 80);
+
+        // Create a fake input event and touch event array
+        scroller.setUseSimulatedTouchEvents(true);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventDown);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventFlingLeft);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventUp);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        assertEquals(1, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkChangeToNextPageOnSwipeRightTwice() {
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.setMultiMode(true, 80);
+
+        // Create a fake input event and touch event array
+        scroller.setUseSimulatedTouchEvents(true);
+
+        // First swipe
+        touchEvents.clear();
+        touchEvents.add(touchEventDown);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventFlingRight);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventUp);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        // Second swipe
+        touchEvents.clear();
+        touchEvents.add(touchEventDown);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventFlingRight);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventUp);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        assertEquals(0, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_checkChangeToNextPageOnSwipeLeftTwice() {
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.addScrollerItem(testBitmap);
+        scroller.setMultiMode(true, 80);
+
+        // Create a fake input event and touch event array
+        scroller.setUseSimulatedTouchEvents(true);
+
+        // First swipe
+        touchEvents.clear();
+        touchEvents.add(touchEventDown);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventFlingLeft);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventUp);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        // Second swipe
+        touchEvents.clear();
+        touchEvents.add(touchEventDown);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventFlingLeft);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        touchEvents.clear();
+        touchEvents.add(touchEventUp);
+        scroller.setSimulatedTouchEvents(touchEvents);
+        scroller.update(elapsedTime);
+
+        assertEquals(0, scroller.getCurrentPageIndex());
+    }
+
+    @Test
+    public void test_setPageIconUnselectedColour() {
+        int colour = rand.nextInt();
+        scroller.setPageIconUnselectedColour(colour);
+
+        assertEquals(colour, scroller.getPageIconUnselectedColour());
+    }
+
+    @Test
+    public void test_setPageIconSelectedColour() {
+        int colour = rand.nextInt();
+        scroller.setPageIconSelectedColour(colour);
+
+        assertEquals(colour, scroller.getPageIconSelectedColour());
+    }
+
+    @Test
+    public void test_setPageIconShadowColour() {
+        int colour = rand.nextInt();
+        scroller.setPageIconShadowColour(colour);
+
+        assertEquals(colour, scroller.getPageIconShadowColour());
+    }
+
+    @Test
+    public void test_setPageIconRelativePercentageYPos() {
+        float percentage = Math.abs((rand.nextInt() % 20) / 10.0f);
+        scroller.setPageIconRelativePercentageYPos(percentage);
+
+        assertEquals(percentage, scroller.getPageIconRelativePercentageYPos());
     }
 }
 
