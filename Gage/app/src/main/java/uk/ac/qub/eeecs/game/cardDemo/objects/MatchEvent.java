@@ -446,11 +446,11 @@ public class MatchEvent extends GameObject{
 
 
 
-            if ((textHeight >= mGame.getScreenHeight() * 0.25) && size <= 75 && !playersChosen)
+            if ((textHeight >= mGame.getScreenHeight() * 0.25) && !playersChosen)
                 drawCards = true;
 
             if (drawCards){
-                if (animationCounter % 4  == 0) {
+                if (animationCounter % 2  == 0) {
                     if (leftHolderPosition < mGame.getScreenWidth() * 0.25) {
                         leftHolderPosition += 10;
                         cardHolder1.setPosition(leftHolderPosition, (int) (mGame.getScreenHeight() * 0.35));
@@ -501,7 +501,7 @@ public class MatchEvent extends GameObject{
             paint.setColor(Color.BLACK);
             paint.setTextSize(75);
 
-            graphics2D.drawText(scenarioDescription, (int)(mGame.getScreenWidth()/ 4), textHeight, paint);
+            graphics2D.drawText(scenarioDescription, (int)(mGame.getScreenWidth()/ 4.5), textHeight, paint);
 
             if(drawCards) {
                 graphics2D.drawText("Please choose your card", (int) (mGame.getScreenWidth() / 3), (int) (textHeight * 1.5), paint);
