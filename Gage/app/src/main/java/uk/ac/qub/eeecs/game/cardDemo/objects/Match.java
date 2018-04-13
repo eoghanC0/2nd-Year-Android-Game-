@@ -39,7 +39,7 @@ public class Match extends GameObject {
         this.playerAScore = 0;
         this.playerBScore = 0;
         this.difficulty = difficulty;
-        this.totalGameTimeLength = 50;
+        this.totalGameTimeLength = gameLength;
         currentGameTime = 0.0;
         this.playerTeam = playerTeam;
         this.gameState = gameState.MIDFIELD;
@@ -51,7 +51,7 @@ public class Match extends GameObject {
         this.displayGameWinner = false;
         timeSinceLastScenario = 0;
         this.playerTeam = playerTeam;
-        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, mGameScreen, "Test Player", "M A I N  M E N U", "0 | 0 | 0");
+        infoBar = new InfoBar(mGame.getScreenWidth() / 2, 270, mGame.getScreenWidth(), mGame.getScreenHeight() * 0.1f, mGameScreen,  "Test Player", "M A I N  M E N U", "0 | 0 | 0");
         this.gameResult = null;
         this.resultMessage = null;
     }
@@ -255,7 +255,8 @@ public class Match extends GameObject {
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         if (newEvent != null)
-            newEvent.draw(elapsedTime, graphics2D);
+            if (!gameOver)
+                newEvent.draw(elapsedTime, graphics2D);
 
         Paint paint = mGame.getPaint();
         paint.reset();
