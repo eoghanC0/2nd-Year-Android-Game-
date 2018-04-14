@@ -63,6 +63,9 @@ public class HelpScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("HelpOptionsScreen", "img/help-options-screen.png");
         assetManager.loadAndAddBitmap("HelpPacksScreen", "img/help-packs-screen.png");
         assetManager.loadAndAddBitmap("HelpSquadScreen", "img/help-squad-screen.png");
+        assetManager.loadAndAddBitmap("HelpPlaying", "img/help-playing.png");
+        assetManager.loadAndAddBitmap("HelpScenarios", "img/help-scenarios.png");
+        assetManager.loadAndAddBitmap("HelpGainingXP", "img/help-gaining-xp.png");
 
         background = assetManager.getBitmap("MainBackground");
 
@@ -75,8 +78,10 @@ public class HelpScreen extends FootballGameScreen {
         imageScroller.addScrollerItem(assetManager.getBitmap("HelpOptionsScreen"));
         imageScroller.addScrollerItem(assetManager.getBitmap("HelpPacksScreen"));
         imageScroller.addScrollerItem(assetManager.getBitmap("HelpSquadScreen"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpPlaying"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpScenarios"));
+        imageScroller.addScrollerItem(assetManager.getBitmap("HelpGainingXP"));
 
-        imageScroller.setPageIconSelectedColour(Color.rgb(159, 200, 250));
         imageScroller.setPageIconRelativePercentageYPos(1.1f);
     }
 

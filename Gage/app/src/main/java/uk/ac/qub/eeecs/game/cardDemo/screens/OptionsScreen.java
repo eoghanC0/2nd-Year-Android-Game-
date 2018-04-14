@@ -201,7 +201,7 @@ public class OptionsScreen extends FootballGameScreen {
             case 1:
                 return "Amateur";
             case 2:
-                return "Professional";
+                return "Pro";
         }
         return null;
     }

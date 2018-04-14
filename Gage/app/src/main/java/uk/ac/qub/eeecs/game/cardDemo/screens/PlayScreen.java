@@ -71,11 +71,11 @@ public class PlayScreen extends FootballGameScreen {
                     break;
                 case "Player B":
                     mGame.setLosses(mGame.getLosses() + 1);
-                    mGame.setXp(mGame.getXp() + (100 * (difficulty + 1)));
+                    mGame.setXp(mGame.getXp() + (50 * (difficulty + 1)));
                     break;
                 case "Draw":
                     mGame.setDraws(mGame.getDraws() + 1);
-                    mGame.setXp(mGame.getXp() + (50 * (difficulty + 1)));
+                    mGame.setXp(mGame.getXp() + (100 * (difficulty + 1)));
                     break;
 
             }
