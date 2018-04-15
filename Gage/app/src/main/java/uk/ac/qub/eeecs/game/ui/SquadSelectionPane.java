@@ -442,7 +442,7 @@ public class SquadSelectionPane extends GameObject {
                         break;
                     }
                 }
-            cardScroller.removeSelectDestination(cardScroller.getSelectDestinations().indexOf(cardScroller.getRemovedCardBound()));
+            cardScroller.removeSelectDestination(cardScroller.getSelectDestinations().indexOf(removedCard.getBound()));
         }
     }
 

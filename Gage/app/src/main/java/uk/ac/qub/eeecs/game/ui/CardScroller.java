@@ -22,10 +22,10 @@ import uk.ac.qub.eeecs.game.objects.Card;
 /**
  * This class allows you to create a horizontally moving card scroller
  *
- * Clicking the left side of the scroller moves the card(s) right, displaying the previous card
- * Clicking the right side of the scroller moves the card(s) left, displaying the next card
+ * Swiping left-right on the scroller moves the card(s) right, displaying the previous card(s)
+ * Swiping right-left on the scroller moves the card(s) left, displaying the next card(s)
  *
- * Images are automatically scaled to fit within the scroller
+ * Cards are automatically scaled to fit within the scroller
  *
  * User can toggle between single card and multi card mode
  *
@@ -399,7 +399,7 @@ public class CardScroller extends Scroller<Card> {
      * Card is removed if a TOUCH_UP is detected in a select destination
      */
     private void checkAndPerformDragCard() {
-        if(!selectMode || scrollerItems.isEmpty()) return;
+        if(!selectMode || scrollerItems.isEmpty() || isAnimating()) { return; }
 
         List<TouchEvent> touchEvents;
         if(!useSimulatedTouchEvents) touchEvents = mGameScreen.getGame().getInput().getTouchEvents();
@@ -425,6 +425,7 @@ public class CardScroller extends Scroller<Card> {
                             touchDown = true;
                             draggedCardOriginalPosition = new Vector2(scrollerItems.get(selectedItemIndex).position.x, scrollerItems.get(selectedItemIndex).position.y);
                             itemSelected = true;
+                            Log.d("DEBUG", "checkAndPerformDragCard: SELECTED " + scrollerItems.get(selectedItemIndex).toString());
                         }
                     }
                 } else // No touch down

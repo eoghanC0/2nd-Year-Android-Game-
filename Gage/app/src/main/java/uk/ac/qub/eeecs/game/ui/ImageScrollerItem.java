@@ -31,7 +31,7 @@ public class ImageScrollerItem extends GameObject {
 
 
     // /////////////////////////////////////////////////////////////////////////
-    // Cnostructors
+    // Constructors
     // /////////////////////////////////////////////////////////////////////////
 
     /**
@@ -41,9 +41,9 @@ public class ImageScrollerItem extends GameObject {
      */
     public ImageScrollerItem(GameScreen gameScreen) {
         super(gameScreen);
-        position = new Vector2(0,0);
+        position.set(0,0);
         AssetStore assetStore = gameScreen.getGame().getAssetManager();
-        assetStore.loadAndAddBitmap("Empty", "img/empty.png");
+        if(assetStore.getBitmap("Empty" ) == null) assetStore.loadAndAddBitmap("Empty", "img/empty.png");
         mBitmap = assetStore.getBitmap("Empty");
         metaData = new String[]{"ImageScrollerItem"};
     }
