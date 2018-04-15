@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.game.DemoGame;
-import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
+import uk.ac.qub.eeecs.game.screens.PlayScreen;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;

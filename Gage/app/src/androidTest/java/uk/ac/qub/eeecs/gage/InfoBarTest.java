@@ -13,9 +13,9 @@ import java.util.Random;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
-import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
+import uk.ac.qub.eeecs.game.screens.HelpScreen;
+import uk.ac.qub.eeecs.game.ui.InfoBar;
 
 import static junit.framework.Assert.assertEquals;
 

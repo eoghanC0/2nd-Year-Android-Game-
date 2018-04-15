@@ -11,12 +11,11 @@ import org.junit.runner.RunWith;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
-import uk.ac.qub.eeecs.game.cardDemo.objects.MatchEvent;
-import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
+import uk.ac.qub.eeecs.game.objects.Match;
+import uk.ac.qub.eeecs.game.objects.MatchEvent;
+import uk.ac.qub.eeecs.game.screens.PlayScreen;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.format;
 
 /**
  * Created by Aedan on 10/03/2018.

@@ -3,25 +3,18 @@ package uk.ac.qub.eeecs.gage;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.ScreenManager;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
-import uk.ac.qub.eeecs.game.cardDemo.screens.LoadGameScreen;
-import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
-import uk.ac.qub.eeecs.game.cardDemo.screens.SquadScreen;
-import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
-import uk.ac.qub.eeecs.game.cardDemo.ui.ListBox;
+import uk.ac.qub.eeecs.game.screens.LoadGameScreen;
+import uk.ac.qub.eeecs.game.screens.MenuScreen;
 
 import static junit.framework.Assert.assertEquals;
 
