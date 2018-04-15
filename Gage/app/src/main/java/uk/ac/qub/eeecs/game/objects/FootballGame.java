@@ -234,7 +234,7 @@ public class FootballGame extends Game {
         draws = 0;
         xp = 500;
         difficulty = 1;
-        gameLength = 60;
+        gameLength = 10;
         saveGame();
     }
 
@@ -258,6 +258,12 @@ public class FootballGame extends Game {
         bgMusic.play();
     }
 
+    public void refillClubFitness() {
+        for (Card card : club) {
+            card.setFitness(100);
+        }
+    }
+
     /**
      * Adds a card to the game's squad property
      *
@@ -270,9 +276,25 @@ public class FootballGame extends Game {
     }
 
     /**
+     * Adds a card to the game's squad property
+     *
+     * @param card
+     */
+    public void addToClub(Card card) {
+        club.add(card);
+    }
+
+    /**
      * Clears the squad array
      */
     public void clearSquad() {
         squad.clear();
+    }
+
+    /**
+     * Clears the club array
+     */
+    public void clearClub() {
+        club.clear();
     }
 }

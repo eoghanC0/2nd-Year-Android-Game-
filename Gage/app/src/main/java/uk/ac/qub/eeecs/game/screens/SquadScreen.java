@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
+import uk.ac.qub.eeecs.game.objects.Card;
 import uk.ac.qub.eeecs.game.objects.FootballGameScreen;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.objects.FootballGame;
@@ -61,6 +62,12 @@ public class SquadScreen extends FootballGameScreen {
             }
 
             mGame.setFormation(selectionPane.getFormationString());
+
+            mGame.clearClub();
+
+            for (Card card : selectionPane.getScrollerItems()) {
+                mGame.addToClub(card);
+            }
 
             // Save game
             mGame.saveGame();
