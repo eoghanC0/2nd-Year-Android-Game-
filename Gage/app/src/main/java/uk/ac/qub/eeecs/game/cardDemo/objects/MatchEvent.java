@@ -2,6 +2,7 @@ package uk.ac.qub.eeecs.game.cardDemo.objects;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.lang.Math;
 import java.util.ArrayList;
