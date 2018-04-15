@@ -792,6 +792,33 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
     }
 
     // /////////////////////////////////////////////////////////////////////////
+    // Testing
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Sets the simulatedTouchEvents used for simulated input
+     *
+     * @param simulatedTouchEvents
+     */
+    public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
+        this.simulatedTouchEvents = simulatedTouchEvents;
+    }
+
+    /**
+     * Sets whether or not the scroller should use simulated touch events passed in (for testing)
+     * or standard input settings
+     *
+     * @param useSimulatedTouchEvents
+     */
+    public void setUseSimulatedTouchEvents(boolean useSimulatedTouchEvents) {
+        if(useSimulatedTouchEvents) {
+            this.useSimulatedTouchEvents = true;
+        } else {
+            this.useSimulatedTouchEvents = false;
+        }
+    }
+
+    // /////////////////////////////////////////////////////////////////////////
     // Getters
     // /////////////////////////////////////////////////////////////////////////
 

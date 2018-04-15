@@ -132,6 +132,21 @@ public class CardScrollerTest {
         touchList.clear();
     }
 
+    public void addTestData() {
+        scroller.addScrollerItem(new Card(gameScreen, "1", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"2", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"3", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"4", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"5", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"6", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"7", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"8", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"9", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"10", 100));
+        scroller.addScrollerItem(new Card(gameScreen,"11", 100));
+    }
+
+
     @Test
     public void testConstructor_CheckPosition() {
         boolean result = scroller.position.x == 0 && scroller.position.y == 0;
@@ -218,7 +233,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_addTestData() {
-        scroller.addTestData();
+        addTestData();
         assertEquals(scroller.getItemCount(), 11);
     }
 
@@ -452,7 +467,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_calculateMultiItemsDisplayed_MultipleItemsInScroller() {
-        scroller.addTestData();
+        addTestData();
         // calculateMultiItemsDisplayed() is triggered by setMultiMode()
         scroller.setMultiMode(true, 100);
         assertEquals(scroller.getMaxDisplayedItems(),3);
@@ -469,7 +484,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_setMultiMode_True_False_MultipleItemsInScroller_CheckPosition() {
-        scroller.addTestData();
+        addTestData();
         scroller.setMultiMode(true, 100);
         scroller.setMultiMode(false, 100);
         assertEquals(scroller.getScrollerItems().get(0).position.x, scroller.position.x);
@@ -486,7 +501,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionTrue_CheckNextItemIndex() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(true);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
@@ -495,7 +510,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionTrue_CheckPosition_Item9() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(true);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
@@ -504,7 +519,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionTrue_CheckPosition_Item10() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(true);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
@@ -513,7 +528,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionFalse_CheckNextItemIndex() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(false);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
@@ -522,7 +537,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionFalse_CheckPosition_Item3() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(false);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
@@ -531,7 +546,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionFalse_CheckPosition_Item4() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(false);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
@@ -540,7 +555,7 @@ public class CardScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItemsInScroller_ScrollDirectionFalse_CheckPosition_Item5() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(false);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();

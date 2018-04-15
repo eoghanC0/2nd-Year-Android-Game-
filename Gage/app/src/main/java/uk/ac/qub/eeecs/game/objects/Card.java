@@ -109,6 +109,20 @@ public class Card extends GameObject {
 
     private boolean showingStats = true;
 
+    /********************
+     * Testing Properties
+     ********************/
+
+    /**
+     * Determines whether to use simulated touch events or touch events from device
+     */
+    protected boolean useSimulatedTouchEvents = false;
+
+    /**
+     * Contains the simulated touch events
+     */
+    protected List<TouchEvent> simulatedTouchEvents = new ArrayList<TouchEvent>();
+
     // /////////////////////////////////////////////////////
     // Constructor
     // /////////////////////////////////////////////////////
@@ -555,7 +569,9 @@ public class Card extends GameObject {
     @Override
     public void update(ElapsedTime elapsedTime) {
         // Consider any touch events occurring in this update
-        List<TouchEvent> touchEvents = mGameScreen.getGame().getInput().getTouchEvents();
+        List<TouchEvent> touchEvents;
+        if(useSimulatedTouchEvents) touchEvents = simulatedTouchEvents;
+        else touchEvents = mGameScreen.getGame().getInput().getTouchEvents();
 
         // Check for a touch event on this listBox
         for (TouchEvent touchEvent : touchEvents) {
@@ -698,5 +714,32 @@ public class Card extends GameObject {
     @Override
     public String toString() {
         return String.format("Card { ID: %1$s | Display Name: %2$s | Club: %3$s | Rating: %4$d | Fitness: %5$d}", playerID, displayName, club, rating, fitness);
+    }
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Testing
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Sets the simulatedTouchEvents used for simulated input
+     *
+     * @param simulatedTouchEvents
+     */
+    public void setSimulatedTouchEvents(List<TouchEvent> simulatedTouchEvents) {
+        this.simulatedTouchEvents = simulatedTouchEvents;
+    }
+
+    /**
+     * Sets whether or not the scroller should use simulated touch events passed in (for testing)
+     * or standard input settings
+     *
+     * @param useSimulatedTouchEvents
+     */
+    public void setUseSimulatedTouchEvents(boolean useSimulatedTouchEvents) {
+        if(useSimulatedTouchEvents) {
+            this.useSimulatedTouchEvents = true;
+        } else {
+            this.useSimulatedTouchEvents = false;
+        }
     }
 }

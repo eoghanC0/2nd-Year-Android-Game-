@@ -19,6 +19,7 @@ import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.game.objects.FootballGame;
 import uk.ac.qub.eeecs.game.screens.HelpScreen;
 import uk.ac.qub.eeecs.game.ui.ImageScroller;
+import uk.ac.qub.eeecs.game.ui.ImageScrollerItem;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -138,6 +139,13 @@ public class ImageScrollerTest {
         touchList.clear();
     }
 
+    public void addTestData() {
+        ImageScrollerItem imageScrollerItem = new ImageScrollerItem(0,0,100,200, testBitmap, helpScreen);
+        for (int i = 0; i < 8; i++) {
+            scroller.addScrollerItem(imageScrollerItem);
+        }
+    }
+
     @Test
     public void test_Constructor_ValidData() {
         float x = 0, y = 0, width = 100, height = 50;
@@ -186,7 +194,7 @@ public class ImageScrollerTest {
 
     @Test
     public void test_addTestData() {
-        scroller.addTestData();
+        addTestData();
 
         assertEquals(scroller.getItemCount(), 8);
     }
@@ -283,7 +291,7 @@ public class ImageScrollerTest {
 
     @Test
     public void test_calculateMultiItemsDisplayed_MultipleItems() {
-        scroller.addTestData();
+        addTestData();
         // calculateMultiItemsDisplayed() is triggered by setMultiMode()
         scroller.setMultiMode(true, 100);
 
@@ -302,7 +310,7 @@ public class ImageScrollerTest {
 
     @Test
     public void test_setMultiMode_True_False_MultipleItems() {
-        scroller.addTestData();
+        addTestData();
         scroller.setMultiMode(true, 100);
         scroller.setMultiMode(false, 100);
 
@@ -321,7 +329,7 @@ public class ImageScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItems_ScrollDirection_True() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(true);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
@@ -333,7 +341,7 @@ public class ImageScrollerTest {
 
     @Test
     public void test_calculateNextMultiVectors_MultipleItems_ScrollDirection_False() {
-        scroller.addTestData();
+        addTestData();
         scroller.setScrollDirection(false);
         scroller.setMultiMode(true, 100);
         scroller.calculateNextMultiVectors();
