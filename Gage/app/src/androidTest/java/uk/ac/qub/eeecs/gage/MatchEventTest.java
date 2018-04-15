@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.game.objects.FootballGameScreen;
 import uk.ac.qub.eeecs.game.objects.FootballGame;
 import uk.ac.qub.eeecs.game.objects.Card;
 import uk.ac.qub.eeecs.game.objects.Match;

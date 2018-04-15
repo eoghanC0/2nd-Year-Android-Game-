@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ScreenManager;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.game.DemoGame;
 import uk.ac.qub.eeecs.game.screens.MenuScreen;
 import uk.ac.qub.eeecs.game.screens.OptionsScreen;
 
