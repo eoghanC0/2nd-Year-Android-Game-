@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class MenuScreen extends FootballGameScreen {
     private final Bitmap background;
     private final Rect backgroundRect = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
-    private boolean musicMuteState = false;
+    private boolean musicMuteState = true;
 
     // /////////////////////////////////////////////////////////////////////////
     // Constructors
@@ -144,16 +145,18 @@ public class MenuScreen extends FootballGameScreen {
             else if (mPacksButton.isPushTriggered())
                 changeToScreen(new PackScreen(mGame));
             else if (mMusicButton.isPushTriggered()) {
+                musicMuteState = !musicMuteState;
                 if(musicMuteState) {
-                    mMusicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
-                    mMusicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMutePushed"));
+                    mMusicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIcon"));
+                    mMusicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconPushed"));
+                    mMusicButton.updateMainBitmap();
                     mGame.getBGMusic().setVolume(1.0f);
                 } else {
-                    mMusicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIcon"));
-                    mMusicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
-                    mGame.getBGMusic().setVolume(0);
+                    mMusicButton.setmDefaultBitmap(mGame.getAssetManager().getBitmap("MusicIconMute"));
+                    mMusicButton.setmPushBitmap(mGame.getAssetManager().getBitmap("MusicIconMutePushed"));
+                    mMusicButton.updateMainBitmap();
+                    mGame.getBGMusic().setVolume(0f);
                 }
-                musicMuteState = !musicMuteState;
             }
         }
     }
