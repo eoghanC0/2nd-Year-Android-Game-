@@ -20,6 +20,10 @@ import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
 
 public class HelpScreen extends FootballGameScreen {
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Properties
+    // /////////////////////////////////////////////////////////////////////////
+
     /**
      * Background image
      */
@@ -44,7 +48,12 @@ public class HelpScreen extends FootballGameScreen {
      * Allows user to scroll between help images
      */
     public ImageScroller imageScroller;
-    
+
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Constructor
+    // /////////////////////////////////////////////////////////////////////////
+
     /**
      * Create a new game screen associated with the specified game instance
      *
@@ -85,6 +94,25 @@ public class HelpScreen extends FootballGameScreen {
         imageScroller.setPageIconRelativePercentageYPos(1.1f);
     }
 
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Methods
+    // /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Remove the current game screen and then change to the specified screen
+     *
+     * @param screen game screen to become active
+     */
+    public void changeToScreen(GameScreen screen) {
+        mGame.getScreenManager().removeScreen(this.getName());
+        mGame.getScreenManager().addScreen(screen);
+    }
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Update and Draw
+    // /////////////////////////////////////////////////////////////////////////
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         infoBar.update(elapsedTime);
@@ -104,15 +132,6 @@ public class HelpScreen extends FootballGameScreen {
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
     }
 
-    /**
-     * Remove the current game screen and then change to the specified screen
-     *
-     * @param screen game screen to become active
-     */
-    public void changeToScreen(GameScreen screen) {
-        mGame.getScreenManager().removeScreen(this.getName());
-        mGame.getScreenManager().addScreen(screen);
-    }
 }
 
 
