@@ -31,7 +31,7 @@ public class PlayScreen extends FootballGameScreen {
     private int endGameCounter;
     private boolean startCount;
 
-    private Match currentMatch;
+    public Match currentMatch;
 
 
     private ArrayList<Card> playerTeam;
@@ -62,6 +62,11 @@ public class PlayScreen extends FootballGameScreen {
     }
 
 
+    /*
+    Update the players stats after each game.
+    The player gets a base xp of 50, 100 or 200 for a loss, draw or win respectively.
+    There is a multiplier based on difficulty of 1x, 2x or 3x for easy, medium or hard respectively.
+     */
     private void endGame(){
         String result = currentMatch.getGameResult();
             switch (result){
@@ -89,6 +94,7 @@ public class PlayScreen extends FootballGameScreen {
         checkForWinner();
         if (startCount)
             endGameCounter++;
+        //a timer used to give some time before the game ends
         if (endGameCounter > 50)
             endGame();
 

@@ -193,6 +193,13 @@ public class MatchEvent extends GameObject{
         }
     }
 
+
+    /*
+    Select a player for the AI to use
+    If it is the goalkeeper scenario, then always choose the goalkeeper
+    Otherwise, the players are sorted into order based on their stat
+    A wieghting system is then used to select a player, with the highest chance being the player with the highest stat
+     */
     private void selectPlayers(){
         Card playerCard = cardHolder1.getCard();
         Card cpuCard = null;
@@ -243,6 +250,10 @@ public class MatchEvent extends GameObject{
         drawCards = false;
     }
 
+
+    /*
+    dependeing on the scenario, get the relevant stat from the player
+     */
     private int getStats(Card player, String scenario){
         Card currentCard = player;
         //use the players stamina as a percentage to modify their stats by
@@ -280,12 +291,18 @@ public class MatchEvent extends GameObject{
         return stat;
     }
 
+    //This method is the 'swap' part of a bubble sort
     private void swap(int x) {//go through the array and sort from smallest to highest
         Card temp = AITeam.get(x - 1);
         AITeam.set(x - 1, AITeam.get(x));
         AITeam.set(x, temp);
     }
 
+
+    /*
+    A general bubble sort that can be used for different stats based on the scenario
+    It carries out the comparison part of the bubble sore, and if the swap is needed it calls the swap method
+     */
     private  void bubbleSort(String scenario) {
 
         int n = AITeam.size();
@@ -413,6 +430,7 @@ public class MatchEvent extends GameObject{
      * holders to determine it's position
      */
 
+
     /**
      *  Temp card used so that when the user swaps a card with a card in the card holder
      *  it gets added back to the card scroller when the scroller has finished animating
@@ -440,6 +458,9 @@ public class MatchEvent extends GameObject{
         }
     }
 
+    /*
+    Method used to set up the animations for the scenario i.e. text and cards moving
+     */
     private void checkForDrawAnimations(){
         if (animationCounter >= 50){
                 if (textHeight < mGame.getScreenHeight() * 0.25)

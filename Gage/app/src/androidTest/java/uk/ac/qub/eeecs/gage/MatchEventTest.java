@@ -10,8 +10,8 @@ import org.junit.runner.RunWith;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.game.objects.FootballGameScreen;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
 import uk.ac.qub.eeecs.game.objects.Card;
 import uk.ac.qub.eeecs.game.objects.Match;
 import uk.ac.qub.eeecs.game.objects.MatchEvent;
@@ -174,23 +174,6 @@ public class MatchEventTest {
         assertEquals(removedCard, testEvent.cardHolder1.getCard());
 
     }
-    /**
-     * Test that when the card is removed from the scroller but not placed in the card holder it gets
-     * added back to the scroller, and that when a card is moved to a different position in the scroller
-     * it is not removed
-     * However I am unsure of how to carry out these tests now and will carry them out in the next sprint
-
-
-    @Test
-    public void checkCardNotRemovedFromScrollerWhenDraggedOut(){
-
-    }
-
-    @Test
-    public void checkCardNotRemovedFromScroller(){
-
-    }
-    */
 
 
 
