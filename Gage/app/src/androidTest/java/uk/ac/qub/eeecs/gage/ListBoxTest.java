@@ -14,8 +14,8 @@ import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.game.objects.FootballGameScreen;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
 import uk.ac.qub.eeecs.game.screens.HelpScreen;
 import uk.ac.qub.eeecs.game.ui.ListBox;
 

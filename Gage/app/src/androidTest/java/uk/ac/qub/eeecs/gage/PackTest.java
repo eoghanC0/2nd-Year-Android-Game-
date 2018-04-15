@@ -12,8 +12,8 @@ import java.util.Collections;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
+import uk.ac.qub.eeecs.game.objects.FootballGameScreen;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
 import uk.ac.qub.eeecs.game.objects.Card;
 import uk.ac.qub.eeecs.game.objects.Pack;
 import uk.ac.qub.eeecs.game.screens.HelpScreen;
