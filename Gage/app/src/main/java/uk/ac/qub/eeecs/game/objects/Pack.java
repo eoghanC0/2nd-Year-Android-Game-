@@ -79,7 +79,7 @@ public class Pack extends GameObject {
     private void addToClub() {
         FootballGame game = (FootballGame) mGameScreen.getGame();
         for (Card card : cardScroller.getScrollerItems()) {
-            if (getClubIDs(game).contains(card.getPlayerID())) {
+            if (getOwnedIDs(game).contains(card.getPlayerID())) {
                 //Deal with duplicates ;
                 // if the card exists, just reward with XP instead
                 game.addXP(card.getRating());
@@ -91,14 +91,17 @@ public class Pack extends GameObject {
     }
 
     /**
-     * Gets the playerID's of all players already stored in the club
+     * Gets the playerID's of all players already owned
      *
      * @param game
      * @return
      */
-    private ArrayList<String> getClubIDs(FootballGame game) {
+    private ArrayList<String> getOwnedIDs(FootballGame game) {
         ArrayList<String> playerIDs = new ArrayList<>();
         for (Card player : game.getClub()) {
+            playerIDs.add(player.getPlayerID());
+        }
+        for (Card player : game.getSquad()) {
             playerIDs.add(player.getPlayerID());
         }
         return playerIDs;

@@ -84,6 +84,7 @@ public class PlayScreen extends FootballGameScreen {
                     break;
 
             }
+            mGame.refillClubFitness();
             mGame.saveGame();
             changeToScreen(new MenuScreen(mGame));
 

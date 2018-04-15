@@ -142,9 +142,7 @@ public class SquadSelectionPane extends GameObject {
 
         // Add club to card scroller
         for (Card card : gameScreen.getGame().getClub()) {
-            ArrayList<String> squadIDs = new ArrayList<>(getSquadIDs(gameScreen.getGame()));
-            if (!squadIDs.contains(card.getPlayerID()))
-                cardScroller.addScrollerItem(card);
+            cardScroller.addScrollerItem(card);
         }
 
         cardScroller.setMultiMode(true, 80);
@@ -154,18 +152,9 @@ public class SquadSelectionPane extends GameObject {
     //////////////////////////////////////////////
     //  Methods
     //////////////////////////////////////////////
-    /**
-     * Gets the playerID's of all players already stored in the squad
-     *
-     * @param game
-     * @return
-     */
-    private ArrayList<String> getSquadIDs(FootballGame game) {
-        ArrayList<String> playerIDs = new ArrayList<>();
-        for (Card player : game.getSquad()) {
-            playerIDs.add(player.getPlayerID());
-        }
-        return playerIDs;
+
+    public ArrayList<Card> getScrollerItems() {
+        return cardScroller.getScrollerItems();
     }
 
     /**
