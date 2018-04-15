@@ -234,7 +234,7 @@ public class FootballGame extends Game {
         draws = 0;
         xp = 500;
         difficulty = 1;
-        gameLength = 300;
+        gameLength = 60;
         saveGame();
     }
 

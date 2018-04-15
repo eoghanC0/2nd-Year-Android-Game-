@@ -8,7 +8,6 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
 import uk.ac.qub.eeecs.game.objects.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.objects.FootballGame;
 import uk.ac.qub.eeecs.game.ui.ImageScroller;
 import uk.ac.qub.eeecs.game.ui.InfoBar;
@@ -18,6 +17,10 @@ import uk.ac.qub.eeecs.game.ui.InfoBar;
  */
 
 public class HelpScreen extends FootballGameScreen {
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Properties
+    // /////////////////////////////////////////////////////////////////////////
 
     /**
      * Background image
@@ -43,7 +46,11 @@ public class HelpScreen extends FootballGameScreen {
      * Allows user to scroll between help images
      */
     public ImageScroller imageScroller;
-    
+
+    // /////////////////////////////////////////////////////////////////////////
+    // Constructor
+    // /////////////////////////////////////////////////////////////////////////
+
     /**
      * Create a new game screen associated with the specified game instance
      *
@@ -84,6 +91,10 @@ public class HelpScreen extends FootballGameScreen {
         imageScroller.setPageIconRelativePercentageYPos(1.1f);
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Update and Draw
+    // /////////////////////////////////////////////////////////////////////////
+
     @Override
     public void update(ElapsedTime elapsedTime) {
         infoBar.update(elapsedTime);
@@ -102,6 +113,7 @@ public class HelpScreen extends FootballGameScreen {
         imageScroller.draw(elapsedTime, graphics2D);
         menuScreenButton.draw(elapsedTime, graphics2D, null, null);
     }
+
 }
 
 
