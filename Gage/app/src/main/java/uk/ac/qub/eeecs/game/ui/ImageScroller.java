@@ -18,8 +18,8 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 /**
  * This class allows you to create a horizontally moving image scroller
  *
- * Clicking the left side of the scroller moves the image(s) right, displaying the previous image
- * Clicking the right side of the scroller moves the image(s) left, displaying the next image
+ * Swiping left-right on the scroller moves the image(s) right, displaying the previous image(s)
+ * Swiping right-left on the scroller moves the image(s) left, displaying the next image(s)
  *
  * Images are automatically scaled to fit within the scroller
  *

@@ -24,20 +24,21 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
 /**
  * Abstract class for Scroller's
  *
- * Clicking the left side of the scroller moves the card(s) right, displaying the previous card
- * Clicking the right side of the scroller moves the card(s) left, displaying the next card
+ * Swiping left-right on the scroller moves the item(s) right, displaying the previous item(s)
+ * Swiping right-left on the scroller moves the item(s) left, displaying the next item(s)
  *
- * Images are automatically scaled to fit within the scroller
+ * Items are automatically scaled to fit within the scroller
  *
- * User can toggle between single card and multi card mode
+ * User can toggle between single item and multi item mode
  *
- * - Single card
- *      Cards displayed one at a time
- *      Cards are scaled to fit the total height of the scroller
+ * - Single item
+ *      Items displayed one at a time
+ *      Items are scaled to fit the total height of the scroller
  *      Scroller cycles in a loop
  * - Multi card
- *      Displays multiple card at a time by using the full width of the scroller
- *      User chooses the maximum card height, allowing for more/less cards to be displayed
+ *      Requires all items to have same dimensions to behave properly
+ *      Displays multiple items at a time by using the full width of the scroller
+ *      User chooses the maximum item height, allowing for more/less items to be displayed
  *      Scroller cycles in a loop
  *
  * Default Settings:
