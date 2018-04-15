@@ -5,6 +5,7 @@ import android.graphics.Paint;
 
 import java.lang.Math;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import uk.ac.qub.eeecs.gage.Game;
@@ -79,8 +80,8 @@ public class MatchEvent extends GameObject{
         assetManager.loadAndAddBitmap("ConfirmButton", "img/BUTTONCONFIRM.png");
 
 
-        confirmPlayer = new PushButton(mGame.getScreenWidth() / 2.0f, mGame.getScreenHeight() / 2.3f, 200, 100, "ConfirmButton", mGameScreen  );
-
+        confirmPlayer = new PushButton(mGame.getScreenWidth() / 2.0f, mGame.getScreenHeight() / 2.3f, 200, 100, "MenuButton","MenuButtonPushed", mGameScreen  );
+        confirmPlayer.setButtonText("Confirm", 32, Color.WHITE);
         winner = null;
 
 
