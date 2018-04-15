@@ -15,26 +15,26 @@ import uk.ac.qub.eeecs.game.ui.InfoBar;
  * Created by Aedan on 24/01/2018.
  */
 //This class stores the details of each match
-public class Match extends GameObject {
+public  class Match extends GameObject {
 
-    private int playerAScore;
-    private int playerBScore;
-    private GameState gameState;
-    private Game mGame;
-    private MatchEvent newEvent;
-    private ArrayList<Card> AITeam, playerTeam;
-    private int difficulty;
-    private InfoBar infoBar;
-    private String gameResult;
-    private String resultMessage;
+    private   int playerAScore;
+    private   int playerBScore;
+    private   GameState gameState;
+    private   Game mGame;
+    private   MatchEvent newEvent;
+    private   ArrayList<Card> AITeam, playerTeam;
+    private   int difficulty;
+    private   InfoBar infoBar;
+    private   String gameResult;
+    private   String resultMessage;
 
-    private final int totalGameTimeLength;
-    private double currentGameTime, displayTime, timeSinceLastScenario;
+    private   final int totalGameTimeLength;
+    private   double currentGameTime, displayTime, timeSinceLastScenario;
 
-    private boolean winnerDecided, scenarioActive, gameOver, displayGameWinner;
-    public enum GameState{MIDFIELD, PLAYER_A_DANGEROUS_ATTACK, PLAYER_A_ATTACK, PLAYER_B_ATTACK, PLAYER_B_DANGEROUS_ATTACK };
+    private   boolean winnerDecided, scenarioActive, gameOver, displayGameWinner;
+    public  enum GameState{MIDFIELD, PLAYER_A_DANGEROUS_ATTACK, PLAYER_A_ATTACK, PLAYER_B_ATTACK, PLAYER_B_DANGEROUS_ATTACK };
 
-    public Match(FootballGameScreen gameScreen, int difficulty, int gameLength, ArrayList<Card> playerTeam){
+    public  Match(FootballGameScreen gameScreen, int difficulty, int gameLength, ArrayList<Card> playerTeam){
         super(gameScreen);
         this.playerAScore = 0;
         this.playerBScore = 0;
@@ -56,25 +56,31 @@ public class Match extends GameObject {
         this.resultMessage = null;
     }
 
-    private void setPlayerAScore(int score){this.playerAScore = score;}
+    public  void setPlayerAScore(int score){this.playerAScore = score;}
 
-    private void setPlayerBScore(int score){this.playerBScore = score;}
+    public  void setPlayerBScore(int score){this.playerBScore = score;}
 
-    private void setGameState(GameState gameState) {this.gameState = gameState;}
+    public  void setGameState(GameState gameState) {this.gameState = gameState;}
 
-    private GameState getGameState(){return gameState;}
+    public  GameState getGameState(){return gameState;}
 
-    public int getPlayerBScore() {
+    public  int getPlayerBScore() {
         return playerBScore;
     }
 
-    public int getPlayerAScore() {
+    public  int getPlayerAScore() {
         return playerAScore;
     }
 
     public String getGameResult(){ return gameResult;}
 
-    private void populateAITeam() {
+
+    /*
+    Create the team for the AI.
+    Depending on difficulty, the AI team will have a rating range.
+    The AI team will be a 4-3-3 formation with 4 defenders, 3 midfielders and 3 attackers.
+     */
+    private  void populateAITeam() {
         int minRating = 0, maxRating = 0;
         switch (difficulty) {
             case 0:
@@ -113,7 +119,10 @@ public class Match extends GameObject {
         }
 
     }
-    private boolean checkIfCardIsntDupe(Card newPlayer){
+
+    //Check that a selected player isnt already in the AI Team
+
+    private  boolean checkIfCardIsntDupe(Card newPlayer){
         for (int i = 0; i < AITeam.size(); i++) {
             if (newPlayer.getPlayerID().equals(AITeam.get(i).getPlayerID()))
                 return false;
@@ -121,13 +130,20 @@ public class Match extends GameObject {
         return true;
     }
 
-    private void makeScenario(){
+    //Create a new scenario
+    private  void makeScenario(){
         scenarioActive = true;
         newEvent = new MatchEvent(mGameScreen, gameState, AITeam, playerTeam);
         winnerDecided = false;
     }
 
-    private void displayScenarioWinner(){
+
+    /*
+    Display the winner of a given scenario
+    Change the state of the game based on the winner.
+    If the scenaio resulted in a goal being scored, update the score and return the game to midfield
+     */
+    private  void displayScenarioWinner(){
         String winner = newEvent.getWinner();
          if (winner != null){
 
@@ -176,7 +192,8 @@ public class Match extends GameObject {
         }
     }
 
-    private void checkForWinner(){
+    //check if a winner has been decided for the scenario and display it if so
+    private  void checkForWinner(){
         if (newEvent != null)
             if (newEvent.getWinner() != null){
                 displayScenarioWinner();
@@ -186,7 +203,7 @@ public class Match extends GameObject {
 
     }
 
-    private void checkIfGameOver(){
+    private  void checkIfGameOver(){
       if (currentGameTime >= totalGameTimeLength){
           gameOver = true;
           checkForGameWinner();
@@ -196,7 +213,8 @@ public class Match extends GameObject {
 
     }
 
-    private void checkForGameWinner(){
+    //check if the game has ended
+    private  void checkForGameWinner(){
         if (playerAScore > playerBScore){
             gameResult = "Player A";
             resultMessage = "You have won this game!";
@@ -213,7 +231,7 @@ public class Match extends GameObject {
     /**
      * Updates properties of the InfoBar
      */
-    private void updateInfoBar() {
+    private  void updateInfoBar() {
         displayTime = currentGameTime / totalGameTimeLength * 90;
         if (gameOver)
             displayTime = 90.00;
@@ -222,7 +240,9 @@ public class Match extends GameObject {
         infoBar.setAreaThreeText(String.format("%2.2f", displayTime ));
     }
 
-    private void checkForScenario(){
+
+    //Create a scenario once the scenario timer is up
+    private  void checkForScenario(){
         if (timeSinceLastScenario > 5){
             makeScenario();
             timeSinceLastScenario = 0;
@@ -253,7 +273,7 @@ public class Match extends GameObject {
      }
 
     @Override
-    public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
+    public  void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         if (newEvent != null)
             if (!gameOver)
                 newEvent.draw(elapsedTime, graphics2D);

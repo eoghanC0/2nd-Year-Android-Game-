@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.game.DemoGame;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
 import uk.ac.qub.eeecs.game.screens.PlayScreen;
 
 import static junit.framework.Assert.assertEquals;
@@ -22,13 +22,13 @@ import static junit.framework.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class PlayScreenTest {
-    private Game game;
+    private FootballGame game;
 
     @Before
     public void setup() {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        game = new DemoGame();
+        game = new FootballGame();
 
         FileIO fileIO = new FileIO(appContext);
         game.mFileIO = fileIO;
