@@ -17,10 +17,10 @@ def delete_files_in_dir(folder):
 
 urlString = "https://www.easports.com/fifa/ultimate-team/api/fut/item?page="
 
-jsonOutputDir = "../assets/player_json"
-headshotOutputDir = "../assets/img/playerBitmaps"
-nationFlagOutputDir = "../assets/img/nationBitmaps"
-clubBadgeOutputDir = "../assets/img/clubBadgeBitmaps"
+jsonOutputDir = "../app/src/main/assets/player_json"
+headshotOutputDir = "../app/src/main/assets/img/playerBitmaps"
+nationFlagOutputDir = "../app/src/main/assets/img/nationBitmaps"
+clubBadgeOutputDir = "../app/src/main/assets/img/clubBadgeBitmaps"
 
 delete_files_in_dir(headshotOutputDir)
 delete_files_in_dir(nationFlagOutputDir)
