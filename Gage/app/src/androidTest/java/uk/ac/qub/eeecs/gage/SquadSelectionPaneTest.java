@@ -14,10 +14,10 @@ import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
-import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
-import uk.ac.qub.eeecs.game.cardDemo.ui.CardHolder;
-import uk.ac.qub.eeecs.game.cardDemo.ui.SquadSelectionPane;
+import uk.ac.qub.eeecs.game.objects.Card;
+import uk.ac.qub.eeecs.game.screens.HelpScreen;
+import uk.ac.qub.eeecs.game.ui.CardHolder;
+import uk.ac.qub.eeecs.game.ui.SquadSelectionPane;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;

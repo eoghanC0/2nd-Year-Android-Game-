@@ -3,25 +3,19 @@ package uk.ac.qub.eeecs.gage;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
-import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
-import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
-import uk.ac.qub.eeecs.game.cardDemo.objects.MatchEvent;
-import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
+import uk.ac.qub.eeecs.game.objects.Card;
+import uk.ac.qub.eeecs.game.objects.Match;
+import uk.ac.qub.eeecs.game.objects.MatchEvent;
+import uk.ac.qub.eeecs.game.screens.PlayScreen;
 
 import static junit.framework.TestCase.assertEquals;
 

@@ -15,9 +15,9 @@ import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.ScreenManager;
 import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
-import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
+import uk.ac.qub.eeecs.game.screens.MenuScreen;
+import uk.ac.qub.eeecs.game.screens.HelpScreen;
 
 import static junit.framework.Assert.assertEquals;
 
