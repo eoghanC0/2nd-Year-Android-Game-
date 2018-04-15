@@ -1,4 +1,4 @@
-package uk.ac.qub.eeecs.game.cardDemo.screens;
+package uk.ac.qub.eeecs.game.screens;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -7,11 +7,10 @@ import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
 import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.ui.PushButton;
-import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.ui.ImageScroller;
-import uk.ac.qub.eeecs.game.cardDemo.ui.InfoBar;
+import uk.ac.qub.eeecs.game.objects.FootballGameScreen;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
+import uk.ac.qub.eeecs.game.ui.ImageScroller;
+import uk.ac.qub.eeecs.game.ui.InfoBar;
 
 /**
  * Created by eimhin on 27/11/2017.
