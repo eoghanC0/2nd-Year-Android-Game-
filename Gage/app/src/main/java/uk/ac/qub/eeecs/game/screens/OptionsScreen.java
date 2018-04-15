@@ -184,7 +184,7 @@ public class OptionsScreen extends FootballGameScreen {
                 textPositions[4] = calculateNewTextPosition(timeDownButton, timeUpButton, textPositions[4], String.valueOf((mGame.getGameLength() / 60)) + " mins");
             }
             if (timeDownButton.isPushTriggered()){
-                if (length > 240){
+                if (length > 60){
                     length -= 60;
                     mGame.setGameLength(length);
                 }
