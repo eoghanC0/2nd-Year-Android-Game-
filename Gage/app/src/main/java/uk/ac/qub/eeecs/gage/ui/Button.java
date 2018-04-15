@@ -54,7 +54,6 @@ public abstract class Button extends GameObject {
     /**
      * Protected class to manage text property of a Button
      */
-    // TODO: ButtonText is WIP
     protected class ButtonText {
         private Button button;
         private String text = "";
