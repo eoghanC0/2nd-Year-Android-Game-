@@ -2,7 +2,6 @@ package uk.ac.qub.eeecs.game.objects;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
 import java.lang.Math;
 import java.util.ArrayList;
@@ -48,23 +47,16 @@ public class MatchEvent extends GameObject{
 
     private CardScroller cardScroller;
 
-    /**
-     * Properties for drag and drop
-     */
-    private boolean touchDown = false;
-    private Vector2 draggedCardOriginalPosition = new Vector2();
 
     private String winner;
     private ArrayList<Card> AITeam;
-    private ArrayList<Card> PlayerTeam;
 
 
     public MatchEvent(GameScreen gameScreen, Match.GameState gameState, ArrayList<Card> AITeam, ArrayList<Card> playerTeam){
         super(gameScreen);
         mGame = mGameScreen.getGame();
         this.AITeam = AITeam;
-        this.PlayerTeam = playerTeam;
-        generateSccenario(gameState);
+        generateScenario(gameState);
         animationCounter = 0;
         textHeight = 0;
         leftHolderPosition = mGame.getScreenWidth() * 0.1f;
@@ -75,8 +67,8 @@ public class MatchEvent extends GameObject{
 
         cardScroller = new CardScroller(mGame.getScreenWidth() * 0.5f, (mGame.getScreenHeight() * 0.8f) + mGame.getScreenHeight(), mGame.getScreenWidth(), mGame.getScreenHeight() * 0.4f, mGameScreen);
 
-        for (int i = 0; i < AITeam.size(); i++) {
-            cardScroller.addScrollerItem(AITeam.get(i));
+        for (int i = 0; i < playerTeam.size(); i++) {
+            cardScroller.addScrollerItem(playerTeam.get(i));
         }
         cardScroller.setMultiMode(true, 100);
         cardScroller.setSelectMode(true);
@@ -99,7 +91,7 @@ public class MatchEvent extends GameObject{
     }
 
     //method to generate a random scenario
-    private void generateSccenario(Match.GameState gameState){
+    private void generateScenario(Match.GameState gameState){
 
         ArrayList<String> possibleScenarios = new ArrayList<String>();
 
@@ -221,25 +213,25 @@ public class MatchEvent extends GameObject{
             int randomNumber = rnd.nextInt(100);
             if (randomNumber < 40)
                 cpuCard = AITeam.get(10);
-            else if (randomNumber >= 40 && randomNumber < 55)
+            else if (randomNumber < 55)
                 cpuCard = AITeam.get(9);
-            else if (randomNumber >= 55 && randomNumber < 65)
+            else if (randomNumber < 65)
                 cpuCard = AITeam.get(8);
-            else if (randomNumber >= 65 && randomNumber < 72)
+            else if (randomNumber < 72)
                 cpuCard = AITeam.get(7);
-            else if (randomNumber >= 72 && randomNumber < 79)
+            else if (randomNumber < 79)
                 cpuCard = AITeam.get(6);
-            else if (randomNumber >= 79 && randomNumber < 85)
+            else if (randomNumber < 85)
                 cpuCard = AITeam.get(5);
-            else if (randomNumber >= 85 && randomNumber < 90)
+            else if (randomNumber < 90)
                 cpuCard = AITeam.get(4);
-            else if (randomNumber >= 90 && randomNumber < 93)
+            else if (randomNumber < 93)
                 cpuCard = AITeam.get(3);
-            else if (randomNumber >= 93 && randomNumber < 95)
+            else if (randomNumber < 95)
                 cpuCard = AITeam.get(2);
-            else if (randomNumber >= 95 && randomNumber < 97)
+            else if (randomNumber < 97)
                 cpuCard = AITeam.get(1);
-            else if (randomNumber >= 97)
+            else
                 cpuCard = AITeam.get(0);
         }
 
@@ -255,39 +247,39 @@ public class MatchEvent extends GameObject{
     dependeing on the scenario, get the relevant stat from the player
      */
     private int getStats(Card player, String scenario){
-        Card currentCard = player;
         //use the players stamina as a percentage to modify their stats by
         float stamina;
         int stat = 0;
-        stamina = currentCard.getFitness() / 100;
+        stamina = player.getFitness() / 100;
         switch (scenario) {
                     case "DEF":
-                        stat = (int) stamina * currentCard.getDefending();
+                        stat = (int) stamina * player.getDefending();
                         break;
                     case "PAS":
-                        stat = (int) stamina * currentCard.getPassing();
+                        stat = (int) stamina * player.getPassing();
                         break;
                     case "PAC":
-                        stat = (int) stamina * currentCard.getPace();
+                        stat = (int) stamina * player.getPace();
                         break;
                     case "DRI":
-                        stat= (int) stamina * currentCard.getDribbling();
+                        stat= (int) stamina * player.getDribbling();
                         break;
                     case "SHO":
-                        stat = (int) stamina * currentCard.getShooting();
+                        stat = (int) stamina * player.getShooting();
                         break;
                     case "HEA":
-                        stat = (int) stamina * currentCard.getHeading();
+                        stat = (int) stamina * player.getHeading();
                         break;
+                        //if a GK is used for a non GK scenariom they will recieve half of their rating for the stat
                     case "GK":
-                        if (currentCard.getPlayerPosition().equals("GoalKeeper"))
-                            stat = (int) stamina * currentCard.getRating();
+                        if (player.getPlayerPosition().equals("GoalKeeper"))
+                            stat = (int) stamina * player.getRating();
                         else
-                            stat = (int)(stamina * currentCard.getRating())/2;
+                            stat = (int)(stamina * player.getRating())/2;
                         break;
                 }
 
-                currentCard.setFitness(currentCard.getFitness() - 10);
+        player.setFitness(player.getFitness() - 10);
         return stat;
     }
 
@@ -407,19 +399,6 @@ public class MatchEvent extends GameObject{
             scrollerDisplayed = !scrollerDisplayed;
             distanceMoved = 0;
         }
-    }
-
-    /**
-     * Check if a touch is within the general area of a certain location
-     * @param userTouchLocation
-     * @param touchDestination
-     */
-    private boolean checkIfTouchInArea(Vector2 userTouchLocation, BoundingBox touchDestination) {
-        if(userTouchLocation == null || touchDestination == null) return false;
-
-        if(touchDestination.contains(userTouchLocation.x, userTouchLocation.y)) return true;
-
-        return false;
     }
 
 
