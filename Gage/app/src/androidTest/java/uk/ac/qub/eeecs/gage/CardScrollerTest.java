@@ -1,7 +1,6 @@
 package uk.ac.qub.eeecs.gage;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -19,10 +18,10 @@ import uk.ac.qub.eeecs.gage.engine.input.TouchEvent;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.gage.util.BoundingBox;
 import uk.ac.qub.eeecs.gage.util.Vector2;
-import uk.ac.qub.eeecs.game.cardDemo.objects.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
-import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
-import uk.ac.qub.eeecs.game.cardDemo.ui.CardScroller;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
+import uk.ac.qub.eeecs.game.objects.Card;
+import uk.ac.qub.eeecs.game.screens.HelpScreen;
+import uk.ac.qub.eeecs.game.ui.CardScroller;
 
 import static junit.framework.Assert.assertEquals;
 

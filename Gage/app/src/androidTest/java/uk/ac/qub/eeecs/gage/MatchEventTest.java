@@ -3,25 +3,19 @@ package uk.ac.qub.eeecs.gage;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
-import uk.ac.qub.eeecs.gage.engine.ElapsedTime;
-import uk.ac.qub.eeecs.gage.engine.graphics.IGraphics2D;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
-import uk.ac.qub.eeecs.gage.world.GameScreen;
-import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Card;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
-import uk.ac.qub.eeecs.game.cardDemo.objects.MatchEvent;
-import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
+import uk.ac.qub.eeecs.game.objects.FootballGameScreen;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
+import uk.ac.qub.eeecs.game.objects.Card;
+import uk.ac.qub.eeecs.game.objects.Match;
+import uk.ac.qub.eeecs.game.objects.MatchEvent;
+import uk.ac.qub.eeecs.game.screens.PlayScreen;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -180,23 +174,6 @@ public class MatchEventTest {
         assertEquals(removedCard, testEvent.cardHolder1.getCard());
 
     }
-    /**
-     * Test that when the card is removed from the scroller but not placed in the card holder it gets
-     * added back to the scroller, and that when a card is moved to a different position in the scroller
-     * it is not removed
-     * However I am unsure of how to carry out these tests now and will carry them out in the next sprint
-
-
-    @Test
-    public void checkCardNotRemovedFromScrollerWhenDraggedOut(){
-
-    }
-
-    @Test
-    public void checkCardNotRemovedFromScroller(){
-
-    }
-    */
 
 
 

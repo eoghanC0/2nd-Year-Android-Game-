@@ -16,8 +16,8 @@ import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.gage.world.FootballGameScreen;
 import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.screens.HelpScreen;
-import uk.ac.qub.eeecs.game.cardDemo.ui.ListBox;
+import uk.ac.qub.eeecs.game.screens.HelpScreen;
+import uk.ac.qub.eeecs.game.ui.ListBox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

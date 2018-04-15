@@ -13,10 +13,9 @@ import uk.ac.qub.eeecs.gage.engine.ScreenManager;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
 import uk.ac.qub.eeecs.game.DemoGame;
 import uk.ac.qub.eeecs.game.SplashScreen1;
-import uk.ac.qub.eeecs.game.cardDemo.screens.MenuScreen;
-import uk.ac.qub.eeecs.game.cardDemo.screens.PackScreen;
-import uk.ac.qub.eeecs.game.cardDemo.screens.SquadScreen;
-import uk.ac.qub.eeecs.game.cardDemo.ui.*;
+import uk.ac.qub.eeecs.game.screens.MenuScreen;
+import uk.ac.qub.eeecs.game.screens.PackScreen;
+import uk.ac.qub.eeecs.game.screens.SquadScreen;
 
 import static junit.framework.Assert.assertEquals;
 

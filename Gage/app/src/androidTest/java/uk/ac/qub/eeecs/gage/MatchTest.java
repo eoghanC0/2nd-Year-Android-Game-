@@ -10,13 +10,12 @@ import org.junit.runner.RunWith;
 
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
-import uk.ac.qub.eeecs.game.FootballGame;
-import uk.ac.qub.eeecs.game.cardDemo.objects.Match;
-import uk.ac.qub.eeecs.game.cardDemo.objects.MatchEvent;
-import uk.ac.qub.eeecs.game.cardDemo.screens.PlayScreen;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
+import uk.ac.qub.eeecs.game.objects.Match;
+import uk.ac.qub.eeecs.game.objects.MatchEvent;
+import uk.ac.qub.eeecs.game.screens.PlayScreen;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.format;
 
 /**
  * Created by Aedan on 10/03/2018.
@@ -158,6 +157,33 @@ public class MatchTest {
         testMatch.timeSinceLastScenario = 6;
         testMatch.checkForScenario();
         assertEquals(true, testMatch.newEvent != null);
+    }
+
+    @Test
+    public void checkPlayerStatsUpgraded(){
+        int originalWins = game.getWins();
+        testMatch.gameOver = true;
+        testMatch.gameResult = "Player A";
+        playScreen.endGame();
+        assertEquals(game.getWins(), originalWins + 1);
+
+    }
+
+    @Test
+    public void checkPlayerXPIncreased(){
+        int originalWins = game.getXp();
+        testMatch.gameOver = true;
+        testMatch.gameResult = "Player A";
+        playScreen.endGame();
+        assertEquals((originalWins < game.getXp()), true);
+
+    }
+
+    @Test
+    public void checkScenarioCreated(){
+        testMatch.timeSinceLastScenario = 6;
+        testMatch.checkForScenario();
+        assertEquals(testMatch.newEvent != null, true);
     }
 
 
