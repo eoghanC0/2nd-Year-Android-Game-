@@ -82,6 +82,7 @@ public class FileIO {
      * @param assetName Name of the asset to open for reading
      * @return InputStream that can be used to read the asset
      * @throws IOException if the asset cannot be opened
+     * Author - Stephen McVeigh
      */
     public String readAsset(String assetName) throws IOException {
         InputStream in = mAssetManager.open(assetName);
@@ -179,6 +180,7 @@ public class FileIO {
     // /////////////////////////////////////////////////////////////////////////
     /**
      * @return a string (i.e. the data stored in the file)
+     * Author - Stephen McVeigh
      */
     public String readFile(int saveSlot) throws IOException {
         File dir = new File(mContext.getFilesDir().getPath());
@@ -201,6 +203,7 @@ public class FileIO {
         return "";
     }
 
+    //Author - Stephen McVeigh
     public ArrayList<String> getSaveFileNames() {
         ArrayList<String> fileNames = new ArrayList<>();
         File dir = new File(mContext.getFilesDir().getPath());
@@ -216,6 +219,7 @@ public class FileIO {
     /**
      * @param fileName filepath given to the file to be written
      * @param data the data to be written to the file
+     * Author - Stephen McVeigh
      */
     public void writeFile(String fileName, String data) throws IOException {
         File file = new File(mContext.getFilesDir().getPath() + File.separator + fileName);
@@ -228,6 +232,7 @@ public class FileIO {
 
     /**
      * @param gameID The gameID of the game save that needs to be deleted
+     * Author - Stephen McVeigh
      */
     public void deleteSaveByGameID(int gameID) {
         File dir = new File(mContext.getFilesDir().getPath());
@@ -241,6 +246,7 @@ public class FileIO {
 
     /**
      * @param fileName The name of the game save that needs to be deleted
+     * Author - Stephen McVeigh
      */
     public void deleteSaveByName(String fileName) {
         File file = new File(mContext.getFilesDir().getPath() + File.separator + fileName);

@@ -202,6 +202,8 @@ public class FootballGame extends Game {
      * Loads the "JSONified" game properties from the given save slot
      *
      * @param saveSlot
+     *
+     * Author - Stephen McVeigh and Inaki McKearney
      */
     public void loadGame(int saveSlot) {
         try {
@@ -268,6 +270,8 @@ public class FootballGame extends Game {
      * Adds a card to the game's squad property
      *
      * @param card
+     *
+     * Author - Eimhin Laverty
      */
     public void addToSquad(Card card) {
         if(squad.size() <= 11) {
@@ -279,6 +283,8 @@ public class FootballGame extends Game {
      * Adds a card to the game's squad property
      *
      * @param card
+     *
+     * Author - Eimhin Laverty
      */
     public void addToClub(Card card) {
         club.add(card);
@@ -286,6 +292,8 @@ public class FootballGame extends Game {
 
     /**
      * Clears the squad array
+     *
+     * Author - Eimhin Laverty
      */
     public void clearSquad() {
         squad.clear();
@@ -293,6 +301,8 @@ public class FootballGame extends Game {
 
     /**
      * Clears the club array
+     *
+     * Author - Eimhin Laverty
      */
     public void clearClub() {
         club.clear();

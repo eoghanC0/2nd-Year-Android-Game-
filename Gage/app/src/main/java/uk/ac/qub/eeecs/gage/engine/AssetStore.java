@@ -69,6 +69,7 @@ public class AssetStore {
     // Store //
     // /////////////////////////////////////////////////////////////////////////
 
+    //Author - Stephen McVeigh
     public String readAsset(String fileName) {
         try {
             return mFileIO.readAsset(fileName);
@@ -81,6 +82,7 @@ public class AssetStore {
     /**
      * @param fileName filepath given to the file to be written
      * @param data the data to be written to the file
+     * Author - Stephen McVeigh
      */
     public void writeFile(String fileName, String data) {
         try {
@@ -92,6 +94,7 @@ public class AssetStore {
 
     /**
      * @param saveSlot filepath given to the file to be written
+     * Author - Stephen McVeigh
      */
     public String readSave(int saveSlot) {
         try {
@@ -102,12 +105,14 @@ public class AssetStore {
         }
     }
 
+    //Author - Stephen McVeigh
     public ArrayList<String> getSaveFiles() {
         return mFileIO.getSaveFileNames();
     }
 
     /**
      * @param gameID The gameID of the game file which has to be deleted
+     * Author - Stephen McVeigh
      */
     public void deleteSave(int gameID) {
         mFileIO.deleteSaveByGameID(gameID);
@@ -115,6 +120,7 @@ public class AssetStore {
 
     /**
      * @param fileName The name of the game file which has to be deleted
+     * Author - Stephen McVeigh
      */
     public void deleteSave(String fileName) {
         mFileIO.deleteSaveByName(fileName);

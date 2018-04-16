@@ -58,6 +58,7 @@ public abstract class GameScreen {
         mGame = game;
     }
 
+    //Author - Stephen McVeigh
     public GameScreen(String name) {
         mName = name;
         mGame = null;

@@ -191,6 +191,7 @@ public class GestureHandler extends TouchHandler
      *
      * @param motionEvent Event which triggered the scroll
      * @return true if the event is consumed, otherwise false
+     * Author - Stephen McVeigh
      */
     public boolean onDoubleTap(MotionEvent motionEvent) {
         // Instantiate and add a fling event
@@ -206,6 +207,7 @@ public class GestureHandler extends TouchHandler
      *
      * @param motionEvent Movement event which triggered this onDoubleTapEvent
      * @return true if the event is consumed, otherwise false
+     * Author - Stephen McVeigh
      */
     public boolean onDoubleTapEvent(MotionEvent motionEvent) {
         // Returning false as the basic underlying event handling needs to run

@@ -139,13 +139,15 @@ public class GameObject {
      *
      * @param x x-location of the game object
      * @param y y-location of the game object
+     *
+     * Authors - Stephen McVeigh and Eimhin Laverty
      */
     public void setPosition(float x, float y) {
-
         mBound.x = position.x = x;
         mBound.y = position.y = y;
     }
 
+    //Author - Stephen McVeigh
     public void setScaledHeight(int height) {
         mBound.halfHeight = height / 2f;
         mBound.halfWidth = height * 225/355/2f;

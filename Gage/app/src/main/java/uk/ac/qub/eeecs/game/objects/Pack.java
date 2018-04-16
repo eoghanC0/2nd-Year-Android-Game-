@@ -66,6 +66,8 @@ public class Pack extends GameObject {
      * @param rare
      * @param minRating
      * @param maxRating
+     *
+     * Authors - Stephen McVeigh and Eoghan Conlon
      */
     private void createCards(int numberOfCards, boolean rare, int minRating, int maxRating) {
         for (int i = 0; i < numberOfCards; i++) {
@@ -135,6 +137,8 @@ public class Pack extends GameObject {
      * It is returned as a new copied object so that it can be manipulated in the opening animation
      *
      * @return
+     *
+     * Author - Stephen McVeigh and Eoghan Conlon
      */
     private Card getBestCard() {
         int highestRating = 0;
