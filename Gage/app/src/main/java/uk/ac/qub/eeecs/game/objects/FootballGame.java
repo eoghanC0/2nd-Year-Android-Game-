@@ -150,6 +150,8 @@ public class FootballGame extends Game {
      * @param collection
      * @return
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private JSONArray getCardCollectionAsJson(ArrayList<Card> collection) throws JSONException{
         JSONArray array = new JSONArray();
@@ -165,6 +167,8 @@ public class FootballGame extends Game {
      * @param collection
      * @return
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private ArrayList<Card> getCardCollectionAsArrayList(JSONArray collection) throws JSONException{
         ArrayList<Card> array = new ArrayList<>();
