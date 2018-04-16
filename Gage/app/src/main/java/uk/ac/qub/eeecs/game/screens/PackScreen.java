@@ -263,6 +263,7 @@ public class PackScreen extends FootballGameScreen {
                         packPopUp.disableButton1();
                         notEnoughCoinsPopUp.disableButton1();
                         notEnoughCoinsPopUp.disableButton2();
+                        infoBar.addNotification("You just bought a new Player Pack!", 2, 5);
                     } else if (packPopUp.getHasNoBeenPressed()) {
                         drawPopup = false;
                         displayHorizontalScroller = false;
