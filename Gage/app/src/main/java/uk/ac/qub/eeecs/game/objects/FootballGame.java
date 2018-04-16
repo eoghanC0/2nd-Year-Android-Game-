@@ -177,6 +177,7 @@ public class FootballGame extends Game {
 
     /**
      * Saves the current state of the game to a JSON file with the current time stamp in the GameIDth save slot
+     * Author - Inaki McKearney
      */
     public void saveGame() {
         try {
@@ -242,6 +243,7 @@ public class FootballGame extends Game {
 
     /**
      * Gets a random music file and plays it
+     * Author - Inaki McKearney
      */
     private void playBackgroundMusic(){
         Random rand = new Random(System.currentTimeMillis());
