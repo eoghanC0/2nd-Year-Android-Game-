@@ -214,8 +214,6 @@ public class CardScroller extends Scroller<Card> {
 
             // Trigger flag to check page icons
             checkPageChange = true;
-
-            Log.d("DEBUG", "addScrollerItem: Added card " + card.toString());
         }
     }
 
