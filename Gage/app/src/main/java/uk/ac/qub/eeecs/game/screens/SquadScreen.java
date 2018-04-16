@@ -13,6 +13,10 @@ import uk.ac.qub.eeecs.game.objects.FootballGame;
 import uk.ac.qub.eeecs.game.ui.CardHolder;
 import uk.ac.qub.eeecs.game.ui.SquadSelectionPane;
 
+/**
+ * Created by Steven McVeigh
+ */
+
 public class SquadScreen extends FootballGameScreen {
     // /////////////////////////////////////////////////////////////////////////
     // Properties
