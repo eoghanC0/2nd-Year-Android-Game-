@@ -133,6 +133,8 @@ public class Card extends GameObject {
      * @param gameScreen
      * @param playerID
      * @param fitness
+     *
+     * Author - Stephen McVeigh
      */
     public Card(GameScreen gameScreen, String playerID, int fitness) {
         //The aspect ratio of the card is 225/355
@@ -155,6 +157,8 @@ public class Card extends GameObject {
      * @param playerPosition
      * @param minRating
      * @param maxRating
+     *
+     * Author - Stephen McVeigh
      */
 
     public Card(GameScreen gameScreen, boolean rare, String playerPosition,int minRating, int maxRating) {
@@ -175,6 +179,8 @@ public class Card extends GameObject {
      * A cards copy constructor. Creates another card identical to the passed card
      *
      * @param c
+     *
+     * Author - Eimhin Laverty
      */
     public Card(Card c) {
         super(c.position.x, c.position.y, c.mBound.getWidth(), c.mBound.getHeight(), null, c.mGameScreen);
@@ -188,7 +194,7 @@ public class Card extends GameObject {
     }
 
     // ///////////////////////////////////////////////////////////
-    // Getters
+    // Getters - Multiple Contributers (Inaki and Stephen)
     // ///////////////////////////////////////////////////////////
     public String getPlayerID() {
         return playerID;
@@ -277,7 +283,7 @@ public class Card extends GameObject {
     }
 
     // ///////////////////////////////////////////////////////////
-    // Setters
+    // Setters - Stephen McVeigh
     // ///////////////////////////////////////////////////////////
     public void setFitness(int fitness) {
         this.fitness = fitness;
@@ -296,6 +302,8 @@ public class Card extends GameObject {
      * Returns a the playerID and fitness stat of a card to be saved in JSON form
      * @return
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     public JSONObject getSaveDetails() throws JSONException{
         JSONObject card = new JSONObject();
@@ -309,6 +317,8 @@ public class Card extends GameObject {
      *
      * @return
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private JSONArray getPlayersArray() throws JSONException {
         JSONObject playerJson = new JSONObject(assetManager.readAsset("player_json/all_cards.json"));
@@ -325,6 +335,8 @@ public class Card extends GameObject {
      * @param playersArray
      * @return
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private ArrayList<String> getRelevantPlayerIDs(boolean rare, int minRating, int maxRating, String playerPosition, JSONArray playersArray) throws JSONException{
         //Get an array of playerIDs where the player is rare/non-rare (depending on the parameter)
@@ -349,6 +361,8 @@ public class Card extends GameObject {
      * @param playersArray
      * @return
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private JSONObject getJSONPlayer(String playerID, JSONArray playersArray) throws JSONException{
         return playersArray.getJSONObject(Integer.parseInt(playerID));
@@ -360,6 +374,8 @@ public class Card extends GameObject {
      *
      * @param thisPlayer
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private void populateNames(JSONObject thisPlayer) throws JSONException{
         playerID = thisPlayer.getString("id");
@@ -375,6 +391,8 @@ public class Card extends GameObject {
      *
      * @param thisPlayer
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private void populateClubDetails(JSONObject thisPlayer) throws JSONException{
         JSONObject clubDetails = thisPlayer.getJSONObject("club");
@@ -391,6 +409,8 @@ public class Card extends GameObject {
      *
      * @param thisPlayer
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private void populateNationDetails(JSONObject thisPlayer) throws JSONException{
         JSONObject nationDetails = thisPlayer.getJSONObject("nation");
@@ -406,6 +426,8 @@ public class Card extends GameObject {
      *
      * @param thisPlayer
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private void populatePositionDetails(JSONObject thisPlayer) throws JSONException{
         playerPosition = thisPlayer.getString("position");
@@ -430,6 +452,8 @@ public class Card extends GameObject {
      * For simplicity, the goalkeeper related stats of an outfield player become half the corresponding outfield stat, and vice versa
      * @param thisPlayer
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private void populateAttributeDetails(JSONObject thisPlayer) throws JSONException{
         JSONArray attributes = thisPlayer.getJSONArray("attributes");
@@ -494,6 +518,8 @@ public class Card extends GameObject {
      *
      * @param thisPlayer
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private void populateHeadshot(JSONObject thisPlayer) throws JSONException{
         if (assetManager.getBitmap("player_" + thisPlayer.getString("id")) == null)
@@ -506,6 +532,8 @@ public class Card extends GameObject {
      *
      * @param thisPlayer
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private void populateBackground(JSONObject thisPlayer) throws JSONException{
         rare = thisPlayer.getBoolean("rare");
@@ -548,6 +576,8 @@ public class Card extends GameObject {
      * @param playerID
      * @param playersArray
      * @throws JSONException
+     *
+     * Author - Stephen McVeigh
      */
     private void populateCardProperties(String playerID, JSONArray playersArray) throws JSONException {
         JSONObject thisPlayerJSON = getJSONPlayer(playerID, playersArray);
@@ -565,6 +595,8 @@ public class Card extends GameObject {
      * Updates the card object every frame
      *
      * @param elapsedTime Elapsed time information
+     *
+     * Authors - Stephen McVeigh and Inaki McKearney
      */
     @Override
     public void update(ElapsedTime elapsedTime) {
@@ -587,6 +619,8 @@ public class Card extends GameObject {
      *
      * @param elapsedTime Elapsed time information
      * @param graphics2D  Graphics instance
+     *
+     * Author - Stephen McVeigh
      */
     @Override
     public void draw(ElapsedTime elapsedTime,IGraphics2D graphics2D) {
@@ -717,7 +751,7 @@ public class Card extends GameObject {
     }
 
     // /////////////////////////////////////////////////////////////////////////
-    // Testing
+    // Testing - Eimhin Laverty
     // /////////////////////////////////////////////////////////////////////////
 
     /**
