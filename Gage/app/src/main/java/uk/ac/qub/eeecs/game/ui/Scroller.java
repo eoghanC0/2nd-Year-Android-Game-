@@ -511,7 +511,7 @@ public abstract class Scroller<T extends GameObject> extends GameObject {
      * scrollAnimationTriggered is true
      */
     private void checkAndPerformScrollAnimation() {
-        if(!scrollAnimationTriggered) return;
+        if(!scrollAnimationTriggered || (multiMode && scrollerItems.size() <= maxDisplayedItems)) return;
 
         // Move current card and next card
         float moveBy = 0;

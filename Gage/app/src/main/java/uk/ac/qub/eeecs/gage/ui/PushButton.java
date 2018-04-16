@@ -235,4 +235,9 @@ public class PushButton extends Button {
      * Sets the button's enabled property
      */
     public void setEnabled(boolean isEnabled) {this.isEnabled = isEnabled;}
+
+    /**
+     * Sets mBitmap to mDefaultBitmap
+     */
+    public void updateMainBitmap() { this.mBitmap = mDefaultBitmap; }
 }

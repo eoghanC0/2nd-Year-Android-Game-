@@ -214,8 +214,6 @@ public class CardScroller extends Scroller<Card> {
 
             // Trigger flag to check page icons
             checkPageChange = true;
-
-            Log.d("DEBUG", "addScrollerItem: Added card " + card.toString());
         }
     }
 
@@ -425,7 +423,6 @@ public class CardScroller extends Scroller<Card> {
                             touchDown = true;
                             draggedCardOriginalPosition = new Vector2(scrollerItems.get(selectedItemIndex).position.x, scrollerItems.get(selectedItemIndex).position.y);
                             itemSelected = true;
-                            Log.d("DEBUG", "checkAndPerformDragCard: SELECTED " + scrollerItems.get(selectedItemIndex).toString());
                         }
                     }
                 } else // No touch down
