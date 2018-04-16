@@ -22,6 +22,8 @@ import uk.ac.qub.eeecs.game.ui.InfoBar;
 /**
  * An exceedingly basic menu screen with a couple of touch buttons
  *
+ * Created by Eoghan Conlon
+ *
  * @version 1.0
  */
 public class MenuScreen extends FootballGameScreen {
@@ -44,8 +46,6 @@ public class MenuScreen extends FootballGameScreen {
     private PushButton mMusicButton;
     private PushButton mPacksButton;
 
-    private Music myMusic;
-
     private final Bitmap background;
     private final Rect backgroundRect = new Rect(0,0, this.getGame().getScreenWidth(),this.getGame().getScreenHeight());
 
@@ -57,6 +57,8 @@ public class MenuScreen extends FootballGameScreen {
 
     /**
      * Create a simple menu screen
+     * Author: Eoghan Conlon
+     * Contributed by: Eimhin Laverty
      *
      * @param game Game to which this screen belongs
      */
@@ -74,7 +76,6 @@ public class MenuScreen extends FootballGameScreen {
         assetManager.loadAndAddBitmap("MusicIconPushed", "img/MusicIconPushed.png");
         assetManager.loadAndAddBitmap("MusicIconMute", "img/MusicIconMute.png");
         assetManager.loadAndAddBitmap("MusicIconMutePushed", "img/MusicIconMutePushed.png");
-        assetManager.loadAndAddBitmap("packsIcon", "img/ball2.jpg");
         assetManager.loadAndAddBitmap("MenuButton", "img/MenuButton.png");
         assetManager.loadAndAddBitmap("MenuButtonPushed", "img/MenuButtonPushed.png");
         assetManager.loadAndAddBitmap("ArrowBack", "img/ArrowBack.png");
@@ -111,6 +112,8 @@ public class MenuScreen extends FootballGameScreen {
 
     /**
      * Update the menu screen
+     * Author: Eoghan Conlon
+     * Contributed by: Eimhin Laverty, Iñaki McKearney
      *
      * @param elapsedTime Elapsed time information
      */
@@ -123,12 +126,6 @@ public class MenuScreen extends FootballGameScreen {
 
         List<TouchEvent> touchEvents = input.getTouchEvents();
         if (touchEvents.size() > 0) {
-
-            // Just check the first touch event that occurred in the frame.
-            // It means pressing the screen with several fingers may not
-            // trigger a 'button', but, hey, it's an exceedingly basic menu.
-            TouchEvent touchEvent = touchEvents.get(0);
-
             // Update each button and transition if needed
             mHelpButton.update(elapsedTime);
             mOptionsButton.update(elapsedTime);
@@ -163,6 +160,7 @@ public class MenuScreen extends FootballGameScreen {
 
     /**
      * Draw the menu screen
+     * Author: Eoghan Conlon
      *
      * @param elapsedTime Elapsed time information
      * @param graphics2D  Graphics instance
@@ -183,9 +181,5 @@ public class MenuScreen extends FootballGameScreen {
         mSquadsButton.draw(elapsedTime, graphics2D, null, null);
         mMusicButton.draw(elapsedTime, graphics2D, null, null);
         mPacksButton.draw(elapsedTime, graphics2D, null, null);
-
-        myPaint.reset();
-        myPaint.setTextSize(100);
-        graphics2D.drawText("FOOTBALL TRUMPS", mGame.getScreenWidth() * 0.5f,mGame.getScreenWidth() * 0.9f,myPaint);
     }
 }

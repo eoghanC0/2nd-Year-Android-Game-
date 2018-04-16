@@ -16,7 +16,7 @@ import uk.ac.qub.eeecs.game.ui.InfoBar;
 import uk.ac.qub.eeecs.game.ui.PopUpWindow;
 
 /**
- * Created by stephenmcveigh on 07/12/2017.
+ * Created by Eoghan Conlon
  */
 
 public class PackScreen extends FootballGameScreen {

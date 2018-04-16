@@ -11,6 +11,9 @@ import org.junit.runner.RunWith;
 import uk.ac.qub.eeecs.gage.engine.AssetStore;
 import uk.ac.qub.eeecs.gage.engine.ScreenManager;
 import uk.ac.qub.eeecs.gage.engine.io.FileIO;
+import uk.ac.qub.eeecs.game.objects.FootballGame;
+import uk.ac.qub.eeecs.game.screens.MenuScreen;
+import uk.ac.qub.eeecs.game.screens.PlayScreen;
 import uk.ac.qub.eeecs.game.screens.SquadScreen;
 
 import static junit.framework.Assert.assertEquals;
@@ -24,13 +27,13 @@ import static junit.framework.Assert.assertEquals;
     public class SquadScreenTest {
 
         private Context appContext;
-        private Game game;
+        private FootballGame game;
 
         @Before
         public void setup() {
             appContext = InstrumentationRegistry.getTargetContext();
 
-            game = new DemoGame();
+            game = new FootballGame();
 
             FileIO fileIO = new FileIO(appContext);
             game.mFileIO = fileIO;
@@ -46,7 +49,7 @@ import static junit.framework.Assert.assertEquals;
             game.mScreenManager.addScreen(squadScreen);
 
             // Call test
-            //squadScreen.changeToScreen(new MenuScreen(game));
+            squadScreen.changeToScreen(new MenuScreen(game));
 
             // Check return
             assertEquals(game.getScreenManager().getCurrentScreen().getName(), "MenuScreen");
@@ -60,7 +63,7 @@ import static junit.framework.Assert.assertEquals;
             game.mScreenManager.addScreen(squadScreen);
 
             // Call test
-            //squadScreen.changeToScreen(new PlayScreen(game));
+            squadScreen.changeToScreen(new PlayScreen(game));
 
             // Check return
             assertEquals(game.getScreenManager().getCurrentScreen().getName(), "PlayScreen");

@@ -11,7 +11,7 @@ import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 
 /**
- * Created by eimhin on 09/03/2018.
+ * Created by Eoghan Conlon
  */
 
 public class PopUpWindow extends GameObject {

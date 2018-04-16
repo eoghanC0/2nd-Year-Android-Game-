@@ -9,6 +9,10 @@ import uk.ac.qub.eeecs.gage.world.GameObject;
 import uk.ac.qub.eeecs.gage.world.GameScreen;
 import uk.ac.qub.eeecs.game.objects.Card;
 
+/**
+ * Created by Steven McVeigh
+ */
+
 public class CardHolder extends GameObject {
     //////////////////////////////////////////////
     //  Properties

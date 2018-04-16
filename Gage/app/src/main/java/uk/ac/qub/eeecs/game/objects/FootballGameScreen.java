@@ -9,6 +9,8 @@ import uk.ac.qub.eeecs.gage.world.GameScreen;
  * Game screen class acting as a container for a coherent section of the game (a
  * level, configuration screen, etc.)
  *
+ * Created by Iñaki McKearney
+ *
  * @version 1.0
  */
 public abstract class FootballGameScreen extends GameScreen {

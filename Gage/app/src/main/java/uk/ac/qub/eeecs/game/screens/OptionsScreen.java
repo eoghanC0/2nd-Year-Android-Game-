@@ -70,6 +70,8 @@ public class OptionsScreen extends FootballGameScreen {
 
     /**
      * Create a new game screen associated with the specified game instance
+     * Author: Aedan Vallely
+     * Contributed by: Eimhin Laverty
      *
      * @param game Game instance to which the game screen belongs
      */
@@ -140,6 +142,11 @@ public class OptionsScreen extends FootballGameScreen {
 
     }
 
+    /**
+     * Author: Aedam Vallely
+     *
+     * @param elapsedTime Elapsed time information for the frame
+     */
     @Override
     public void update(ElapsedTime elapsedTime) {
         // Process any touch events occurring since the last update
@@ -206,7 +213,12 @@ public class OptionsScreen extends FootballGameScreen {
     }
 
 
-
+    /**
+     * Author: Aedan Vallely
+     *
+     * @param elapsedTime Elapsed time information for the frame
+     * @param graphics2D  Graphics instance used to draw the screen
+     */
     @Override
     public void draw(ElapsedTime elapsedTime, IGraphics2D graphics2D) {
         graphics2D.drawBitmap(background, null, backgroundRect, mPaint);
@@ -237,6 +249,8 @@ public class OptionsScreen extends FootballGameScreen {
 
     /**
      * Draws text with shadow
+     * Author: Eimhin Laverty
+     *
      * @param graphics2D
      * @param text
      * @param x
@@ -252,6 +266,8 @@ public class OptionsScreen extends FootballGameScreen {
 
     /**
      * Gets area occupied by block of text
+     * Author: Eimhin Laverty
+     *
      * @param paint
      * @param text
      * @return area occupied
@@ -264,6 +280,8 @@ public class OptionsScreen extends FootballGameScreen {
 
     /**
      * Calculates position of text so that it is centered between two buttons
+     * Author Eimhin Laverty
+     *
      * @return Vector2
       */
     private Vector2 calculateNewTextPosition(PushButton buttonOne, PushButton buttonTwo, Vector2 textPosition, String text) {

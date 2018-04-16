@@ -25,6 +25,7 @@ import static junit.framework.Assert.assertEquals;
 
 /**
  * ImageScroller Tests
+ * Created by Eimhin Laverty
  */
 
 @RunWith(AndroidJUnit4.class)

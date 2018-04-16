@@ -23,7 +23,7 @@ import static junit.framework.Assert.assertEquals;
 
 /**
  * HelpScreenTests
- *
+ * Created by Eimhin Laverty
  */
 
 @RunWith(AndroidJUnit4.class)
