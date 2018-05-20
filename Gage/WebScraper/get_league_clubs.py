@@ -1,3 +1,6 @@
+# Created by Stephen McVeigh
+
+
 import urllib.request
 import json
 import os
